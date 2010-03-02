@@ -1,0 +1,6 @@
+earthquake:damage=collapsed_building | building=collapsed | earthquake:damage=collapsed [0x6402 resolution 24]
+earthquake:damage=partially_collapsed [0x6403 resolution 24]
+earthquake:damage=spontaneous_camp | (tourism=camp_site & refugee=yes) [0x4800 resolution 20]
+earthquake:damage=landslide [0x6615 resolution 24]
+earthquake:damage=damaged_infrastructure [0x3000 resolution 24]
+barrier=obstacle | impassable=yes [0x5700 resolution 24]

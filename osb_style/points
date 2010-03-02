@@ -1,0 +1,5 @@
+# Openstreetbugs:
+type = '0' {name '${text}'} [0x7111 resolution 20]
+type = '1' {name '${text}'} [0x7112 resolution 20]
+
+note=* | fixme = * | FIXME=* |Fixme=* {name 'Notiz: ${note}' | 'Notiz: ${fixme}' | 'Notiz: ${FIXME}' | 'Notiz: ${Fixme}' } [0x7110 resolution 20]

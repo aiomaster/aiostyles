@@ -1,0 +1,1 @@
+addr:interpolation=* {name 'Interpolation:${addr:interpolation}'} [0x37 resolution 24]
