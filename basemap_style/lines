@@ -71,12 +71,12 @@ highway=byway [0x08 road_class=0 road_speed=0 resolution 23]
 
 # motorways
 highway=motorway {add oneway = yes; add bicycle = no; add foot = no; name '${ref|highway-symbol:hbox} ${name} (${maxspeed})' | '${ref|highway-symbol:hbox} (${maxspeed})' | '${name} (${maxspeed})' | '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'}
-highway=motorway & (maxspeed>110) [0x01 road_class=4 road_speed=7 resolution 12]
-highway=motorway & (maxspeed>90 & maxspeed<111) [0x01 road_class=4 road_speed=6 resolution 12]
-highway=motorway & (maxspeed>80 & maxspeed<91) [0x01 road_class=4 road_speed=5 resolution 12]
-highway=motorway & (maxspeed>60 & maxspeed<81) [0x01 road_class=4 road_speed=4 resolution 12]
-highway=motorway & (maxspeed>40 & maxspeed<61) [0x01 road_class=4 road_speed=3 resolution 12]
-highway=motorway & maxspeed<41 [0x01 road_class=4 road_speed=3 resolution 12]
+#highway=motorway & (maxspeed>110) [0x01 road_class=4 road_speed=7 resolution 12]
+#highway=motorway & (maxspeed>90 & maxspeed<111) [0x01 road_class=4 road_speed=6 resolution 12]
+#highway=motorway & (maxspeed>80 & maxspeed<91) [0x01 road_class=4 road_speed=5 resolution 12]
+#highway=motorway & (maxspeed>60 & maxspeed<81) [0x01 road_class=4 road_speed=4 resolution 12]
+#highway=motorway & (maxspeed>40 & maxspeed<61) [0x01 road_class=4 road_speed=3 resolution 12]
+#highway=motorway & maxspeed<41 [0x01 road_class=4 road_speed=3 resolution 12]
 highway=motorway [0x01 road_class=4 road_speed=7 resolution 12]
 
 highway=motorway_link {add bicycle = no; add foot = no} [0x01 road_class=4 road_speed=4 resolution 16]
@@ -84,70 +84,70 @@ highway=motorway_link {add bicycle = no; add foot = no} [0x01 road_class=4 road_
 # trunks
 (highway=trunk | highway=trunk_link) {name '${ref|highway-symbol:hbox} ${name} (${maxspeed})' | '${ref|highway-symbol:hbox} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}' }
 (highway=trunk | highway=trunk_link) & motorroad=yes {add bicycle = no; add foot = no} 
-(highway=trunk | highway=trunk_link) & maxspeed>90 [0x02 road_class=3 road_speed=6 resolution 16]
-(highway=trunk | highway=trunk_link) & (maxspeed>80 & maxspeed<91) [0x02 road_class=3 road_speed=5 resolution 16]
-(highway=trunk | highway=trunk_link) & (maxspeed>60 & maxspeed<81) [0x02 road_class=3 road_speed=4 resolution 16]
-(highway=trunk | highway=trunk_link) & (maxspeed>40 & maxspeed<61) [0x02 road_class=3 road_speed=3 resolution 16]
-(highway=trunk | highway=trunk_link) & maxspeed<41 [0x02 road_class=3 road_speed=2 resolution 16]
+#(highway=trunk | highway=trunk_link) & maxspeed>90 [0x02 road_class=3 road_speed=6 resolution 16]
+#(highway=trunk | highway=trunk_link) & (maxspeed>80 & maxspeed<91) [0x02 road_class=3 road_speed=5 resolution 16]
+#(highway=trunk | highway=trunk_link) & (maxspeed>60 & maxspeed<81) [0x02 road_class=3 road_speed=4 resolution 16]
+#(highway=trunk | highway=trunk_link) & (maxspeed>40 & maxspeed<61) [0x02 road_class=3 road_speed=3 resolution 16]
+#(highway=trunk | highway=trunk_link) & maxspeed<41 [0x02 road_class=3 road_speed=2 resolution 16]
 (highway=trunk | highway=trunk_link) [0x02 road_class=3 road_speed=6 resolution 16]
 
 # primarys
 (highway=primary | highway=primary_link) {name '${ref|highway-symbol:box} ${name} (${maxspeed})' | '${ref|highway-symbol:box} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}' }
-(highway=primary | highway=primary_link) & maxspeed>90 [0x02 road_class=3 road_speed=6 resolution 19]
-(highway=primary | highway=primary_link) & (maxspeed>80 & maxspeed<91) [0x02 road_class=3 road_speed=5 resolution 19]
-(highway=primary | highway=primary_link) & (maxspeed>60 & maxspeed<81) [0x02 road_class=3 road_speed=4 resolution 19]
-(highway=primary | highway=primary_link) & (maxspeed>40 & maxspeed<61) [0x02 road_class=3 road_speed=3 resolution 19]
-(highway=primary | highway=primary_link) & maxspeed<41 [0x02 road_class=3 road_speed=2 resolution 19]
+#(highway=primary | highway=primary_link) & maxspeed>90 [0x02 road_class=3 road_speed=6 resolution 19]
+#(highway=primary | highway=primary_link) & (maxspeed>80 & maxspeed<91) [0x02 road_class=3 road_speed=5 resolution 19]
+#(highway=primary | highway=primary_link) & (maxspeed>60 & maxspeed<81) [0x02 road_class=3 road_speed=4 resolution 19]
+#(highway=primary | highway=primary_link) & (maxspeed>40 & maxspeed<61) [0x02 road_class=3 road_speed=3 resolution 19]
+#(highway=primary | highway=primary_link) & maxspeed<41 [0x02 road_class=3 road_speed=2 resolution 19]
 (highway=primary | highway=primary_link) [0x02 road_class=3 road_speed=5 resolution 19]
 
 
 # secondarys
 highway=secondary {name '${ref|highway-symbol:oval} ${name} (${maxspeed})' | '${ref|highway-symbol:oval} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}' }
-(highway=secondary | highway=secondary_link) & maxspeed>90 [0x03 road_class=2 road_speed=6 resolution 20]
-(highway=secondary | highway=secondary_link) & (maxspeed>80 & maxspeed<91) [0x03 road_class=2 road_speed=5 resolution 20]
-(highway=secondary | highway=secondary_link) & (maxspeed>60 & maxspeed<81) [0x03 road_class=2 road_speed=4 resolution 20]
-(highway=secondary | highway=secondary_link) & (maxspeed>40 & maxspeed<61) [0x03 road_class=2 road_speed=3 resolution 20]
-(highway=secondary | highway=secondary_link) & maxspeed<41 [0x03 road_class=2 road_speed=2 resolution 20]
+#(highway=secondary | highway=secondary_link) & maxspeed>90 [0x03 road_class=2 road_speed=6 resolution 20]
+#(highway=secondary | highway=secondary_link) & (maxspeed>80 & maxspeed<91) [0x03 road_class=2 road_speed=5 resolution 20]
+#(highway=secondary | highway=secondary_link) & (maxspeed>60 & maxspeed<81) [0x03 road_class=2 road_speed=4 resolution 20]
+#(highway=secondary | highway=secondary_link) & (maxspeed>40 & maxspeed<61) [0x03 road_class=2 road_speed=3 resolution 20]
+#(highway=secondary | highway=secondary_link) & maxspeed<41 [0x03 road_class=2 road_speed=2 resolution 20]
 (highway=secondary | highway=secondary_link) [0x03 road_class=2 road_speed=5 resolution 20]
 
 # tertiarys
 highway=tertiary {name '${ref|highway-symbol:round} ${name} (${maxspeed})' | '${ref|highway-symbol:round} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:round} ${name}' | '${ref|highway-symbol:round}' | '${name}' }
-(highway=tertiary | highway=tertiary_link) & maxspeed>90 [0x04 road_class=2 road_speed=6 resolution 20]
-(highway=tertiary | highway=tertiary_link) & (maxspeed>80 & maxspeed<91) [0x04 road_class=2 road_speed=5 resolution 20]
-(highway=tertiary | highway=tertiary_link) & (maxspeed>60 & maxspeed<81) [0x04 road_class=2 road_speed=4 resolution 20]
-(highway=tertiary | highway=tertiary_link) & (maxspeed>40 & maxspeed<61) [0x04 road_class=2 road_speed=3 resolution 20]
-(highway=tertiary | highway=tertiary_link) & maxspeed<41 [0x04 road_class=2 road_speed=2 resolution 20]
+#(highway=tertiary | highway=tertiary_link) & maxspeed>90 [0x04 road_class=2 road_speed=6 resolution 20]
+#(highway=tertiary | highway=tertiary_link) & (maxspeed>80 & maxspeed<91) [0x04 road_class=2 road_speed=5 resolution 20]
+#(highway=tertiary | highway=tertiary_link) & (maxspeed>60 & maxspeed<81) [0x04 road_class=2 road_speed=4 resolution 20]
+#(highway=tertiary | highway=tertiary_link) & (maxspeed>40 & maxspeed<61) [0x04 road_class=2 road_speed=3 resolution 20]
+#(highway=tertiary | highway=tertiary_link) & maxspeed<41 [0x04 road_class=2 road_speed=2 resolution 20]
 (highway=tertiary | highway=tertiary_link) [0x04 road_class=2 road_speed=4 resolution 20]
 
 highway=* {name '${name} (${ref}) (${maxspeed})' | '${ref} (${maxspeed})' | '${name} (${maxspeed})' | '${name} (${ref})' | '${ref}' | '${name}' }
 
 
 # unclassified
-highway=unclassified & maxspeed>90 [0x05 road_class=2 road_speed=6 resolution 21]
-highway=unclassified & (maxspeed>80 & maxspeed<91) [0x05 road_class=2 road_speed=5 resolution 21]
-highway=unclassified & (maxspeed>60 & maxspeed<81) [0x05 road_class=2 road_speed=4 resolution 21]
-highway=unclassified & (maxspeed>40 & maxspeed<61) [0x05 road_class=2 road_speed=3 resolution 21]
-highway=unclassified & (maxspeed>20 & maxspeed<41) [0x05 road_class=2 road_speed=2 resolution 21]
-highway=unclassified & maxspeed<21 [0x05 road_class=2 road_speed=1 resolution 21]
+#highway=unclassified & maxspeed>90 [0x05 road_class=2 road_speed=6 resolution 21]
+#highway=unclassified & (maxspeed>80 & maxspeed<91) [0x05 road_class=2 road_speed=5 resolution 21]
+#highway=unclassified & (maxspeed>60 & maxspeed<81) [0x05 road_class=2 road_speed=4 resolution 21]
+#highway=unclassified & (maxspeed>40 & maxspeed<61) [0x05 road_class=2 road_speed=3 resolution 21]
+#highway=unclassified & (maxspeed>20 & maxspeed<41) [0x05 road_class=2 road_speed=2 resolution 21]
+#highway=unclassified & maxspeed<21 [0x05 road_class=2 road_speed=1 resolution 21]
 highway=unclassified [0x05 road_class=2 road_speed=2 resolution 21]
 
 # residentials
-(highway=residential | highway=living_street |highway=minor) & maxspeed>90 [0x06 road_class=0 road_speed=6 resolution 22]
-(highway=residential | highway=living_street |highway=minor) & (maxspeed>80 & maxspeed<91) [0x06 road_class=0 road_speed=5 resolution 22]
-(highway=residential | highway=living_street |highway=minor) & (maxspeed>60 & maxspeed<81) [0x06 road_class=0 road_speed=4 resolution 22]
-(highway=residential | highway=living_street |highway=minor) & (maxspeed>40 & maxspeed<61) [0x06 road_class=0 road_speed=3 resolution 22]
-(highway=residential | highway=living_street |highway=minor) & (maxspeed>20 & maxspeed<41) [0x06 road_class=0 road_speed=2 resolution 22]
-(highway=residential | highway=living_street |highway=minor) & maxspeed<21 [0x06 road_class=0 road_speed=1 resolution 22]
+#(highway=residential | highway=living_street |highway=minor) & maxspeed>90 [0x06 road_class=0 road_speed=6 resolution 22]
+#(highway=residential | highway=living_street |highway=minor) & (maxspeed>80 & maxspeed<91) [0x06 road_class=0 road_speed=5 resolution 22]
+#(highway=residential | highway=living_street |highway=minor) & (maxspeed>60 & maxspeed<81) [0x06 road_class=0 road_speed=4 resolution 22]
+#(highway=residential | highway=living_street |highway=minor) & (maxspeed>40 & maxspeed<61) [0x06 road_class=0 road_speed=3 resolution 22]
+#(highway=residential | highway=living_street |highway=minor) & (maxspeed>20 & maxspeed<41) [0x06 road_class=0 road_speed=2 resolution 22]
+#(highway=residential | highway=living_street |highway=minor) & maxspeed<21 [0x06 road_class=0 road_speed=1 resolution 22]
 (highway=residential | highway=living_street |highway=minor) [0x06 road_class=0 road_speed=3 resolution 22]
 
 
 # service
-highway=service & maxspeed>90 [0x07 road_class=0 road_speed=6 resolution 22]
-highway=service & (maxspeed>80 & maxspeed<91) [0x07 road_class=0 road_speed=5 resolution 22]
-highway=service & (maxspeed>60 & maxspeed<81) [0x07 road_class=0 road_speed=4 resolution 22]
-highway=service & (maxspeed>40 & maxspeed<61) [0x07 road_class=0 road_speed=3 resolution 22]
-highway=service & (maxspeed>20 & maxspeed<41) [0x07 road_class=0 road_speed=2 resolution 22]
-highway=service & maxspeed<21 [0x07 road_class=0 road_speed=1 resolution 22]
+#highway=service & maxspeed>90 [0x07 road_class=0 road_speed=6 resolution 22]
+#highway=service & (maxspeed>80 & maxspeed<91) [0x07 road_class=0 road_speed=5 resolution 22]
+#highway=service & (maxspeed>60 & maxspeed<81) [0x07 road_class=0 road_speed=4 resolution 22]
+#highway=service & (maxspeed>40 & maxspeed<61) [0x07 road_class=0 road_speed=3 resolution 22]
+#highway=service & (maxspeed>20 & maxspeed<41) [0x07 road_class=0 road_speed=2 resolution 22]
+#highway=service & maxspeed<21 [0x07 road_class=0 road_speed=1 resolution 22]
 highway=service [0x07 road_class=0 road_speed=2 resolution 22]
 
 
