@@ -1,0 +1,18 @@
+This is the git repository of the All in one Garmin Map.
+http://wiki.openstreetmap.org/wiki/All_in_one_Garmin_Map
+
+This map for mobile Garmin devices is made with mkgmap
+http://www.mkgmap.org.uk/
+
+Mkgmap uses special style files to map Openstreetmap features to internal Garmin types.
+You can find these Stylefiles used with the aio map here.
+There is one for every layer.
+The most stuff you will find in the basemap layer style and typ files.
+
+Typfiles define how the special Garmin types are displayed on the device.
+You can edit them for example with an online editor:
+http://ati.land.cz/gps/typdecomp/editor.cgi
+
+
+The whole stuff here is public domain. Do what you want to do with it.
+
