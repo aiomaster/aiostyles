@@ -37,7 +37,7 @@ highway=*
 
 # Set highway names to include the reference if there is one
 #highway=* {name '${name} (${ref}) (${maxspeed})' | '${ref} (${maxspeed})' | '${name} (${maxspeed})' | '${name} (${ref})' | '${ref}' | '${name}' }
-highway=footway|highway=cycleway|highway=track|highway=path|highway=bridleway|highway=byway|highway=pedestrian {name '${name} (${ref}) (${maxspeed})' | '${ref} (${maxspeed})' | '${name} (${maxspeed})' | '${name} (${ref})' | '${ref}' | '${name}' }
+highway=footway|highway=cycleway|highway=track|highway=path|highway=bridleway|highway=byway|highway=pedestrian {name '${name} (${ref})' | '${ref}' | '${name}' }
 
 #constructions
 highway = construction | (highway=* & construction=*) [0x08 resolution 22]
@@ -70,25 +70,25 @@ highway=bridleway [0x17 road_class=0 road_speed=0 resolution 23]
 highway=byway [0x08 road_class=0 road_speed=0 resolution 23]
 
 # motorways
-highway=motorway {add oneway = yes; add bicycle = no; add foot = no; name '${ref|highway-symbol:hbox} ${name} (${maxspeed})' | '${ref|highway-symbol:hbox} (${maxspeed})' | '${name} (${maxspeed})' | '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'} [0x01 road_class=4 road_speed=7 resolution 12]
+highway=motorway {add oneway = yes; add bicycle = no; add foot = no; name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'} [0x01 road_class=4 road_speed=7 resolution 12]
 
 highway=motorway_link {add bicycle = no; add foot = no} [0x01 road_class=4 road_speed=4 resolution 16]
 
 # trunks
 (highway=trunk | highway=trunk_link) & motorroad=yes {add bicycle = no; add foot = no} 
-(highway=trunk | highway=trunk_link) {name '${ref|highway-symbol:hbox} ${name} (${maxspeed})' | '${ref|highway-symbol:hbox} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}' } [0x02 road_class=3 road_speed=6 resolution 16]
+(highway=trunk | highway=trunk_link) {name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; add display_name = '${name} (${ref})' } [0x02 road_class=3 road_speed=6 resolution 16]
 
 # primarys
-(highway=primary | highway=primary_link) {name '${ref|highway-symbol:box} ${name} (${maxspeed})' | '${ref|highway-symbol:box} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}' } [0x02 road_class=3 road_speed=5 resolution 19]
+(highway=primary | highway=primary_link) {name '${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}'; add display_name = '${name} (${ref})' } [0x02 road_class=3 road_speed=5 resolution 19]
 
 
 # secondarys
-highway=secondary | highway=secondary_link {name '${ref|highway-symbol:oval} ${name} (${maxspeed})' | '${ref|highway-symbol:oval} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}' } [0x03 road_class=2 road_speed=5 resolution 20]
+highway=secondary | highway=secondary_link {name '${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}'; add display_name = '${name} (${ref})' } [0x03 road_class=2 road_speed=5 resolution 20]
 
 # tertiarys
-highway=tertiary | highway=tertiary_link {name '${ref|highway-symbol:round} ${name} (${maxspeed})' | '${ref|highway-symbol:round} (${maxspeed})' | '${name} (${maxspeed})' |'${ref|highway-symbol:round} ${name}' | '${ref|highway-symbol:round}' | '${name}' } [0x04 road_class=2 road_speed=4 resolution 20]
+highway=tertiary | highway=tertiary_link {name '${ref|highway-symbol:round} ${name}' | '${ref|highway-symbol:round}' | '${name}'; add display_name = '${name} (${ref})' } [0x04 road_class=2 road_speed=4 resolution 20]
 
-highway=* {name '${name} (${ref}) (${maxspeed})' | '${ref} (${maxspeed})' | '${name} (${maxspeed})' | '${name} (${ref})' | '${ref}' | '${name}' }
+highway=* {name '${name} (${ref})' | '${ref}' | '${name}' }
 
 
 # unclassified
@@ -106,7 +106,7 @@ highway=service [0x07 road_class=0 road_speed=2 resolution 22]
 highway=* & area!=yes & area!=true & area!=1 [0x09 ]
 
 natural=coastline [0x15 resolution 12]
-power=line {name 'Stromleitung (${voltage} Volt)'} [0x29 resolution 22]
+power=line {name 'Powerline (${voltage} Volt)'} [0x29 resolution 22]
 
 railway=light_rail [0x39 resolution 23]
 railway=rail [0x14 resolution 17]
