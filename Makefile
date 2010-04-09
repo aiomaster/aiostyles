@@ -125,7 +125,7 @@ do_stuff = \
 	echo "$(REGION) g$(1) Start:" >> $(PRINTFILE) ; date >> $(PRINTFILE) ; \
 	cd $(REGIONPATH)/g$(1)/ && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
-	time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	{ mkdir -p $(WEBDIR)/$(REGION)/$(DATE) && \
 	(sed -i 's|^OutFile "|OutFile "$(REGIONPATH)/gmapsupps/g$(1)/|' $(REGIONPATH)/g$(1)/osmmap.nsi && \
 	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
