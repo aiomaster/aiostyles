@@ -123,6 +123,7 @@ endif
 # name,options,source
 do_stuff = \
 	echo "$(REGION) g$(1) Start:" >> $(PRINTFILE) ; date >> $(PRINTFILE) ; \
+	mkdir -p $(LOGPATH) ; \
 	cd $(REGIONPATH)/g$(1)/ && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
@@ -279,6 +280,7 @@ $(REGIONPATH)/tiles/template.args : $(DATAPATH)
 #	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml ../raw_data/${REGION}_bounds.osm) \
 #	| java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=../raw_data/splittercache /dev/stdin
 ifeq ($(IS_PART_OF),false)
+	mkdir -p $(LOGPATH)
 	cd $(TILEPATH)/ && /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "IS_PART_OF=$(IS_PART_OF)" >> $(LOGPATH)/time_splitter
 # Set the whole path name for the tiles in template.args
