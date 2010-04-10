@@ -119,6 +119,22 @@ endif
 # #--generate-sea=extend-sea-sectors 
 # endif
 
+
+ifeq ($(REGION),europe)
+build_exe = \
+	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi && \
+	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi ;
+else
+build_exe = \
+	sed 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi > $(REGIONPATH)/g$(1)/osmmap_copy.nsi && \
+	makensis -O${LOGPATH}/makensis_$(1)_copy.log $(REGIONPATH)/g$(1)/osmmap_copy.nsi ; \
+	(sed -i 's|^OutFile "|OutFile "$(REGIONPATH)/gmapsupps/g$(1)/|' $(REGIONPATH)/g$(1)/osmmap.nsi && \
+	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
+	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBDIR)/$(REGION)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
+	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe && \
+	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) &
+endif
+
 # params:
 # name,options,source
 do_stuff = \
@@ -128,11 +144,7 @@ do_stuff = \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	{ mkdir -p $(WEBDIR)/$(REGION)/$(DATE) && \
-	(sed -i 's|^OutFile "|OutFile "$(REGIONPATH)/gmapsupps/g$(1)/|' $(REGIONPATH)/g$(1)/osmmap.nsi && \
-	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
-	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBDIR)/$(REGION)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
-	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe && \
-	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) & \
+	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
 	( (tar cjf $(REGIONPATH)/release/g$(1).${DATE}.tar.bz2 -C $(REGIONPATH) g$(1) && \
 	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/$(DATE)/ && \
