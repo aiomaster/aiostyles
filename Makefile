@@ -100,7 +100,7 @@ STYLEPATH := $(AIOPATH)/styles
 TILEPATH := $(REGIONPATH)/tiles
 MKGMAP := java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar
 SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar
-LOGPATH := ${AIOPATH}/logfiles/${REGION}
+LOGPATH := ${AIOPATH}/logfiles/${REGION}/$(DATE)
 
 # We want other options for the overlays than for the basemaplayer containing the routing etc.
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ) --latin1 --tdbfile --gmapsupp --nsis --keep-going
@@ -279,7 +279,8 @@ $(REGIONPATH)/tiles/template.args : $(DATAPATH)
 #	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml ../raw_data/${REGION}_bounds.osm) \
 #	| java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=../raw_data/splittercache /dev/stdin
 ifeq ($(IS_PART_OF),false)
-	cd $(TILEPATH)/ && bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	cd $(TILEPATH)/ && /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	echo "IS_PART_OF=$(IS_PART_OF)" >> $(LOGPATH)/time_splitter
 # Set the whole path name for the tiles in template.args
 	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
 else
