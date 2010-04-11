@@ -8,7 +8,8 @@
 
 SHELL := /bin/bash
 
-REGIONLIST := germany france austria
+BUNDESLAENDER := baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
+REGIONLIST := germany france austria $(BUNDESLAENDER)
 CS_REGIONLIST := $(shell echo $(REGIONLIST)|sed 's/ /,/g')
 
 # The Region should get extracted from Europe if it is part of it.
@@ -31,21 +32,13 @@ ifndef PRINTFILE
 PRINTFILE := $(shell tempfile)
 endif
 
+ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
+DATAPATH := /osm/geofabrik-extrakte/europe/germany/$(REGION).osm.bz2
+KURZ := DE
+else
 ifeq ($(REGION),germany)
 DATAPATH := /osm/geofabrik-extrakte/europe/germany.osm.bz2
 KURZ := DE
-else
-ifeq ($(REGION),berlin)
-DATAPATH := /osm/geofabrik-extrakte/europe/germany/berlin.osm.bz2
-KURZ := B
-else
-ifeq ($(REGION),sachsen)
-DATAPATH := /osm/geofabrik-extrakte/europe/germany/sachsen.osm.bz2
-KURZ := SN
-else
-ifeq ($(REGION),baden-wuerttemberg)
-DATAPATH := /osm/geofabrik-extrakte/europe/germany/baden-wuerttemberg.osm.bz2
-KURZ := BW
 else
 ifeq ($(REGION),haiti)
 DATAPATH := /osm/garmin/aio/haiti/raw_data/haiti.osm.bz2
@@ -54,8 +47,6 @@ else
 REGION := europe
 DATAPATH := /osm/geofabrik-extrakte/europe.osm.bz2
 KURZ := EU
-endif
-endif
 endif
 endif
 endif
@@ -73,7 +64,11 @@ endif
 
 #if we use existing tiles from europe we get the right one from the postgis database
 ifneq ($(IS_PART_OF),false)
+ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
+REGION_TILE_INDEX := $(shell psql -d aio -c "SELECT tiles_$(IS_PART_OF).id FROM tiles_$(IS_PART_OF),bundeslaender WHERE ST_Intersects(tiles_$(IS_PART_OF).the_geom,bundeslaender.the_geom) AND LOWER(bundeslaender.name)=LOWER('$(REGION)');" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
+else
 REGION_TILE_INDEX := $(shell psql -d aio -c "SELECT tiles_$(IS_PART_OF).id FROM tiles_$(IS_PART_OF),countries WHERE ST_Intersects(tiles_$(IS_PART_OF).the_geom,countries.the_geom) AND LOWER(countries.country)=LOWER('$(REGION)');" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
+endif
 REGION_TILE_INDEX_PIPES := $(shell echo "$(REGION_TILE_INDEX)" | tr ',' '|')
 endif
 
@@ -294,7 +289,7 @@ $(REGIONPATH)/tiles/template.args : $(DATAPATH)
 ifeq ($(IS_PART_OF),false)
 	mkdir -p $(LOGPATH)
 	cd $(TILEPATH)/ && /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
-	echo "IS_PART_OF=$(IS_PART_OF)" >> $(LOGPATH)/time_splitter
+	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
 # Set the whole path name for the tiles in template.args
 	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
 else
