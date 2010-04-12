@@ -53,7 +53,7 @@ highway=track & tracktype=grade5 {add motorcar = no} [0x12 road_class=0 road_spe
 
 highway=track | surface=unpaved | highway=unsurfaced {add motorcar = no} [0x0a road_class=0 road_speed=1 resolution 22]
 
-highway=steps {add motorcar = no; add bicycle = no} [0x13 road_class=0 road_speed=0 resolution 22]
+highway=steps {add motorcar = no; add bicycle = no; add mkgmap:unpaved=1} [0x13 road_class=0 road_speed=0 resolution 22]
 
 #highway=path & sac_scale=hiking [0x3a road_class=0 road_speed=0 resolution 22]
 #highway=path & sac_scale=mountain_hiking [0x3b road_class=0 road_speed=0 resolution 22]
