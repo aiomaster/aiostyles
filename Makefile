@@ -164,6 +164,7 @@ structure:
 	mkdir -p $(REGIONPATH)/gbasemap
 	mkdir -p $(REGIONPATH)/gaddr
 	mkdir -p $(REGIONPATH)/gfixme
+	mkdir -p $(REGIONPATH)/gmaxspeed
 	mkdir -p $(REGIONPATH)/gboundary
 	mkdir -p $(REGIONPATH)/gosb
 	mkdir -p $(REGIONPATH)/gcontourlines
@@ -174,6 +175,7 @@ structure:
 	mkdir -p $(REGIONPATH)/gmapsupps/gaddr
 	mkdir -p $(REGIONPATH)/gmapsupps/gboundary
 	mkdir -p $(REGIONPATH)/gmapsupps/gfixme
+	mkdir -p $(REGIONPATH)/gmapsupps/gmaxspeed
 	mkdir -p $(REGIONPATH)/gmapsupps/gosb
 	mkdir -p $(REGIONPATH)/gmapsupps/gcontourlines
 	mkdir -p $(REGIONPATH)/tiles
@@ -185,17 +187,17 @@ clean:
 $(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
 	tar cjf $(WEBDIR)/$(REGION)/styles.tar.bz2 -C $(STYLEPATH)/../ styles
 
-$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img  $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
-ifeq ($(REGION),$(filter $(REGION),sachsen berlin baden-wuerttemberg))
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary}/gmapsupp.img
+ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
+	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
 else
 ifeq ($(REGION),$(filter $(REGION),haiti))
 #	$(GMAPTOOL) -j -m $(DATE) -o $(REGIONPATH)/release/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img
 	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,damage}/gmapsupp.img
 	cp $(REGIONPATH)/release/gmapsupp.img $(WEBDIR)/$(REGION)/gmapsupp.img
 else
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary}/gmapsupp.img $(AIOPATH)/germany/gmapsupps/ghoehe/gmapsupp.img
+	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img $(AIOPATH)/germany/gmapsupps/ghoehe/gmapsupp.img
 
 #	$(GMAPTOOL) -j -m $(DATE) -o $(REGIONPATH)/release/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/../germany/gmapsupps/ghoehe/gmapsupp.img
 endif
@@ -238,6 +240,16 @@ ifeq ($(IS_PART_OF),false)
 else
 	$(call copy_tiles,gfixme)
 	$(call do_stuff,fixme,--gmapsupp --nsis --family-id=3 --product-id=33 --family-name=FIXME,-c $(REGIONPATH)/gfixme/template.args)
+endif
+
+$(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(TILEPATH)/template.args
+	rm -f $(REGIONPATH)/gmaxspeed/*
+ifeq ($(IS_PART_OF),false)
+	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)6/g;s/description: \(.*\)/description: \1-MAXSPEED/g' $(TILEPATH)/template.args > $(TILEPATH)/gmaxspeed_template.args
+	$(call do_stuff,maxspeed,$(NOBASEMAPOPTIONS) --family-id=84 --product-id=15 --family-name=MAXSPEED --draw-priority=19,-c $(TILEPATH)/gmaxspeed_template.args)
+else
+	$(call copy_tiles,gmaxspeed)
+	$(call do_stuff,maxspeed,--gmapsupp --nsis --family-id=84 --product-id=15 --family-name=MAXSPEED,-c $(REGIONPATH)/gmaxspeed/template.args)
 endif
 
 #$(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(REGIONPATH)/raw_data/boundssplit/template.args
