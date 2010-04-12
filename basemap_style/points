@@ -109,6 +109,7 @@ amenity=dentist [0x301b resolution 24]
 amenity=veterinary [0x301c resolution 24]
 
 amenity=rescue_box [0x7015 resolution 22]
+highway=emergency_access_point {add ref=''; add name=''; add operator=''; add emergency_telephone_code=''; name '${ref} ${name} ${operator} ${emergency_telephone_code}'} [0x7016 resolution 22]
 
 # öffentliche Einrichtungen
 amenity=fire_station [0x3008 resolution 24]
@@ -124,6 +125,8 @@ amenity=recycling [0x2f19 resolution 24]
 amenity=waste_basket [0x2f1a resolution 24]
 amenity=public_building [0x3000 resolution 24]
 amenity=library [0x2c03 resolution 24]
+
+amenity=clock [0x7018 resolution 24]
 
 # Freizeit
 amenity=theatre [0x2d01 resolution 24]
