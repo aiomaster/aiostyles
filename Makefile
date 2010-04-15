@@ -99,7 +99,7 @@ LOGPATH := ${AIOPATH}/logfiles/${REGION}/$(DATE)
 
 # We want other options for the overlays than for the basemaplayer containing the routing etc.
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ) --latin1 --tdbfile --gmapsupp --nsis --keep-going
-GBASEMAPOPTIONS := $(OPTIONS) --family-id=4 --product-id=45 --family-name=OSM --draw-priority=10 --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --net --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000
+GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --net --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000
 NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent
 
 # The Tilesplitter options:
@@ -155,7 +155,22 @@ do_stuff = \
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
 copy_tiles = \
 	cp -a $(AIOPATH)/$(IS_PART_OF)/$(1)/$(TILE_PREFIX)*{$(REGION_TILE_INDEX)}.img $(REGIONPATH)/$(1)/ ; \
-	grep -A2 -E "mapname: $(TILE_PREFIX)[0-9]($(REGION_TILE_INDEX_PIPES))" $(AIOPATH)/$(IS_PART_OF)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args ;
+	grep -A2 -E "mapname: $(TILE_PREFIX)[0-9]($(REGION_TILE_INDEX_PIPES))" $(AIOPATH)/$(IS_PART_OF)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
+
+
+ifeq ($(IS_PART_OF),false)
+make_layer = \
+	rm -f $(REGIONPATH)/g$(1)/* ; \
+	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)$(3)/g;s/description: \(.*\)/description: \1-$(1)/g' $(TILEPATH)/template.args > $(TILEPATH)/g$(1)_template.args && \
+	$(call do_stuff,addr,$(NOBASEMAPOPTIONS) --family-id=$(4) --product-id=$(5) --family-name=$(1) --draw-priority=$(6),-c $(TILEPATH)/gaddr_template.args)
+else
+make_layer = \
+	rm -f $(REGIONPATH)/g$(1)/* ; \
+	$(call copy_tiles,g$(1)) && \
+	$(call do_stuff,$(1),$(7) --gmapsupp --nsis --family-id=$(4) --product-id=$(5) --family-name=$(1),-c $(REGIONPATH)/g$(1)/template.args)
+endif
+
+
 
 
 all: $(WEBDIR)/$(REGION)/gmapsupp.img.bz2 $(WEBDIR)/$(REGION)/styles.tar.bz2
@@ -187,7 +202,7 @@ clean:
 $(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
 	tar cjf $(WEBDIR)/$(REGION)/styles.tar.bz2 -C $(STYLEPATH)/../ styles
 
-$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
 	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
@@ -213,56 +228,20 @@ endif
 	echo '--------------------------------------- Ende $(REGION)' >> $(PRINTFILE);date >> $(PRINTFILE);echo "-----------------------------------" >> $(PRINTFILE)
 
 $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(TILEPATH)/template.args
-	rm -f $(REGIONPATH)/gbasemap/*
-ifeq ($(IS_PART_OF),false)
-	sed 's/description: \(.*\)/description: \1-OSM/g' $(TILEPATH)/template.args > $(TILEPATH)/gbasemap_template.args
-	$(call do_stuff,basemap,$(GBASEMAPOPTIONS),-c $(TILEPATH)/gbasemap_template.args)
-else
-	$(call copy_tiles,gbasemap)
-	$(call do_stuff,basemap,--gmapsupp --nsis --index --family-id=4 --product-id=45 --family-name=OSM,-c $(REGIONPATH)/gbasemap/template.args)
-endif
+	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,--index)
 
 $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(TILEPATH)/template.args
-	rm -f $(REGIONPATH)/gaddr/*
-ifeq ($(IS_PART_OF),false)
-	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)1/g;s/description: \(.*\)/description: \1-ADDR/g' $(TILEPATH)/template.args > $(TILEPATH)/gaddr_template.args
-	$(call do_stuff,addr,$(NOBASEMAPOPTIONS) --family-id=5 --product-id=40 --family-name=ADRESSEN --draw-priority=20,-c $(TILEPATH)/gaddr_template.args)
-else
-	$(call copy_tiles,gaddr)
-	$(call do_stuff,addr,--gmapsupp --nsis --family-id=5 --product-id=40 --family-name=ADRESSEN,-c $(REGIONPATH)/gaddr/template.args)
-endif
+	$(call make_layer,addr,$(NOBASEMAPOPTIONS),1,5,40,20)
 
 $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(TILEPATH)/template.args
-	rm -f $(REGIONPATH)/gfixme/*
-ifeq ($(IS_PART_OF),false)
-	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)2/g;s/description: \(.*\)/description: \1-FIXME/g' $(TILEPATH)/template.args > $(TILEPATH)/gfixme_template.args
-	$(call do_stuff,fixme,$(NOBASEMAPOPTIONS) --family-id=3 --product-id=33 --family-name=FIXME --draw-priority=22,-c $(TILEPATH)/gfixme_template.args)
-else
-	$(call copy_tiles,gfixme)
-	$(call do_stuff,fixme,--gmapsupp --nsis --family-id=3 --product-id=33 --family-name=FIXME,-c $(REGIONPATH)/gfixme/template.args)
-endif
+	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),2,3,33,22)
 
 $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(TILEPATH)/template.args
-	rm -f $(REGIONPATH)/gmaxspeed/*
-ifeq ($(IS_PART_OF),false)
-	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)6/g;s/description: \(.*\)/description: \1-MAXSPEED/g' $(TILEPATH)/template.args > $(TILEPATH)/gmaxspeed_template.args
-	$(call do_stuff,maxspeed,$(NOBASEMAPOPTIONS) --family-id=84 --product-id=15 --family-name=MAXSPEED --draw-priority=19,-c $(TILEPATH)/gmaxspeed_template.args)
-else
-	$(call copy_tiles,gmaxspeed)
-	$(call do_stuff,maxspeed,--gmapsupp --nsis --family-id=84 --product-id=15 --family-name=MAXSPEED,-c $(REGIONPATH)/gmaxspeed/template.args)
-endif
+	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),6,84,15,19)
 
 #$(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(REGIONPATH)/raw_data/boundssplit/template.args
 $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(TILEPATH)/template.args
-	rm -f $(REGIONPATH)/gboundary/*
-ifeq ($(IS_PART_OF),false)
-#	$(call do_stuff,boundary,$(NOBASEMAPOPTIONS) --family-id=6 --product-id=30 --family-name=boundary  --mapname=$(TILE_PREFIX)4$(TILE_START) --description='Boundary_Layer' --draw-priority=21,../raw_data/boundssplit/*.osm.gz)
-	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)4/g;s/description: \(.*\)/description: \1-BOUNDARY/g' $(TILEPATH)/template.args > $(TILEPATH)/gboundary_template.args
-	$(call do_stuff,boundary,$(NOBASEMAPOPTIONS) --family-id=6 --product-id=30 --family-name=boundary --draw-priority=21,-c $(TILEPATH)/gboundary_template.args)
-else
-	$(call copy_tiles,gboundary)
-	$(call do_stuff,boundary,--gmapsupp --nsis --family-id=6 --product-id=30 --family-name=boundary,-c $(REGIONPATH)/gboundary/template.args)
-endif
+	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),4,6,30,21)
 
 $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
 	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --bb $(BBOX) --nkv keyValueList="type.0" --wx $(REGIONPATH)/raw_data/osb_$(REGION).osm
@@ -270,14 +249,7 @@ $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_la
 	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --family-id=2323 --product-id=42 --family-name=osb  --mapname=$(TILE_PREFIX)3$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm)
 
 $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(TILEPATH)/template.args
-	rm -f $(REGIONPATH)/gdamage/*
-ifeq ($(IS_PART_OF),false)
-	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)5/g;s/description: \(.*\)/description: \1-DAMAGE/g' $(TILEPATH)/template.args > $(TILEPATH)/gdamage_template.args
-	$(call do_stuff,damage,$(NOBASEMAPOPTIONS) --family-id=4242 --product-id=2323 --family-name=damage --draw-priority=25  --add-pois-to-areas,-c $(TILEPATH)/gdamage_template.args)
-else
-	$(call copy_tiles,gdamage)
-	$(call do_stuff,damage,--gmapsupp --nsis --family-id=4242 --product-id=2323 --family-name=damage,-c $(REGIONPATH)/gdamage/template.args)
-endif
+	$(call make_layer,damage,$(NOBASEMAPOPTIONS),5,4242,2323,25)
 
 $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	cd $(REGIONPATH)/raw_data/contourlines; phyghtmap -a $(LEFT):$(BOTTOM):$(RIGHT):$(TOP) -j $(USE_CORES)
@@ -300,7 +272,7 @@ $(REGIONPATH)/tiles/template.args : $(DATAPATH)
 #	| java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=../raw_data/splittercache /dev/stdin
 ifeq ($(IS_PART_OF),false)
 	mkdir -p $(LOGPATH)
-	cd $(TILEPATH)/ && /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	cd $(TILEPATH)/ && rm $(TILEPATH)/* && /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
 # Set the whole path name for the tiles in template.args
 	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
