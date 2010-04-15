@@ -27,6 +27,16 @@ ifndef USE_OLD_AREAS_LIST
 USE_OLD_AREAS_LIST := false
 endif
 
+ifndef WORK_PARALLEL
+USE_CORES :=4
+SHELL_EXECUTOR := &
+else
+USE_CORES :=1
+SHELL_EXECUTOR := ;
+endif
+
+
+
 # The Printfile defines where to store all the Output of the programs. I don't want to see everything when I get a mail from cron.
 ifndef PRINTFILE
 PRINTFILE := $(shell tempfile)
@@ -89,7 +99,6 @@ REGIONPATH := $(AIOPATH)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
 GMAPTOOL := /usr/local/bin/gmt
-USE_CORES :=4
 JAVA_OPT := -Xmx8000M -ea
 STYLEPATH := $(AIOPATH)/styles
 TILEPATH := $(REGIONPATH)/tiles
@@ -127,8 +136,21 @@ build_exe = \
 	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
 	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBDIR)/$(REGION)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
 	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe && \
-	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) &
+	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
 endif
+
+
+tar_img_dir = \
+	(tar cjf $(REGIONPATH)/release/g$(1).${DATE}.tar.bz2 -C $(REGIONPATH) g$(1) && \
+	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/$(DATE)/ && \
+	ln -sf $(DATE)/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/g$(1).tar.bz2 && \
+	md5sum -b $(WEBDIR)/$(REGION)/g$(1).tar.bz2 > $(WEBDIR)/$(REGION)/g$(1).tar.bz2.md5 ) $(SHELL_EXECUTOR)
+
+compress_gmapsupp = \
+	(bzip2 -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.bz2 && \
+	ln -sf $(DATE)/g$(1).$(DATE).img.bz2 $(WEBDIR)/$(REGION)/g$(1).img.bz2 && \
+	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.bz2 > $(WEBDIR)/$(REGION)/g$(1).img.bz2.md5 ) $(SHELL_EXECUTOR)
+
 
 # params:
 # name,options,source
@@ -141,13 +163,8 @@ do_stuff = \
 	{ mkdir -p $(WEBDIR)/$(REGION)/$(DATE) && \
 	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
-	( (tar cjf $(REGIONPATH)/release/g$(1).${DATE}.tar.bz2 -C $(REGIONPATH) g$(1) && \
-	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/$(DATE)/ && \
-	ln -sf $(DATE)/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/g$(1).tar.bz2 && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).tar.bz2 > $(WEBDIR)/$(REGION)/g$(1).tar.bz2.md5 ) & \
-	(bzip2 -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.bz2 && \
-	ln -sf $(DATE)/g$(1).$(DATE).img.bz2 $(WEBDIR)/$(REGION)/g$(1).img.bz2 && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.bz2 > $(WEBDIR)/$(REGION)/g$(1).img.bz2.md5 ) & ) ; \
+	(  $(call tar_img_dir,$(1)) \
+	$(call compress_gmapsupp,$(1)) ) ; \
 	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style --series-name=\"OSM-AllInOne-$(KURZ)-$(1)\" $(2) $(3)\nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; java -jar $(MKGMAP) --version 2>> $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; } ; \
 	echo "$(REGION) g$(1) Ende:" >> $(PRINTFILE) ; date >> $(PRINTFILE) ; echo -e "...........\n" >> $(PRINTFILE) ;
 
@@ -157,7 +174,9 @@ copy_tiles = \
 	cp -a $(AIOPATH)/$(IS_PART_OF)/$(1)/$(TILE_PREFIX)*{$(REGION_TILE_INDEX)}.img $(REGIONPATH)/$(1)/ ; \
 	grep -A2 -E "mapname: $(TILE_PREFIX)[0-9]($(REGION_TILE_INDEX_PIPES))" $(AIOPATH)/$(IS_PART_OF)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
 
-
+# make_layer takes the following parameters that differ for every layer:
+# params: 	name		mkgmap_options		layernumber used for TileIDs	family-id	product-id	draw-priority	extra_opts while combine premade tiles
+# example: 	basemap		$(GBASEMAPOPTIONS)	0				4		45		20		--index
 ifeq ($(IS_PART_OF),false)
 make_layer = \
 	rm -f $(REGIONPATH)/g$(1)/* ; \
