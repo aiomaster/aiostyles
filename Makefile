@@ -9,7 +9,8 @@
 SHELL := /bin/bash
 
 BUNDESLAENDER := baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
-REGIONLIST := germany france austria $(BUNDESLAENDER)
+COUNTRIES := germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus chzech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
+REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
 CS_REGIONLIST := $(shell echo $(REGIONLIST)|sed 's/ /,/g')
 
 # The Region should get extracted from Europe if it is part of it.
@@ -27,12 +28,12 @@ ifndef USE_OLD_AREAS_LIST
 USE_OLD_AREAS_LIST := false
 endif
 
-ifndef WORK_PARALLEL
-USE_CORES :=4
-SHELL_EXECUTOR := &
-else
+ifeq ($(WORK_PARALLEL),false)
 USE_CORES :=1
 SHELL_EXECUTOR := ;
+else
+USE_CORES :=4
+SHELL_EXECUTOR := &
 endif
 
 
@@ -45,20 +46,32 @@ endif
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
 DATAPATH := /osm/geofabrik-extrakte/europe/germany/$(REGION).osm.bz2
 KURZ := DE
-else
+endif
+
+ifeq ($(REGION),$(filter $(REGION),$(COUNTRIES)))
+DATAPATH := /osm/geofabrik-extrakte/europe/$(REGION).osm.bz2
+KURZ := EU
+endif
+
 ifeq ($(REGION),germany)
 DATAPATH := /osm/geofabrik-extrakte/europe/germany.osm.bz2
 KURZ := DE
-else
+endif
+
+ifeq ($(REGION),united_kingdom)
+DATAPATH := /osm/geofabrik-extrakte/europe/great_britain.osm.bz2
+KURZ := UK
+endif
+
 ifeq ($(REGION),haiti)
 DATAPATH := /osm/garmin/aio/haiti/raw_data/haiti.osm.bz2
 KURZ := HT
-else
+endif
+
+ifndef REGION
 REGION := europe
 DATAPATH := /osm/geofabrik-extrakte/europe.osm.bz2
 KURZ := EU
-endif
-endif
 endif
 
 # Use the first 4 numbers of the mapid as Prefix and the 5th to distinguish between the layers. The last 3 numbers are to number the tiles.
@@ -77,7 +90,7 @@ ifneq ($(IS_PART_OF),false)
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
 REGION_TILE_INDEX := $(shell psql -d aio -c "SELECT DISTINCT tiles_$(IS_PART_OF).id FROM tiles_$(IS_PART_OF),bundeslaender WHERE ST_Intersects(tiles_$(IS_PART_OF).the_geom,bundeslaender.the_geom) AND LOWER(bundeslaender.name)=LOWER('$(REGION)');" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
 else
-REGION_TILE_INDEX := $(shell psql -d aio -c "SELECT DISTINCT tiles_$(IS_PART_OF).id FROM tiles_$(IS_PART_OF),countries WHERE ST_Intersects(tiles_$(IS_PART_OF).the_geom,countries.the_geom) AND LOWER(countries.country)=LOWER('$(REGION)');" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
+REGION_TILE_INDEX := $(shell psql -d aio -c "SELECT DISTINCT tiles_$(IS_PART_OF).id FROM tiles_$(IS_PART_OF),countries WHERE ST_Intersects(tiles_$(IS_PART_OF).the_geom,countries.the_geom) AND LOWER(countries.country)=LOWER(REPLACE(REPLACE('$(REGION)','_',' '),'-',' and '));" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
 endif
 REGION_TILE_INDEX_PIPES := $(shell echo "$(REGION_TILE_INDEX)" | tr ',' '|')
 endif
