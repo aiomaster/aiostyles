@@ -9,7 +9,7 @@
 SHELL := /bin/bash
 
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
-COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus chzech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
+COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
 CS_REGIONLIST := $(shell echo $(REGIONLIST)|sed 's/ /,/g')
 
@@ -131,7 +131,7 @@ NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxsp
 ifeq ($(USE_OLD_AREAS_LIST),true)
 SPLITTER_OPTIONS := --split-file=$(TILEPATH)/areas.list --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
 else
-SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1400000 --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
+SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
 endif
 
 # ifeq ($(REGION),$(filter $(REGION),sachsen berlin baden-wuerttemberg haiti))
@@ -171,7 +171,6 @@ compress_gmapsupp = \
 # params:
 # name,options,source
 do_stuff = \
-	echo "$(REGION) g$(1) Start:" >> $(PRINTFILE) ; date >> $(PRINTFILE) ; \
 	mkdir -p $(LOGPATH) ; \
 	cd $(REGIONPATH)/g$(1)/ && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
@@ -181,8 +180,7 @@ do_stuff = \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
 	(  $(call tar_img_dir,$(1)) \
 	$(call compress_gmapsupp,$(1)) ) ; \
-	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style --series-name=\"OSM-AllInOne-$(KURZ)-$(1)\" $(2) $(3)\nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; java -jar $(MKGMAP) --version 2>> $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; } ; \
-	echo "$(REGION) g$(1) Ende:" >> $(PRINTFILE) ; date >> $(PRINTFILE) ; echo -e "...........\n" >> $(PRINTFILE) ;
+	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style --series-name=\"OSM-AllInOne-$(KURZ)-$(1)\" $(2) $(3)\nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; java -jar $(MKGMAP) --version 2>> $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; } ;
 
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
@@ -322,4 +320,3 @@ ifeq ($(USE_OLD_AREAS_LIST),false)
 	touch $(AIOPATH)/{$(CS_REGIONLIST)}/tiles/template.args || true
 endif
 endif
-	echo "$(REGION) Auspacken Ende:" >> $(PRINTFILE);date >> $(PRINTFILE)
