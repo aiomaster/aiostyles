@@ -194,7 +194,7 @@ ifeq ($(IS_PART_OF),false)
 make_layer = \
 	rm -f $(REGIONPATH)/g$(1)/* ; \
 	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)$(3)/g;s/description: \(.*\)/description: \1-$(1)/g' $(TILEPATH)/template.args > $(TILEPATH)/g$(1)_template.args && \
-	$(call do_stuff,addr,$(NOBASEMAPOPTIONS) --family-id=$(4) --product-id=$(5) --family-name=$(1) --draw-priority=$(6),-c $(TILEPATH)/gaddr_template.args)
+	$(call do_stuff,$(1),$(NOBASEMAPOPTIONS) --family-id=$(4) --product-id=$(5) --family-name=$(1) --draw-priority=$(6),-c $(TILEPATH)/gaddr_template.args)
 else
 make_layer = \
 	rm -f $(REGIONPATH)/g$(1)/* ; \
