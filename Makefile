@@ -8,8 +8,8 @@
 
 SHELL := /bin/bash
 
-BUNDESLAENDER := baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
-COUNTRIES := germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus chzech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
+BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
+COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus chzech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
 CS_REGIONLIST := $(shell echo $(REGIONLIST)|sed 's/ /,/g')
 
@@ -70,6 +70,9 @@ endif
 
 ifndef REGION
 REGION := europe
+endif
+
+ifeq ($(REGION),europe)
 DATAPATH := /osm/geofabrik-extrakte/europe.osm.bz2
 KURZ := EU
 endif
