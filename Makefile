@@ -192,19 +192,23 @@ copy_tiles = \
 # params: 	name		mkgmap_options		layernumber used for TileIDs	family-id	product-id	draw-priority	extra_opts while combine premade tiles
 # example: 	basemap		$(GBASEMAPOPTIONS)	0				4		45		20		--index
 ifeq ($(IS_PART_OF),false)
-make_layer = \
-	rm -f $(REGIONPATH)/g$(1)/* ; \
+handle_layer = \
 	sed 's/mapname: $(TILE_PREFIX)0/mapname: $(TILE_PREFIX)$(3)/g;s/description: \(.*\)/description: \1-$(1)/g' $(TILEPATH)/template.args > $(TILEPATH)/g$(1)_template.args && \
 	$(call do_stuff,$(1),$(2) --family-id=$(4) --product-id=$(5) --family-name=$(1) --draw-priority=$(6),-c $(TILEPATH)/g$(1)_template.args)
 else
-make_layer = \
-	rm -f $(REGIONPATH)/g$(1)/* ; \
+handle_layer = \
 	$(call copy_tiles,g$(1)) && \
 	$(call do_stuff,$(1),$(7) --gmapsupp --nsis --family-id=$(4) --product-id=$(5) --family-name=$(1),-c $(REGIONPATH)/g$(1)/template.args)
 endif
 
 
-
+make_layer = \
+	rm -f $(REGIONPATH)/g$(1)/* ; \
+	echo -e "To install this stuff in Mapsource you have do execute the .exe from this directory.\nThis will start the installer, copy the *.img's to your Mapsource-map-folder and write to your registry.\n" >> $(REGIONPATH)/HOWTO.txt \
+	echo -e "To load this map in QLandkarteGT you have to select the osmmap.tdb in this directory from within QLandKarteGt.\nThe Typfile in this directory gets automatically included.\n" >> $(REGIONPATH)/HOWTO.txt \
+	echo -e "For generating a gmapsupp to copy to your SD-Card you need to run mkgmap like this:\njava -ea -jar mkgmap.jar --gmapsupp --family-id=$(4) --product-id=$(5) --family-name=$(1) ./*.img $(1).TYP\n" >> $(REGIONPATH)/HOWTO.txt \
+	echo -e "Enjoy!\n" >> $(REGIONPATH)/HOWTO.txt \
+	$(call handle_layer,$(1),$(2),$(3),$(4),$(5),$(6),$(7))
 
 all: $(WEBDIR)/$(REGION)/gmapsupp.img.bz2 $(WEBDIR)/$(REGION)/styles.tar.bz2
 
