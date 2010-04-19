@@ -269,7 +269,7 @@ EXPIRE := 6
 endif
 
 clean:
-	rm $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release/*.bz2
+	rm $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release/*.bz2 ; \
 	find $(WEBDIR)/{$(CS_ALL_REGIONS)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
 
 

@@ -108,10 +108,10 @@ highway=* & area!=yes & area!=true & area!=1 [0x09 ]
 natural=coastline [0x15 resolution 12]
 power=line {name 'Powerline (${voltage} Volt)'} [0x29 resolution 22]
 
-railway=light_rail [0x39 resolution 23]
-railway=rail [0x14 resolution 17]
-railway=subway [0x39 resolution 23]
-railway=tram | railway=narrow_gauge [0x39 resolution 23]
+railway=light_rail [0x14 resolution 23]
+railway=rail [0x39 resolution 15]
+railway=subway [0x14 resolution 23]
+railway=tram | railway=narrow_gauge [0x14 resolution 23]
 
 route=ferry {add mkgmap:ferry=1} [0x1a road_class=0 road_speed=0 resolution 18]
 
