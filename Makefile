@@ -258,8 +258,14 @@ structure:
 	mkdir -p $(REGIONPATH)/tiles
 	mkdir -p $(REGIONPATH)/release
 
+ifndef EXPIRE
+EXPIRE := 6
+endif
+
+
 clean:
 	rm $(REGIONPATH)/release/*.bz2
+	find $(WEBDIR)/{europe,$(CS_REGIONLIST)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
 
 $(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
 	tar cjf $(WEBDIR)/$(REGION)/styles.tar.bz2 -C $(STYLEPATH)/../ styles
