@@ -15,7 +15,8 @@ PATH_TO_REGIONS := $(AIOPATH)
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
 COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
-CS_REGIONLIST := $(shell echo $(REGIONLIST)|sed 's/ /,/g')
+ALL_REGIONS := europe $(REGIONLIST)
+CS_ALL_REGIONS := $(shell echo $(ALL_REGIONS)|sed 's/ /,/g')
 
 # The Region should get extracted from Europe if it is part of it.
 # The Regionlist defines which countries that are.
@@ -258,17 +259,27 @@ structure:
 	mkdir -p $(REGIONPATH)/tiles
 	mkdir -p $(REGIONPATH)/release
 
+
+
+# Clean the webdir and remove all directories that are older than EXPIRE date.
+# Clean the release dir of the region-dirs.
+
 ifndef EXPIRE
 EXPIRE := 6
 endif
 
-
 clean:
-	rm $(REGIONPATH)/release/*.bz2
-	find $(WEBDIR)/{europe,$(CS_REGIONLIST)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
+	rm $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release/*.bz2
+	find $(WEBDIR)/{$(CS_ALL_REGIONS)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
+
+
+# If something has changed in the stylepath repack it and write it to the webdir.
 
 $(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
 	tar cjf $(WEBDIR)/$(REGION)/styles.tar.bz2 -C $(STYLEPATH)/../ styles
+
+
+# Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
 $(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
