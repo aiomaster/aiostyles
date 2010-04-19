@@ -8,6 +8,10 @@
 
 SHELL := /bin/bash
 
+AIOPATH := /osm/garmin/aio
+PATH_TO_REGIONS := $(AIOPATH)
+
+
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
 COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
@@ -22,6 +26,10 @@ else
 IS_PART_OF := false
 endif
 endif
+
+
+
+
 
 # The splitter can use an older areas.list file from previous computations.
 ifndef USE_OLD_AREAS_LIST
@@ -109,9 +117,8 @@ TOP := $(word 3, $(CHOORDS) )
 RIGHT := $(word 4, $(CHOORDS) )
 BBOX := bottom=$(BOTTOM) left=$(LEFT) top=$(TOP) right=$(RIGHT)
 
-AIOPATH := /osm/garmin/aio
 OSMOSIS := $(AIOPATH)/osmosis-0.31/bin/osmosis
-REGIONPATH := $(AIOPATH)/$(REGION)
+REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
 GMAPTOOL := /usr/local/bin/gmt
@@ -121,6 +128,24 @@ TILEPATH := $(REGIONPATH)/tiles
 MKGMAP := java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar
 SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar
 LOGPATH := ${AIOPATH}/logfiles/${REGION}/$(DATE)
+
+# Define dependencies of the layers.
+ifeq ($(IS_PART_OF),false)
+DEPENDENCY_BASEMAP := $(TILEPATH)/template.args
+DEPENDENCY_ADDR := $(TILEPATH)/template.args
+DEPENDENCY_FIXME := $(TILEPATH)/template.args
+DEPENDENCY_MAXSPEED := $(TILEPATH)/template.args
+DEPENDENCY_BOUNDARY := $(TILEPATH)/template.args
+DEPENDENCY_DAMAGE := $(TILEPATH)/template.args
+else
+PART_META_PATH := $(PATH_TO_REGIONS)/$(IS_PART_OF)
+DEPENDENCY_BASEMAP := $(PART_META_PATH)/gmapsupps/gbasemap/gmapsupp.img
+DEPENDENCY_ADDR := $(PART_META_PATH)/gmapsupps/gaddr/gmapsupp.img
+DEPENDENCY_FIXME := $(PART_META_PATH)/gmapsupps/gfixme/gmapsupp.img
+DEPENDENCY_MAXSPEED := $(PART_META_PATH)/gmapsupps/gmaxspeed/gmapsupp.img
+DEPENDENCY_BOUNDARY := $(PART_META_PATH)/gmapsupps/gboundary/gmapsupp.img
+DEPENDENCY_DAMAGE := $(PART_META_PATH)/gmapsupps/gdamage/gmapsupp.img
+endif
 
 # We want other options for the overlays than for the basemaplayer containing the routing etc.
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ) --latin1 --tdbfile --gmapsupp --nsis --keep-going
@@ -185,8 +210,8 @@ do_stuff = \
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
 copy_tiles = \
-	cp -a $(AIOPATH)/$(IS_PART_OF)/$(1)/$(TILE_PREFIX)*{$(REGION_TILE_INDEX)}.img $(REGIONPATH)/$(1)/ ; \
-	grep -A2 -E "mapname: $(TILE_PREFIX)[0-9]($(REGION_TILE_INDEX_PIPES))" $(AIOPATH)/$(IS_PART_OF)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
+	cp -a $(PART_META_PATH)/$(1)/$(TILE_PREFIX)*{$(REGION_TILE_INDEX)}.img $(REGIONPATH)/$(1)/ ; \
+	grep -A2 -E "mapname: $(TILE_PREFIX)[0-9]($(REGION_TILE_INDEX_PIPES))" $(PART_META_PATH)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
 
 # make_layer takes the following parameters that differ for every layer:
 # params: 	name		mkgmap_options		layernumber used for TileIDs	family-id	product-id	draw-priority	extra_opts while combine premade tiles
@@ -264,20 +289,20 @@ ifeq ($(REGION),germany)
 endif
 	echo '--------------------------------------- Ende $(REGION)' >> $(PRINTFILE);date >> $(PRINTFILE);echo "-----------------------------------" >> $(PRINTFILE)
 
-$(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(TILEPATH)/template.args
+$(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
 	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,--index)
 
-$(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(TILEPATH)/template.args
+$(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(DEPENDENCY_ADDR)
 	$(call make_layer,addr,$(NOBASEMAPOPTIONS),1,5,40,20)
 
-$(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(TILEPATH)/template.args
+$(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(DEPENDENCY_FIXME)
 	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),2,3,33,22)
 
-$(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(TILEPATH)/template.args
+$(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(DEPENDENCY_MAXSPEED)
 	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),6,84,15,19)
 
 #$(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(REGIONPATH)/raw_data/boundssplit/template.args
-$(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(TILEPATH)/template.args
+$(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(DEPENDENCY_BOUNDARY)
 	$(call make_layer,boundary,$(NOBASEMAPOPTIONS) --process-boundary-relations,4,6,30,21)
 
 $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
@@ -285,7 +310,7 @@ $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_la
 	rm -f $(REGIONPATH)/gosb/*
 	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --family-id=2323 --product-id=42 --family-name=osb  --mapname=$(TILE_PREFIX)3$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm)
 
-$(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(TILEPATH)/template.args
+$(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(DEPENDENCY_DAMAGE)
 	$(call make_layer,damage,$(NOBASEMAPOPTIONS),5,4242,2323,25)
 
 $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
@@ -313,14 +338,10 @@ ifeq ($(IS_PART_OF),false)
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
 # Set the whole path name for the tiles in template.args
 	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
-else
-	touch $(TILEPATH)/template.args || true
 endif
 ifeq ($(REGION),europe)
 ifeq ($(USE_OLD_AREAS_LIST),false)
 	psql -d aio -c "DELETE FROM tiles_europe;"
 	sed -n '/^[0-9]*:/{N;s/^\([0-9]*\):[^:]*: \(.*\),\(.*\) to \(.*\),\(.*\)/INSERT INTO tiles_europe (id,the_geom) VALUES (\1,ST_SetSRID(ST_MakeBox2D(ST_Point(\3,\2),ST_Point(\5,\4)),4326));/p}' $(TILEPATH)/areas.list | psql -d aio
-#	grep -A1 "^[^#]" $(TILEPATH)/areas.list | tr '\n' ' ' | sed 's/--/\n/g' | sed 's/^\(.*\):.*: \(.*\),\(.*\) to \(.*\),\(.*\)/INSERT INTO tiles_europe (id,the_geom) VALUES (\1,ST_SetSRID(ST_MakeBox2D(ST_Point(\3, \2),ST_Point(\5,\4)),4326));/g' | psql -d aio
-	touch $(AIOPATH)/{$(CS_REGIONLIST)}/tiles/template.args || true
 endif
 endif
