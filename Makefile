@@ -281,7 +281,7 @@ $(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
 
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
-$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
 	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
@@ -360,5 +360,6 @@ ifeq ($(REGION),europe)
 ifeq ($(USE_OLD_AREAS_LIST),false)
 	psql -d aio -c "DELETE FROM tiles_europe;"
 	sed -n '/^[0-9]*:/{N;s/^\([0-9]*\):[^:]*: \(.*\),\(.*\) to \(.*\),\(.*\)/INSERT INTO tiles_europe (id,the_geom) VALUES (\1,ST_SetSRID(ST_MakeBox2D(ST_Point(\3,\2),ST_Point(\5,\4)),4326));/p}' $(TILEPATH)/areas.list | psql -d aio
+	$(AIOPATH)/makekml.sh
 endif
 endif
