@@ -351,7 +351,7 @@ $(REGIONPATH)/tiles/template.args : $(DATAPATH)
 #	| java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=../raw_data/splittercache /dev/stdin
 ifeq ($(IS_PART_OF),false)
 	mkdir -p $(LOGPATH)
-	cd $(TILEPATH)/ && rm $(TILEPATH)/* ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	cd $(TILEPATH)/ && rm $(TILEPATH)/*.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
 # Set the whole path name for the tiles in template.args
 	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
