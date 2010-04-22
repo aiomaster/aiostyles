@@ -311,7 +311,7 @@ $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
 	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,--index)
 
 $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(DEPENDENCY_ADDR)
-	$(call make_layer,addr,$(NOBASEMAPOPTIONS),1,5,40,20)
+	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,1,5,40,20)
 
 $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(DEPENDENCY_FIXME)
 	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),2,3,33,22)
