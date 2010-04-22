@@ -321,7 +321,7 @@ $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(DEPENDENCY_MAXSPEED)
 
 #$(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(REGIONPATH)/raw_data/boundssplit/template.args
 $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(DEPENDENCY_BOUNDARY)
-	$(call make_layer,boundary,$(NOBASEMAPOPTIONS) --process-boundary-relations,4,6,30,21)
+	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),4,6,30,21)
 
 $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
 	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --bb $(BBOX) --nkv keyValueList="type.0" --wx $(REGIONPATH)/raw_data/osb_$(REGION).osm
