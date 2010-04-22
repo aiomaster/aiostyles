@@ -9,8 +9,12 @@
 SHELL := /bin/bash
 
 AIOPATH := /osm/garmin/aio
-PATH_TO_REGIONS := $(AIOPATH)
+PATH_TO_REGIONS := $(AIOPATH)/regions
 
+# default region is europe
+ifndef REGION
+REGION := europe
+endif
 
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
 COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
@@ -37,6 +41,7 @@ ifndef USE_OLD_AREAS_LIST
 USE_OLD_AREAS_LIST := false
 endif
 
+# if we want to start some compressing tasks in a subshell to work parallel we use & instead of ; to separate shell commands
 ifeq ($(WORK_PARALLEL),false)
 USE_CORES :=1
 SHELL_EXECUTOR := ;
@@ -75,10 +80,6 @@ endif
 ifeq ($(REGION),haiti)
 DATAPATH := /osm/garmin/aio/haiti/raw_data/haiti.osm.bz2
 KURZ := HT
-endif
-
-ifndef REGION
-REGION := europe
 endif
 
 ifeq ($(REGION),europe)
