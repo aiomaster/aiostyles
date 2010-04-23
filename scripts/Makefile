@@ -317,7 +317,7 @@ endif
 	echo '--------------------------------------- Ende $(REGION)' >> $(PRINTFILE);date >> $(PRINTFILE);echo "-----------------------------------" >> $(PRINTFILE)
 
 $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
-	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,--index)
+	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,--index --route)
 
 $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(DEPENDENCY_ADDR)
 	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,1,5,40,20)
