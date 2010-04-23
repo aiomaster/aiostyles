@@ -15,16 +15,11 @@ cat << EOKMLHEAD
         <color>2025b1e3</color>
       </PolyStyle>
     </Style>
-<Placemark>
-<name>Kacheln</name>
-<styleUrl>#kachelStyle</styleUrl>
-<MultiGeometry>
 EOKMLHEAD
-psql -d aio -c "SELECT ST_AsKML(the_geom) FROM tiles_europe" | tail -n+3 | head -n-2
+psql -d aio -c "SELECT id,ST_AsKML(the_geom) FROM tiles_europe" | tail -n+3 | head -n-2 | awk -F\| '{gsub(/[[:space:]]*/,"",$1); print "<Placemark>\n<name>"$1"</name>\n<styleUrl>#kachelStyle</styleUrl>\n"$2"\n</Placemark>"}'
 cat << EOKMLTAIL
-</MultiGeometry>
-</Placemark>
 </Document>
 </kml>
 EOKMLTAIL
 ) > /osm/wwwroot/aio/tiles/tiles.kml
+
