@@ -39,7 +39,7 @@ else
 EUROPEPARAMS=$1
 
 # Jeden Dienstag rechne komplett neu. Sonst benutze die alten Splittergrenzen.
-  if [ `date +%w` -ne 5 ]; then
+  if [ `date +%w` -ne 2 ]; then
   	EUROPEPARAMS="$EUROPEPARAMS  USE_OLD_AREAS_LIST=true"
   fi
   ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile make -j${MAKE_THREADS} PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfile.log

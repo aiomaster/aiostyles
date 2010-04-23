@@ -36,10 +36,6 @@ endif
 
 
 
-# The splitter can use an older areas.list file from previous computations.
-ifndef USE_OLD_AREAS_LIST
-USE_OLD_AREAS_LIST := false
-endif
 
 # if we want to start some compressing tasks in a subshell to work parallel we use & instead of ; to separate shell commands
 ifeq ($(WORK_PARALLEL),false)
@@ -154,9 +150,22 @@ OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KUR
 GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --net --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000
 NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent
 
+# The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
+ifndef USE_OLD_AREAS_LIST
+USE_OLD_AREAS_LIST:=false
+else
+ifeq ($(USE_OLD_AREAS_LIST),true)
+ifndef AREAS_LIST_FILE
+AREAS_LIST_FILE:=$(TILEPATH)/areas.list
+endif
+# We have to ensure that the areas.list file exist. if not we split completely new.
+USE_OLD_AREAS_LIST:=$(shell if test -f $(AREAS_LIST_FILE); then echo true; else echo false; fi)
+endif
+endif
+
 # The Tilesplitter options:
 ifeq ($(USE_OLD_AREAS_LIST),true)
-SPLITTER_OPTIONS := --split-file=$(TILEPATH)/areas.list --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
+SPLITTER_OPTIONS := --split-file=$(AREAS_LIST_FILE) --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
 else
 SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
 endif
