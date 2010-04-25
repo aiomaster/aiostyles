@@ -159,7 +159,7 @@ ifndef AREAS_LIST_FILE
 AREAS_LIST_FILE:=$(TILEPATH)/areas.list
 endif
 # We have to ensure that the areas.list file exist. if not we split completely new.
-USE_OLD_AREAS_LIST:=$(shell if test -f $(AREAS_LIST_FILE); then echo true; else echo false; fi)
+override USE_OLD_AREAS_LIST:=$(shell if test -f $(AREAS_LIST_FILE); then echo true; else echo false; fi)
 endif
 endif
 
@@ -176,6 +176,28 @@ endif
 # endif
 
 
+#COMPRESSOR:=gzip
+#COMPRESS_SUFFIX:=gz
+#COMPRESS_TAR_OPTION:=z
+#
+#ifeq ($(COMPRESSION),$(filter $(COMPRESSION),gzip bzip2 p7zip)
+#COMPRESSOR:=$(COMPRESSION)
+#
+#endif
+
+
+tar_img_dir = \
+	(tar cjf $(REGIONPATH)/release/g$(1).${DATE}.tar.bz2 -C $(REGIONPATH) g$(1) && \
+	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/$(DATE)/ && \
+	ln -sf $(DATE)/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/g$(1).tar.bz2 && \
+	md5sum -b $(WEBDIR)/$(REGION)/g$(1).tar.bz2 > $(WEBDIR)/$(REGION)/g$(1).tar.bz2.md5 ) $(SHELL_EXECUTOR)
+
+compress_gmapsupp = \
+	(bzip2 -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.bz2 && \
+	ln -sf $(DATE)/g$(1).$(DATE).img.bz2 $(WEBDIR)/$(REGION)/g$(1).img.bz2 && \
+	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.bz2 > $(WEBDIR)/$(REGION)/g$(1).img.bz2.md5 ) $(SHELL_EXECUTOR)
+
+
 ifeq ($(REGION),europe)
 build_exe = \
 	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi && \
@@ -190,18 +212,6 @@ build_exe = \
 	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe && \
 	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
 endif
-
-
-tar_img_dir = \
-	(tar cjf $(REGIONPATH)/release/g$(1).${DATE}.tar.bz2 -C $(REGIONPATH) g$(1) && \
-	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/$(DATE)/ && \
-	ln -sf $(DATE)/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/g$(1).tar.bz2 && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).tar.bz2 > $(WEBDIR)/$(REGION)/g$(1).tar.bz2.md5 ) $(SHELL_EXECUTOR)
-
-compress_gmapsupp = \
-	(bzip2 -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.bz2 && \
-	ln -sf $(DATE)/g$(1).$(DATE).img.bz2 $(WEBDIR)/$(REGION)/g$(1).img.bz2 && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.bz2 > $(WEBDIR)/$(REGION)/g$(1).img.bz2.md5 ) $(SHELL_EXECUTOR)
 
 
 # params:
