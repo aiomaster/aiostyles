@@ -176,26 +176,31 @@ endif
 # endif
 
 
-#COMPRESSOR:=gzip
-#COMPRESS_SUFFIX:=gz
-#COMPRESS_TAR_OPTION:=z
-#
-#ifeq ($(COMPRESSION),$(filter $(COMPRESSION),gzip bzip2 p7zip)
-#COMPRESSOR:=$(COMPRESSION)
-#
-#endif
+COMPRESSOR:=gzip
 
+ifeq ($(COMPRESSOR),zip)
+COMPRESS_SUFFIX:=zip
+endif
+ifeq ($(COMPRESSOR),gzip)
+COMPRESS_SUFFIX:=gz
+endif
+ifeq ($(COMPRESSOR),bzip2)
+COMPRESS_SUFFIX:=bz2
+endif
+ifeq ($(COMPRESSOR),p7zip)
+COMPRESS_SUFFIX:=7z
+endif
 
 tar_img_dir = \
-	(tar cjf $(REGIONPATH)/release/g$(1).${DATE}.tar.bz2 -C $(REGIONPATH) g$(1) && \
-	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/$(DATE)/ && \
-	ln -sf $(DATE)/g$(1).$(DATE).tar.bz2 $(WEBDIR)/$(REGION)/g$(1).tar.bz2 && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).tar.bz2 > $(WEBDIR)/$(REGION)/g$(1).tar.bz2.md5 ) $(SHELL_EXECUTOR)
+	(tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/g$(1).${DATE}.tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH) g$(1) && \
+	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(DATE)/ && \
+	ln -sf $(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/g$(1).tar.$(COMPRESS_SUFFIX) && \
+	md5sum -b $(WEBDIR)/$(REGION)/g$(1).tar.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/g$(1).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 compress_gmapsupp = \
-	(bzip2 -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.bz2 && \
-	ln -sf $(DATE)/g$(1).$(DATE).img.bz2 $(WEBDIR)/$(REGION)/g$(1).img.bz2 && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.bz2 > $(WEBDIR)/$(REGION)/g$(1).img.bz2.md5 ) $(SHELL_EXECUTOR)
+	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
+	ln -sf $(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX) && \
+	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 
 ifeq ($(REGION),europe)
