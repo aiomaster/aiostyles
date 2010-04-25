@@ -170,11 +170,8 @@ else
 SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
 endif
 
-# ifeq ($(REGION),$(filter $(REGION),sachsen berlin baden-wuerttemberg haiti))
-# GBASEMAPOPTIONS := $(GBASEMAPOPTIONS) 
-# #--generate-sea=extend-sea-sectors 
-# endif
-
+# You can specify different Compressors for the result
+# Default is gzip
 
 COMPRESSOR:=gzip
 
