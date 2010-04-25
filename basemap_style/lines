@@ -43,7 +43,7 @@ highway=footway|highway=cycleway|highway=track|highway=path|highway=bridleway|hi
 highway = construction | (highway=* & construction=* & construction!=minor) [0x08 resolution 22]
 
 (highway=path & sac_scale=*) | (highway=* & mtb:scale>1) {add bicycle = no}
-(highway=footway | highway=pedestrian | highway=path) & bicycle!=yes & bicycle!=designated {add bicycle = no}
+(highway=footway | highway=pedestrian ) & bicycle!=yes & bicycle!=designated {add bicycle = no}
 
 highway=footway | highway=path | (highway=pedestrian & area!=yes & area!=true & area!=1) {add motorcar = no} [0x0d road_class=0 road_speed=0 resolution 22]
 
