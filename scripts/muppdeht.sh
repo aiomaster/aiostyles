@@ -10,8 +10,6 @@ PRINT=$(tempfile)
 
 AIOPATH=/osm/garmin/aio
 
-MAKE_THREADS=2
-
 BUNDESLAENDER="baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen"
 COUNTRIES="austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine"
 
@@ -42,7 +40,7 @@ EUROPEPARAMS=$1
   if [ `date +%w` -ne 2 ]; then
   	EUROPEPARAMS="$EUROPEPARAMS  USE_OLD_AREAS_LIST=true"
   fi
-  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile make -j${MAKE_THREADS} PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfile.log
+  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile make PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfile.log
   EU_RET=$?
 
 # if europe has succeded we can extract the countries
@@ -50,7 +48,7 @@ EUROPEPARAMS=$1
 
 # lets do it parallel with the parallel processing shell script
   rm -r $AIOPATH/ppss_dir
-  echo "germany $BUNDESLAENDER $COUNTRIES" | tr ' ' '\n' | ${AIOPATH}/ppss -f - -p 2 -c "ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/\$ITEM/time_makefile make -j${MAKE_THREADS} PRINTFILE=${PRINT} REGION=\$ITEM >> ${AIOPATH}/logfile.log"
+  echo "germany $BUNDESLAENDER $COUNTRIES" | tr ' ' '\n' | ${AIOPATH}/ppss -f - -p 2 -c "ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/\$ITEM/time_makefile make PRINTFILE=${PRINT} REGION=\$ITEM >> ${AIOPATH}/logfile.log"
 
   fi
 
