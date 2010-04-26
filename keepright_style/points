@@ -1,0 +1,163 @@
+# Place tags simply to orient mappers
+place=city [0x0400 resolution 16]
+place=hamlet [0x0e00 resolution 23]
+place=island [0x650c resolution 20]
+place=locality [0x1100 resolution 23]
+place=subdivision [0x1100 resolution 23]
+place=suburb [0x0d00 resolution 22]
+place=town [0x0800 resolution 18]
+place=village [0x0c00 resolution 21]
+
+
+# Openstreetbugs:
+type = '0' {name '${text}'} [0x1604 resolution 20]
+
+# note=* | fixme = * | FIXME=* |Fixme=* {name 'Notiz: ${note}' | 'Notiz: ${fixme}' | 'Notiz: ${FIXME}' | 'Notiz: ${Fixme}' } [0x7110 resolution 20]
+
+# keepright
+
+#30 non-closed areas
+error_type=30 {name '${description}'} [0x1605 resolution 20]
+
+#40 dead-ended one-ways
+error_type=40 {name '${description}'} [0x1606 resolution 20]
+
+#50 almost-junctions
+error_type=50 {name '${description}'} [0x1607 resolution 20]
+
+#60 deprecated tags
+error_type=60 {name '${description}'} [0x1608 resolution 20]
+
+#70 missing tags
+error_type=70 {name '${description}'} [0x1609 resolution 20]
+
+#90 motorways without ref
+error_type=90 {name '${description}'} [0x160a resolution 20]
+
+#100 places of worship without religion
+error_type=100 {name '${description}'} [0x160b resolution 20]
+
+#110 point of interest without name
+error_type=110 {name '${description}'} [0x160c resolution 20]
+
+#120 ways without nodes
+error_type=120 {name '${description}'} [0x160d resolution 20]
+
+#130 floating islands
+error_type=130 {name '${description}'} [0x160e resolution 20]
+
+#150 railway crossings without tag # find a better tag next time
+error_type=150 {name '${description}'} [0x160f resolution 20]
+
+#160 wrongly used railway crossing tag
+error_type=160 {name '${description}'} [0x1707 resolution 20]
+
+#170 fixme-tagged items
+error_type=170 {name '${description}'} [0x1610 resolution 20]
+
+#180 relations without type
+error_type=180 {name '${description}'} [0x1611 resolution 20]
+
+# intersections without junctions
+##191 highway-highway
+error_type=191 {name '${description}'} [0x1612 resolution 20]
+
+##192 highway-waterway
+error_type=192 {name '${description}'} [0x1612 resolution 20]
+
+##193 highway-riverbank
+error_type=193 {name '${description}'} [0x1612 resolution 20]
+
+##194 waterway-waterway
+error_type=194 {name '${description}'} [0x1612 resolution 20]
+
+##195 cycleway-cycleway
+error_type=195 {name '${description}'} [0x1612 resolution 20]
+
+##196 highway-cycleway
+error_type=196 {name '${description}'} [0x1612 resolution 20]
+
+##197 cycleway-waterway
+error_type=197 {name '${description}'} [0x1612 resolution 20]
+
+##198 cycleway-riverbank 
+error_type=198 {name '${description}'} [0x1612 resolution 20]
+
+# overlapping ways
+##201 highway-highway
+error_type=201 {name '${description}'} [0x1613 resolution 20]
+
+##202 highway-waterway
+error_type=202 {name '${description}'} [0x1613 resolution 20]
+
+##203 highway-riverbank
+error_type=203 {name '${description}'} [0x1613 resolution 20]
+
+##204 waterway-waterway
+error_type=204 {name '${description}'} [0x1613 resolution 20]
+
+##205 cycleway-cycleway
+error_type=205 {name '${description}'} [0x1613 resolution 20]
+
+##206 highway-cycleway
+error_type=206 {name '${description}'} [0x1613 resolution 20]
+
+##207 cycleway-waterway
+error_type=207 {name '${description}'} [0x1613 resolution 20]
+
+##208 cycleway-riverbank 
+error_type=208 {name '${description}'} [0x1613 resolution 20]
+
+#210 loopings
+error_type=210 {name '${description}'} [0x1614 resolution 20]
+
+#misspelled tags
+error_type=220 {name '${description}'} [0x1615 resolution 20]
+
+#230   layer conflicts
+##231 mixed layers intersections
+error_type=231 {name '${description}'} [0x1700 resolution 20]
+
+##232 strange layers 
+error_type=232 {name '${description}'} [0x1700 resolution 20]
+
+#270 motorways connected directly
+error_type=270 {name '${description}'} [0x1705 resolution 20]
+
+#280   boundaries
+##281 missing name
+error_type=281 {name '${description}'} [0x1701 resolution 20]
+
+##282 missing admin_level
+error_type=282 {name '${description}'} [0x1701 resolution 20]
+
+##283 not closed loop
+error_type=283 {name '${description}'} [0x1701 resolution 20]
+
+##284 splitting boundary 
+error_type=284 {name '${description}'} [0x1701 resolution 20]
+
+#290   restrictions
+##291 missing type
+error_type=291 {name '${description}'} [0x1702 resolution 20]
+
+##292 missing from way
+error_type=292 {name '${description}'} [0x1702 resolution 20]
+
+##293 missing to way 
+error_type=293 {name '${description}'} [0x1702 resolution 20]
+
+#310   roundabouts
+##311 not closed loop
+error_type=311 {name '${description}'} [0x1703 resolution 20]
+
+##312 wrong direction 
+error_type=312 {name '${description}'} [0x1703 resolution 20]
+
+# warnings
+
+#20 multiple nodes
+error_type=20 {name '${description}'} [0x1704 resolution 20]
+
+#300 maxspeed
+error_type=300 {name '${description}'} [0x1706 resolution 20]
