@@ -393,7 +393,7 @@ $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 $(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.txt.bz2
 	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - --bb $(BBOX) --wx $(REGIONPATH)/raw_data/keepright.osm.gz
 
-$(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright_$(REGION).osm.gz
+$(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright.osm.gz
 	cd $(REGIONPATH)/raw_data/keeprightsplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)7$(TILE_START) --max-nodes=200000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/keepright.osm.gz
 	$(call areas_to_db,$(REGIONPATH)/raw_data/keeprightsplit/areas.list,tiles_keepright_europe)
 # Set the whole path name for the tiles in template.args
