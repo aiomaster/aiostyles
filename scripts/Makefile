@@ -78,7 +78,7 @@ KURZ := UK
 endif
 
 ifeq ($(REGION),haiti)
-DATAPATH := /osm/garmin/aio/haiti/raw_data/haiti.osm.bz2
+DATAPATH := /osm/garmin/aio/regions/haiti/raw_data/haiti.osm.bz2
 KURZ := HT
 endif
 
