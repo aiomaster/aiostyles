@@ -332,13 +332,13 @@ else
 #	$(GMAPTOOL) -j -m $(DATE) -o $(REGIONPATH)/release/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/../germany/gmapsupps/ghoehe/gmapsupp.img
 endif
 endif
-	bzip2 -f $(REGIONPATH)/release/gmapsupp.img
-	mv $(REGIONPATH)/release/gmapsupp.img.bz2 $(REGIONPATH)/release/gmapsupp.img.$(DATE).bz2
-	cp -f $(REGIONPATH)/release/gmapsupp.img.$(DATE).bz2 $(WEBDIR)/$(REGION)/$(DATE)/
-	ln -sf $(WEBDIR)/$(REGION)/$(DATE)/gmapsupp.img.$(DATE).bz2 $(WEBDIR)/$(REGION)/gmapsupp.img.bz2
-	md5sum -b $(WEBDIR)/$(REGION)/gmapsupp.img.bz2 > $(WEBDIR)/$(REGION)/gmapsupp.img.bz2.md5 &
+	$(COMPRESSOR) -f $(REGIONPATH)/release/gmapsupp.img
+	mv $(REGIONPATH)/release/gmapsupp.img.$(COMPRESS_SUFFIX) $(REGIONPATH)/release/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX)
+	cp -f $(REGIONPATH)/release/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(DATE)/
+	ln -sf $(WEBDIR)/$(REGION)/$(DATE)/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX)
+	md5sum -b $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX).md5 &
 ifeq ($(REGION),germany)
-	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBDIR)/$(REGION)/*.bz2
+	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBDIR)/$(REGION)/*.$(COMPRESS_SUFFIX)
 endif
 	echo '--------------------------------------- Ende $(REGION)' >> $(PRINTFILE);date >> $(PRINTFILE);echo "-----------------------------------" >> $(PRINTFILE)
 
