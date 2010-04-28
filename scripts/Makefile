@@ -139,6 +139,7 @@ DEPENDENCY_ADDR := $(TILEPATH)/template.args
 DEPENDENCY_FIXME := $(TILEPATH)/template.args
 DEPENDENCY_MAXSPEED := $(TILEPATH)/template.args
 DEPENDENCY_BOUNDARY := $(REGIONPATH)/raw_data/boundssplit/template.args
+DEPENDENCY_KEEPRIGHT := $(REGIONPATH)/raw_data/keeprightsplit/template.args
 DEPENDENCY_DAMAGE := $(TILEPATH)/template.args
 else
 PART_META_PATH := $(PATH_TO_REGIONS)/$(IS_PART_OF)
@@ -147,6 +148,7 @@ DEPENDENCY_ADDR := $(PART_META_PATH)/gmapsupps/gaddr/gmapsupp.img
 DEPENDENCY_FIXME := $(PART_META_PATH)/gmapsupps/gfixme/gmapsupp.img
 DEPENDENCY_MAXSPEED := $(PART_META_PATH)/gmapsupps/gmaxspeed/gmapsupp.img
 DEPENDENCY_BOUNDARY := $(PART_META_PATH)/gmapsupps/gboundary/gmapsupp.img
+DEPENDENCY_KEEPRIGHT := $(PART_META_PATH)/gmapsupps/gkeepright/gmapsupp.img
 DEPENDENCY_DAMAGE := $(PART_META_PATH)/gmapsupps/gdamage/gmapsupp.img
 endif
 
@@ -271,23 +273,24 @@ make_layer = \
 
 all: $(WEBDIR)/$(REGION)/gmapsupp.img.bz2 $(WEBDIR)/$(REGION)/styles.tar.bz2
 
+
+define make_dirs
+	mkdir -p $(1)/{$(LAYER)}
+	mkdir -p $(1)/raw_data/{splittercache,boundssplit,keeprightsplit,contourlines}
+	mkdir -p $(1)/gmapsupps/{$(LAYER)}
+	mkdir -p $(1)/tiles
+	mkdir -p $(1)/release
+endef
+
+# create the structure for a given region
+
 structure:
-	mkdir -p $(REGIONPATH)/{$(LAYER)}
-	mkdir -p $(REGIONPATH)/raw_data/splittercache
-	mkdir -p $(REGIONPATH)/raw_data/boundssplit
-	mkdir -p $(REGIONPATH)/raw_data/contourlines
-	mkdir -p $(REGIONPATH)/gmapsupps/{$(LAYER)}
-	mkdir -p $(REGIONPATH)/tiles
-	mkdir -p $(REGIONPATH)/release
+	$(call make_dirs,$(REGIONPATH))
+
+# create the structure for all known regions
 
 restructure:
-	mkdir -p $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/{$(LAYER)}
-	mkdir -p $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/raw_data/splittercache
-	mkdir -p $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/raw_data/boundssplit
-	mkdir -p $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/raw_data/contourlines
-	mkdir -p $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/gmapsupps/{$(LAYER)}
-	mkdir -p $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/tiles
-	mkdir -p $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release
+	$(call make_dirs,$(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)})
 
 
 # Clean the webdir and remove all directories that are older than EXPIRE date.
@@ -317,14 +320,19 @@ $(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
 
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
-$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER) $(COUNTRIES)))
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
+# include contourlines of germany if REGION is germany or europe
+ifeq ($(REGION),$(filter $(REGION),germany europe))
+	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img $(PATH_TO_REGIONS)/germany/gmapsupps/ghoehe/gmapsupp.img
+else
+	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed,keepright}/gmapsupp.img
+endif
 else
 ifeq ($(REGION),$(filter $(REGION),haiti))
 #	$(GMAPTOOL) -j -m $(DATE) -o $(REGIONPATH)/release/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,damage}/gmapsupp.img
+	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,damage,keepright}/gmapsupp.img
 	cp $(REGIONPATH)/release/gmapsupp.img $(WEBDIR)/$(REGION)/gmapsupp.img
 else
 	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img $(PATH_TO_REGIONS)/germany/gmapsupps/ghoehe/gmapsupp.img
@@ -362,17 +370,15 @@ $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_la
 	rm -f $(REGIONPATH)/gosb/*
 	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --family-id=2323 --product-id=42 --family-name=osb  --mapname=$(TILE_PREFIX)3$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm)
 
-$(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img : $(AIOPATH)/keepright/keepright_errors.txt.bz2
-	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - --bb $(BBOX) --wx $(REGIONPATH)/raw_data/keepright_$(REGION).osm
-	rm -f $(REGIONPATH)/keepright/*
-	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --family-id=2323 --product-id=42 --family-name=keepright  --mapname=$(TILE_PREFIX)3$(TILE_START) --description='Keepright' --draw-priority=24,../raw_data/keepright_$(REGION).osm)
-
-
+$(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img : $(DEPENDENCY_KEEPRIGHT)
+	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),7,777,777,24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
 
 
 $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(DEPENDENCY_DAMAGE)
 	$(call make_layer,damage,$(NOBASEMAPOPTIONS),5,4242,2323,25,$(TILEPATH)/template.args,_)
 
+
+# contourline target not in use:
 $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	cd $(REGIONPATH)/raw_data/contourlines; phyghtmap -a $(LEFT):$(BOTTOM):$(RIGHT):$(TOP) -j $(USE_CORES)
 	cd $(REGIONPATH)/gcontourlines; java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar $(NOBASEMAPOPTIONS) --style-file=$(STYLEPATH)/basemap_style --description="contour lines" --family-id=5 --product-id=25  --series-name="OSM-AllInOne-$(KURZ)-contourlines" --family-name=contourlines --mapname=63248345 --draw-priority=100  $(REGIONPATH)/raw_data/contourlines/*.osm ;\
@@ -383,6 +389,15 @@ $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	tar cjf $(REGIONPATH)/release/gcontourlines.tar.bz2 -C $(REGIONPATH) gcontourlines
 	cp -f $(REGIONPATH)/release/gcontourlines.tar.bz2 $(WEBDIR)/$(REGION)/
 	md5sum -b $(WEBDIR)/$(REGION)/gcontourlines.tar.bz2 > $(WEBDIR)/$(REGION)/gcontourlines.tar.bz2.md5
+
+$(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.txt.bz2
+	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - --bb $(BBOX) --wx $(REGIONPATH)/raw_data/keepright.osm.gz
+
+$(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright_$(REGION).osm.gz
+	cd $(REGIONPATH)/raw_data/keeprightsplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)7$(TILE_START) --max-nodes=200000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/keepright.osm.gz
+	$(call areas_to_db,$(REGIONPATH)/raw_data/keeprightsplit/areas.list,tiles_keepright_europe)
+# Set the whole path name for the tiles in template.args
+	sed -i "s|input-file: \(.*\)|input-file: $(REGIONPATH)/raw_data/keeprightsplit/\1|g" $(REGIONPATH)/raw_data/keeprightsplit/template.args
 
 $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
 	cd $(REGIONPATH)/raw_data/boundssplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)4$(TILE_START) --max-nodes=1000000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/bounds.osm.gz
