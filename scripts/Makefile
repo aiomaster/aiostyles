@@ -292,7 +292,7 @@ endif
 
 clean:
 	rm $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release/*.bz2 ; \
-	find $(WEBDIR)/{$(CS_ALL_REGIONS)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
+	find $(WEBDIR)/{$(CS_ALL_REGIONS),haiti} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
 
 
 # If something has changed in the stylepath repack it and write it to the webdir.
