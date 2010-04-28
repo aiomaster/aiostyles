@@ -19,8 +19,12 @@ endif
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
 COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
-ALL_REGIONS := europe $(REGIONLIST)
+ALL_REGIONS := haiti europe $(REGIONLIST)
 CS_ALL_REGIONS := $(shell echo $(ALL_REGIONS)|sed 's/ /,/g')
+
+
+LAYER:=gbasemap,gaddr,gfixme,gmaxspeed,gosb,gboundary,gdamage,gcontourlines
+
 
 # The Region should get extracted from Europe if it is part of it.
 # The Regionlist defines which countries that are.
@@ -261,23 +265,11 @@ make_layer = \
 all: $(WEBDIR)/$(REGION)/gmapsupp.img.bz2 $(WEBDIR)/$(REGION)/styles.tar.bz2
 
 structure:
-	mkdir -p $(REGIONPATH)/gbasemap
-	mkdir -p $(REGIONPATH)/gaddr
-	mkdir -p $(REGIONPATH)/gfixme
-	mkdir -p $(REGIONPATH)/gmaxspeed
-	mkdir -p $(REGIONPATH)/gboundary
-	mkdir -p $(REGIONPATH)/gosb
-	mkdir -p $(REGIONPATH)/gcontourlines
+	mkdir -p $(REGIONPATH)/{$(LAYER)}
 	mkdir -p $(REGIONPATH)/raw_data/splittercache
 	mkdir -p $(REGIONPATH)/raw_data/boundssplit
 	mkdir -p $(REGIONPATH)/raw_data/contourlines
-	mkdir -p $(REGIONPATH)/gmapsupps/gbasemap
-	mkdir -p $(REGIONPATH)/gmapsupps/gaddr
-	mkdir -p $(REGIONPATH)/gmapsupps/gboundary
-	mkdir -p $(REGIONPATH)/gmapsupps/gfixme
-	mkdir -p $(REGIONPATH)/gmapsupps/gmaxspeed
-	mkdir -p $(REGIONPATH)/gmapsupps/gosb
-	mkdir -p $(REGIONPATH)/gmapsupps/gcontourlines
+	mkdir -p $(REGIONPATH)/gmapsupps/{$(LAYER)}
 	mkdir -p $(REGIONPATH)/tiles
 	mkdir -p $(REGIONPATH)/release
 
@@ -291,9 +283,16 @@ EXPIRE := 6
 endif
 
 clean:
-	rm $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release/*.bz2 ; \
-	find $(WEBDIR)/{$(CS_ALL_REGIONS),haiti} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
+	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release/*.gz ; \
+	find $(WEBDIR)/{$(CS_ALL_REGIONS)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
 
+# Clean all stuff not directly needed in region dirs
+# Warning you need the imgs of europe to create the other subcountries! 
+extreme_clean: clean
+	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/{$(LAYER)}/*.img ; \
+	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/tiles/*.osm.gz
+
+	
 
 # If something has changed in the stylepath repack it and write it to the webdir.
 
