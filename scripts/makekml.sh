@@ -16,10 +16,10 @@ cat << EOKMLHEAD
       </PolyStyle>
     </Style>
 EOKMLHEAD
-psql -d aio -c "SELECT id,ST_AsKML(the_geom) FROM tiles_europe" | tail -n+3 | head -n-2 | awk -F\| '{gsub(/[[:space:]]*/,"",$1); print "<Placemark>\n<name>"$1"</name>\n<styleUrl>#kachelStyle</styleUrl>\n"$2"\n</Placemark>"}'
+psql -d aio -c "SELECT id,ST_AsKML(the_geom) FROM $1" | tail -n+3 | head -n-2 | awk -F\| '{gsub(/[[:space:]]*/,"",$1); print "<Placemark>\n<name>"$1"</name>\n<styleUrl>#kachelStyle</styleUrl>\n"$2"\n</Placemark>"}'
 cat << EOKMLTAIL
 </Document>
 </kml>
 EOKMLTAIL
-) > /osm/wwwroot/aio/tiles/tiles.kml
+) > /osm/wwwroot/aio/tiles/$1.kml
 

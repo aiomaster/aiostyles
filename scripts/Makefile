@@ -248,6 +248,17 @@ areas_to_db = \
 	sed -n '/^[0-9]*:/{N;s/^\([0-9]*\):[^:]*: \(.*\),\(.*\) to \(.*\),\(.*\)/INSERT INTO $(2) (id,the_geom) VALUES (\1,ST_SetSRID(ST_MakeBox2D(ST_Point(\3,\2),ST_Point(\5,\4)),4326));/p}' $(1) | psql -d aio
 
 
+ifeq ($(REGION),europe)
+define prepare_areas
+	$(call areas_to_db,$(1)/areas.list,tiles$(2)europe)
+# Set the whole path name for the tiles in template.args
+	sed -i "s|input-file: \(.*\)|input-file: $(1)/\1|g" $(1)/template.args
+	$(AIOPATH)/makekml.sh tiles$(2)europe
+endef
+endif
+
+
+
 # make_layer takes the following parameters $(1)-$(9) that differ for every layer:
 # params: 	name		mkgmap_options		layernumber used for TileIDs	family-id	product-id	draw-priority	template.args						PG_TABLE_SELECTOR	extra_opts while combine premade tiles
 # example1: 	basemap		$(GBASEMAPOPTIONS)	0				4		45		20		$(TILEPATH)/template.args				_			--index --route
@@ -395,33 +406,23 @@ $(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.
 
 $(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright.osm.gz
 	cd $(REGIONPATH)/raw_data/keeprightsplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)7$(TILE_START) --max-nodes=200000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/keepright.osm.gz
-	$(call areas_to_db,$(REGIONPATH)/raw_data/keeprightsplit/areas.list,tiles_keepright_europe)
-# Set the whole path name for the tiles in template.args
-	sed -i "s|input-file: \(.*\)|input-file: $(REGIONPATH)/raw_data/keeprightsplit/\1|g" $(REGIONPATH)/raw_data/keeprightsplit/template.args
+	$(call prepare_areas,$(REGIONPATH)/raw_data/keeprightsplit,_keepright_)
 
 $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
 	cd $(REGIONPATH)/raw_data/boundssplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)4$(TILE_START) --max-nodes=1000000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/bounds.osm.gz
-	$(call areas_to_db,$(REGIONPATH)/raw_data/boundssplit/areas.list,tiles_boundary_europe)
-# Set the whole path name for the tiles in template.args
-	sed -i "s|input-file: \(.*\)|input-file: $(REGIONPATH)/raw_data/boundssplit/\1|g" $(REGIONPATH)/raw_data/boundssplit/template.args
+	$(call prepare_areas,$(REGIONPATH)/raw_data/boundssplit,_boundary_)
 
 $(TILEPATH)/template.args : $(DATAPATH)
 	echo "$(REGION) Auspacken Start:" >> $(PRINTFILE);date >> $(PRINTFILE)
-#	cd $(REGIONPATH)/tiles/ && rm $(REGIONPATH)/tiles/* && rm $(REGIONPATH)/raw_data/splittercache/*; bzcat $(DATAPATH) | tee \
-#	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml ../raw_data/${REGION}_bounds.osm) \
-#	| java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=../raw_data/splittercache /dev/stdin
+
 ifeq ($(IS_PART_OF),false)
 	mkdir -p $(LOGPATH)
 	cd $(TILEPATH)/ && rm $(TILEPATH)/*.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
 	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml $(REGIONPATH)/raw_data/bounds.osm.gz) \
 	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
-# Set the whole path name for the tiles in template.args
-	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
+
 endif
-ifeq ($(REGION),europe)
 ifeq ($(USE_OLD_AREAS_LIST),false)
-	$(call areas_to_db,$(TILEPATH)/areas.list,tiles_europe)
-	$(AIOPATH)/makekml.sh
-endif
+	$(call prepare_areas,$(TILEPATH),_)
 endif
