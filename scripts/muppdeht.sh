@@ -13,7 +13,17 @@ AIOPATH=/osm/garmin/aio
 BUNDESLAENDER="baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen"
 COUNTRIES="austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine"
 
+DOW=`date +%w`
 
+# if it is not AiO day and we did not force it then exit
+if [ $FORCE != "yes" ]; then
+   for i in 0 2 4 6; do
+     if [ $DOW -eq $i ]; then
+	incrontab -d
+       	exit 0
+     fi
+   done
+fi
 
 if [ -f $LOCKFILE ]; then
   echo "Es war gelockt: ${LOCKFILE} existiert. Datum: `date`" > ${AIOPATH}/logfiles/muppdeht.log
@@ -36,8 +46,8 @@ else
 
 EUROPEPARAMS=$1
 
-# Jeden Dienstag rechne komplett neu. Sonst benutze die alten Splittergrenzen.
-  if [ `date +%w` -ne 2 ]; then
+# Jeden Montag rechne komplett neu. Sonst benutze die alten Splittergrenzen.
+  if [ $DOW -ne 1 ]; then
   	EUROPEPARAMS="$EUROPEPARAMS  USE_OLD_AREAS_LIST=true"
   fi
   ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile make PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfile.log

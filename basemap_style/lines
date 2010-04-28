@@ -1,4 +1,4 @@
-highway=* & impassable=yes {add access=no}
+highway=* & (impassable=yes | access=private) {set access=no}
 
 aeroway=runway [0x27 resolution 20]
 #boundary=administrative [0x1c resolution 18]
