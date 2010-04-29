@@ -425,4 +425,6 @@ ifeq ($(IS_PART_OF),false)
 endif
 ifeq ($(USE_OLD_AREAS_LIST),false)
 	$(call prepare_areas,$(TILEPATH),_)
+else
+	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
 endif

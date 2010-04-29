@@ -15,15 +15,13 @@ COUNTRIES="austria switzerland france italy united_kingdom albania andorra azore
 
 DOW=`date +%w`
 
-# if it is not AiO day and we did not force it then exit
-if [ $FORCE != "yes" ]; then
-   for i in 0 2 4 6; do
-     if [ $DOW -eq $i ]; then
+# if it is not AiO day then exit
+for i in 0 2 4 6; do
+  if [ $DOW -eq $i ]; then
 	incrontab -d
-       	exit 0
-     fi
-   done
-fi
+	exit 0
+  fi
+done
 
 if [ -f $LOCKFILE ]; then
   echo "Es war gelockt: ${LOCKFILE} existiert. Datum: `date`" > ${AIOPATH}/logfiles/muppdeht.log
