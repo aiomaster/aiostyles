@@ -125,7 +125,7 @@ REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
 GMAPTOOL := /usr/local/bin/gmt
-JAVA_OPT := -Xmx8000M -ea
+JAVA_OPT := -Xmx8000M -ea -XX:MaxPermSize=256M
 STYLEPATH := $(AIOPATH)/styles
 TILEPATH := $(REGIONPATH)/tiles
 MKGMAP := java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar

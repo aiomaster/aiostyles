@@ -39,6 +39,10 @@ else
   cd ${AIOPATH}/openstreetbugs
   wget -N -q http://openstreetbugs.schokokeks.org/dumps/osbdump_latest.sql.bz2
 
+# get the latest keepright dump
+  cd ${AIOPATH}/keepright
+  wget -N -q http://keepright.ipax.at/keepright_errors.txt.bz2
+
 
   cd ${AIOPATH}
 
