@@ -260,6 +260,8 @@ define prepare_areas
 	sed -i "s|input-file: \(.*\)|input-file: $(1)/\1|g" $(1)/template.args
 	$(AIOPATH)/makekml.sh tiles$(2)europe
 endef
+else
+prepare_areas =	sed -i "s|input-file: \(.*\)|input-file: $(1)/\1|g" $(1)/template.args
 endif
 
 
@@ -426,10 +428,7 @@ ifeq ($(IS_PART_OF),false)
 	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml $(REGIONPATH)/raw_data/bounds.osm.gz) \
 	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
-
 endif
 ifeq ($(USE_OLD_AREAS_LIST),false)
 	$(call prepare_areas,$(TILEPATH),_)
-else
-	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
 endif
