@@ -19,7 +19,7 @@ endif
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
 COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
-ALL_REGIONS := haiti europe $(REGIONLIST)
+ALL_REGIONS :=canary_islands haiti europe $(REGIONLIST)
 CS_ALL_REGIONS := $(shell echo $(ALL_REGIONS)|sed 's/ /,/g')
 
 
@@ -80,6 +80,11 @@ endif
 ifeq ($(REGION),haiti)
 DATAPATH := /osm/garmin/aio/regions/haiti/raw_data/haiti.osm.bz2
 KURZ := HT
+endif
+
+ifeq ($(REGION),canary_islands)
+DATAPATH := /osm/geofabrik-extrakte/africa/canary_islands.osm.bz2
+KURZ := CI
 endif
 
 ifeq ($(REGION),europe)
