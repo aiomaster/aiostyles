@@ -248,6 +248,8 @@ copy_tiles = \
 	cp -a $(PART_META_PATH)/$(1)/$(TILE_PREFIX)*{$(call REGION_TILE_INDEX,$(2))}.img $(REGIONPATH)/$(1)/ ; \
 	grep -A2 -E "mapname: $(TILE_PREFIX)[0-9]($(call REGION_TILE_INDEX_PIPES,$(2)))" $(PART_META_PATH)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
 
+# bring a given areas.list to a specified postgis database table
+
 areas_to_db = \
 	psql -d aio -c "DELETE FROM $(2);" ; \
 	sed -n '/^[0-9]*:/{N;s/^\([0-9]*\):[^:]*: \(.*\),\(.*\) to \(.*\),\(.*\)/INSERT INTO $(2) (id,the_geom) VALUES (\1,ST_SetSRID(ST_MakeBox2D(ST_Point(\3,\2),ST_Point(\5,\4)),4326));/p}' $(1) | psql -d aio
@@ -256,12 +258,8 @@ areas_to_db = \
 ifeq ($(REGION),europe)
 define prepare_areas
 	$(call areas_to_db,$(1)/areas.list,tiles$(2)europe)
-# Set the whole path name for the tiles in template.args
-	sed -i "s|input-file: \(.*\)|input-file: $(1)/\1|g" $(1)/template.args
 	$(AIOPATH)/makekml.sh tiles$(2)europe
 endef
-else
-prepare_areas =	sed -i "s|input-file: \(.*\)|input-file: $(1)/\1|g" $(1)/template.args
 endif
 
 
@@ -421,14 +419,13 @@ $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
 
 $(TILEPATH)/template.args : $(DATAPATH)
 	echo "$(REGION) Auspacken Start:" >> $(PRINTFILE);date >> $(PRINTFILE)
-
-ifeq ($(IS_PART_OF),false)
 	mkdir -p $(LOGPATH)
 	cd $(TILEPATH)/ && rm $(TILEPATH)/*.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
 	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml $(REGIONPATH)/raw_data/bounds.osm.gz) \
 	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
-endif
+# Set the full path name for the tiles in template.args
+	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
 ifeq ($(USE_OLD_AREAS_LIST),false)
 	$(call prepare_areas,$(TILEPATH),_)
 endif
