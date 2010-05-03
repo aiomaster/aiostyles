@@ -95,8 +95,8 @@ railway=tram_stop {name '${name} (${route_ref})'} [0x2f17 resolution 23]
 
 # Barrieren
 highway=gate | barrier=gate | barrier=lift_gate [0x7000 resolution 24]
-highway=bollard | barrier=bollard [0x7001 resolution 24]
-barrier=cycle_barrier [0x7002 resolution 24]
+highway=bollard | barrier=bollard {add access=no; add bicycle=yes; add foot=yes } [0x7001 resolution 24]
+barrier=cycle_barrier {add access=no; add bicycle=yes; add foot=yes }[0x7002 resolution 24]
 barrier=cattle_grid [0x7003 resolution 24]
 barrier=toll_booth [0x7004 resolution 24]
 
