@@ -411,10 +411,12 @@ $(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.
 
 $(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright.osm.gz
 	cd $(REGIONPATH)/raw_data/keeprightsplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)7$(TILE_START) --max-nodes=200000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/keepright.osm.gz
+	sed -i "s|input-file: \(.*\)|input-file: $(REGIONPATH)/raw_data/keeprightsplit/\1|g" $(REGIONPATH)/raw_data/keeprightsplit/template.args
 	$(call prepare_areas,$(REGIONPATH)/raw_data/keeprightsplit,_keepright_)
 
 $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
 	cd $(REGIONPATH)/raw_data/boundssplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)4$(TILE_START) --max-nodes=1000000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/bounds.osm.gz
+	sed -i "s|input-file: \(.*\)|input-file: $(REGIONPATH)/raw_data/boundssplit/\1|g" $(REGIONPATH)/raw_data/boundssplit/template.args
 	$(call prepare_areas,$(REGIONPATH)/raw_data/boundssplit,_boundary_)
 
 $(TILEPATH)/template.args : $(DATAPATH)
