@@ -176,10 +176,15 @@ endif
 endif
 
 # The Tilesplitter options:
+GEONAMES:=--geonames-file=$(AIOPATH)/geonames/cities15000.zip
 ifeq ($(USE_OLD_AREAS_LIST),true)
-SPLITTER_OPTIONS := --split-file=$(AREAS_LIST_FILE) --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
+SPLITTER_OPTIONS := --split-file=$(AREAS_LIST_FILE) --cache=$(REGIONPATH)/raw_data/splittercache $(GEONAMES)
+SPLITTER_OPTIONS_BOUNDARY := --split-file=$(REGIONPATH)/raw_data/boundssplit/areas.list $(GEONAMES)
+SPLITTER_OPTIONS_KEEPRIGHT := --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list $(GEONAMES)
 else
-SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(REGIONPATH)/raw_data/splittercache --geonames-file=$(AIOPATH)/geonames/cities15000.zip
+SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(REGIONPATH)/raw_data/splittercache $(GEONAMES)
+SPLITTER_OPTIONS_BOUNDARY := --mapid=$(TILE_PREFIX)4$(TILE_START) --max-nodes=1000000 $(GEONAMES)
+SPLITTER_OPTIONS_KEEPRIGHT := --mapid=$(TILE_PREFIX)7$(TILE_START) --max-nodes=200000 $(GEONAMES)
 endif
 
 # You can specify different Compressors for the result
@@ -256,13 +261,19 @@ areas_to_db = \
 
 
 ifeq ($(REGION),europe)
+ifeq ($(USE_OLD_AREAS_LIST),false)
 define prepare_areas
 	$(call areas_to_db,$(1)/areas.list,tiles$(2)europe)
 	$(AIOPATH)/makekml.sh tiles$(2)europe
 endef
 endif
+endif
 
-
+define process_splitter_files
+# Set the full path name for the tiles in template.args
+	sed -i "s|input-file: \(.*\)|input-file: $(1)/\1|g" $(1)/template.args
+	$(call prepare_areas,$(1),$(2))
+endef
 
 # make_layer takes the following parameters $(1)-$(9) that differ for every layer:
 # params: 	name		mkgmap_options		layernumber used for TileIDs	family-id	product-id	draw-priority	template.args						PG_TABLE_SELECTOR	extra_opts while combine premade tiles
@@ -410,24 +421,18 @@ $(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.
 	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - --bb $(BBOX) --wx $(REGIONPATH)/raw_data/keepright.osm.gz
 
 $(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright.osm.gz
-	cd $(REGIONPATH)/raw_data/keeprightsplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)7$(TILE_START) --max-nodes=200000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/keepright.osm.gz
-	sed -i "s|input-file: \(.*\)|input-file: $(REGIONPATH)/raw_data/keeprightsplit/\1|g" $(REGIONPATH)/raw_data/keeprightsplit/template.args
-	$(call prepare_areas,$(REGIONPATH)/raw_data/keeprightsplit,_keepright_)
+	cd $(REGIONPATH)/raw_data/keeprightsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_KEEPRIGHT) $(REGIONPATH)/raw_data/keepright.osm.gz 2> $(LOGPATH)/splitter_keepright.log
+	$(call process_splitter_files,$(REGIONPATH)/raw_data/keeprightsplit,_keepright_)
 
 $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
-	cd $(REGIONPATH)/raw_data/boundssplit/ ; $(SPLITTER) --mapid=$(TILE_PREFIX)4$(TILE_START) --max-nodes=1000000 --geonames-file=$(AIOPATH)/geonames/cities15000.zip $(REGIONPATH)/raw_data/bounds.osm.gz
-	sed -i "s|input-file: \(.*\)|input-file: $(REGIONPATH)/raw_data/boundssplit/\1|g" $(REGIONPATH)/raw_data/boundssplit/template.args
-	$(call prepare_areas,$(REGIONPATH)/raw_data/boundssplit,_boundary_)
+	cd $(REGIONPATH)/raw_data/boundssplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_BOUNDARY) $(REGIONPATH)/raw_data/bounds.osm.gz 2> $(LOGPATH)/splitter_boundary.log
+	$(call process_splitter_files,$(REGIONPATH)/raw_data/boundssplit,_boundary_)
 
 $(TILEPATH)/template.args : $(DATAPATH)
 	echo "$(REGION) Auspacken Start:" >> $(PRINTFILE);date >> $(PRINTFILE)
 	mkdir -p $(LOGPATH)
-	cd $(TILEPATH)/ && rm $(TILEPATH)/*.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
+	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
 	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml $(REGIONPATH)/raw_data/bounds.osm.gz) \
 	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
-# Set the full path name for the tiles in template.args
-	sed -i "s|input-file: \(.*\)|input-file: $(TILEPATH)/\1|g" $(TILEPATH)/template.args
-ifeq ($(USE_OLD_AREAS_LIST),false)
-	$(call prepare_areas,$(TILEPATH),_)
-endif
+	$(call process_splitter_files,$(TILEPATH),_)
