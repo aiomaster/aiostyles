@@ -143,7 +143,7 @@ MKGMAP_boundary := $(MKGMAP)
 MKGMAP_keepright := $(MKGMAP)
 MKGMAP_damage := $(MKGMAP)
 MKGMAP_contourlines := $(MKGMAP)
-MKGMAP_velomap := java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap_velo.jar
+MKGMAP_velomap := java $(JAVA_OPT) -jar $(AIOPATH)/styles/mkgmap_velo.jar
 SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar
 LOGPATH := ${AIOPATH}/logfiles/${REGION}/$(DATE)
 
