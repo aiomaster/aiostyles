@@ -1,0 +1,23 @@
+About the VeloMap.org Maps - Please Read.
+
+Maps (except contourline maps) are published under CCBYSA 2.0 2009 by VeloMap.org (http://creativecommons.org/licenses/by-sa/2.0/). Map data published under CC-BY-SA-2.0 (http://creativecommons.org/licenses/by-sa/2.0/) by Openstreetmap.org and Contributors (www.openstreetmap.org).
+
+Redistribution and reuse is allowed sticking under the condition of keeping the CCBYSA2.0 licence and mentioning both Openstreetmap.org and Contributors (www.openstreetmap.org) and www.VeloMap.org
+
+
+Map creation tools used:
+
+All maptiles are compiled with mkgmap (www.mkgmap.org.uk/ published under GNU GENERAL PUBLIC LICENSE Version 2, June 1991) using map data from openstreetmap.org.
+
+OpenStreetMap data can be used freely under the terms of the http://creativecommons.org/licenses/by-sa/2.0/
+You can use and edit the map data by visiting openstreetmap.org. All map images are therefore distributed under the CCBY SA 2.0.
+
+I am using map data based on country dumps by Geofabrik from here: http://download.geofabrik.de/osm/europe/
+
+
+
+– SRTM Contourlines to complement your VeloMaps —
+
+The Contourlines data is provided by Jonathan de Ferranti where available and NASA SRTM3 where no files are provided by www.viewfinderpanoramas.org/
+Compiled with mkgmap and srtm2osm. All Copyrights to the contourdata remains with Jonathan de Ferranti. A list of all regions which include srtm data by viewfinderpanoramas.org can be found in the file: regions copyrighted by www.viewfinderpanoramas.org
+Noncommercial redistribution is allowed and encouraged as long as you don't charge any money for it, and leave all copyright notices included. Changing or Reusing these maps is not allowed.
