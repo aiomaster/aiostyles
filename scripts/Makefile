@@ -173,7 +173,7 @@ endif
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --tdbfile --gmapsupp --nsis --keep-going
 GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --net --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000
 NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent
-VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --overview-mapname=mapset
+VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route
 
 # The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
 ifndef USE_OLD_AREAS_LIST
