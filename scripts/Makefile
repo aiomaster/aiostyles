@@ -171,9 +171,10 @@ endif
 
 # We want other options for the overlays than for the basemaplayer containing the routing etc.
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --tdbfile --gmapsupp --nsis --keep-going
-GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --net --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000
-NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent
-VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route
+GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --net --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000 --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3)
+NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3)
+VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --series-name="VeloMap_$(KURZ)" $(2) $(3)
+
 
 # The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
 ifndef USE_OLD_AREAS_LIST
@@ -252,13 +253,13 @@ do_stuff = \
 	mkdir -p $(LOGPATH) ; \
 	cd $(REGIONPATH)/g$(1)/ && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	{ mkdir -p $(WEBDIR)/$(REGION)/$(DATE) && \
 	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
 	(  $(call tar_img_dir,$(1)) \
 	$(call compress_gmapsupp,$(1)) ) ; \
-	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style --series-name=\"OSM-AllInOne-$(KURZ)-$(1)\" $(2) $(3)\nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; } ;
+	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style \nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; } ;
 
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
