@@ -173,7 +173,8 @@ endif
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --tdbfile --gmapsupp --nsis --keep-going
 GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --net --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000 --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3)
 NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3)
-VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --series-name="VeloMap_$(KURZ)" $(2) $(3)
+VELOMAPFID := 6621
+VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --reduce-point-density-polygon=8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --description="VeloMap_$(KURZ)" --mapname=$(VELOMAPFID)0000 --family-id=$(VELOMAPFID) --series-name="VeloMap_$(KURZ)" $(2) $(3)
 
 
 # The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
@@ -394,8 +395,8 @@ endif
 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img : $(DEPENDENCY_VELOMAP)
 	rm $(REGIONPATH)/gvelomap/*
 	cp $(STYLEPATH)/velomap_style/*.txt $(REGIONPATH)/gvelomap/
-	$(call handle_layer,velomap,$(VELOMAPOPTIONS),0,6621,1,8,$(TILEPATH)/template.args,_,--index --route)
-
+	$(call handle_layer,velomap,$(VELOMAPOPTIONS),0,$(VELOMAPFID),1,8,$(TILEPATH)/template.args,_,--index --route)
+	$(GMAPTOOL) -w -n $(VELOMAPFID)*.img
 $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
 	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,$(TILEPATH)/template.args,_,--index --route)
 
