@@ -393,7 +393,7 @@ endif
 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img : $(DEPENDENCY_VELOMAP)
 	rm $(REGIONPATH)/gvelomap/*
 	cp $(STYLEPATH)/velomap_style/*.txt $(REGIONPATH)/gvelomap/
-	$(call handle_layer,velomap,$(VELOMAPOPTIONS),0,6365,1,8,$(TILEPATH)/template.args,_,--index --route)
+	$(call handle_layer,velomap,$(VELOMAPOPTIONS),0,6621,1,8,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
 	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,$(TILEPATH)/template.args,_,--index --route)
