@@ -222,13 +222,13 @@ endif
 tar_img_dir = \
 	(tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/g$(1).${DATE}.tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH) g$(1) && \
 	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(DATE)/ && \
-	ln -sf $(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/g$(1).tar.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).tar.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/g$(1).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	ln -sf $(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) && \
+	md5sum -b $(WEBDIR)/$(REGION)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 compress_gmapsupp = \
 	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
-	ln -sf $(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	ln -sf $(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) && \
+	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 
 ifeq ($(REGION),europe)
@@ -242,8 +242,8 @@ build_exe = \
 	(sed -i 's|^OutFile "|OutFile "$(REGIONPATH)/gmapsupps/g$(1)/|' $(REGIONPATH)/g$(1)/osmmap.nsi && \
 	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
 	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBDIR)/$(REGION)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
-	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe && \
-	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
+	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBDIR)/$(REGION)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe && \
+	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
 endif
 
 
@@ -255,12 +255,13 @@ do_stuff = \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	$(GMAPTOOL) -w -n $(VELOMAPFID)0*.img ; \
+	mkdir -p $(WEBDIR)/$(REGION)/$(1)
 	{ mkdir -p $(WEBDIR)/$(REGION)/$(DATE) && \
 	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
 	(  $(call tar_img_dir,$(1)) \
 	$(call compress_gmapsupp,$(1)) ) ; \
-	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; } ;
+	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBDIR)/$(REGION)/$(1)/mkgmap_params_$(1) ; } ;
 
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
@@ -313,7 +314,7 @@ make_layer = \
 	echo -e "Enjoy!\n" >> $(REGIONPATH)/g$(1)/HOWTO.txt ; \
 	$(call handle_layer,$(1),$(2),$(3),$(4),$(5),$(6),$(7),$(8),$(9))
 
-all: $(WEBDIR)/$(REGION)/gmapsupp.img.bz2 $(WEBDIR)/$(REGION)/styles.tar.bz2
+all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/styles.tar.bz2
 
 
 define make_dirs
@@ -362,7 +363,7 @@ $(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
 
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
-$(WEBDIR)/$(REGION)/gmapsupp.img.bz2 : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX) : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER) $(COUNTRIES) europe))
 # include contourlines of germany if REGION is germany or europe
