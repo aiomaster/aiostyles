@@ -293,7 +293,7 @@ do_stuff = \
 # Rename the imgs to match the family-id schema
 copy_tiles = \
 	cp -a $(PART_META_PATH)/$(1)/*{$(call REGION_TILE_INDEX,$(2))}.img $(REGIONPATH)/$(1)/ ; \
-	for i in `ls *.img`;do mv $$i `echo $$i|sed 's/^[0-9]\{5\}/$(3)$(4)/g'`; done ; \
+	for i in `ls $(REGIONPATH)/$(1)/*.img`;do mv $$i `echo $$i|sed 's/^[0-9]\{5\}/$(3)$(4)/g'`; done ; \
 	grep -A2 -E "mapname: [0-9]{5}($(call REGION_TILE_INDEX_PIPES,$(2)))" $(PART_META_PATH)/tiles/$(1)_template.args | awk --posix '/mapname/{sub("[0-9]{5}","$(3)$(4)",$2);mn=$$2;print;getline;print;getline;print $$1" "mn".img\n"}' > $(REGIONPATH)/$(1)/template.args
 
 # bring a given areas.list to a specified postgis database table
