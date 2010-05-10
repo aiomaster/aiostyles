@@ -255,7 +255,7 @@ do_stuff = \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	$(GMAPTOOL) -w -n $(VELOMAPFID)0*.img ; \
-	mkdir -p $(WEBDIR)/$(REGION)/$(1)
+	mkdir -p $(WEBDIR)/$(REGION)/$(1) && \
 	{ mkdir -p $(WEBDIR)/$(REGION)/$(DATE) && \
 	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
