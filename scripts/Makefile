@@ -279,7 +279,7 @@ do_stuff = \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
 	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
-	$(GMAPTOOL) -w -n $(VELOMAPFID)0*.img ; \
+	$(GMAPTOOL) -w -n $(4)0*.img ; \
 	mkdir -p $(WEBREGIONDIR)/$(1) && cd $(WEBREGIONDIR) && \
 	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
 	$(call build_exe,$(1)) \
