@@ -41,7 +41,7 @@ endif
 
 # for each region there is a new FID so there is no colllision if you install multiple regions in mapsource
 # we add to each FID simply the index of the region in the regionlist of this makefile
-REGION_LIST_INDEX:=$(shell i=0;for regions in $(ALL_REGIONS); do if [ $$region = "$(REGION)" ];then echo $$i; break; else let i++; fi;done)
+REGION_LIST_INDEX:=$(shell i=0;for region in $(ALL_REGIONS); do if [ $$region = "$(REGION)" ];then echo $$i; break; else let i++; fi;done)
 
 VELOMAP_FID:=$(shell expr 6621 + $(REGION_LIST_INDEX))
 VELOMAP_PID:=2
@@ -423,7 +423,7 @@ endif
 	echo '--------------------------------------- Ende $(REGION)' >> $(PRINTFILE);date >> $(PRINTFILE);echo "-----------------------------------" >> $(PRINTFILE)
 
 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img : $(DEPENDENCY_VELOMAP)
-	rm $(REGIONPATH)/gvelomap/*
+	rm $(REGIONPATH)/gvelomap/* ; \
 	cp $(STYLEPATH)/velomap_style/*.txt $(REGIONPATH)/gvelomap/
 	$(call handle_layer,velomap,$(VELOMAPOPTIONS),VeloMap_$(KURZ),$(VELOMAP_FID),$(VELOMAP_PID),8,$(TILEPATH)/template.args,_,--index --route)
 
