@@ -120,7 +120,7 @@ endif
 # 6324 0 023 is the first Tile of the basemap.
 
 ifndef TILE_PREFIX
-TILE_PREFIX := $(VELOMAP_FID)
+TILE_PREFIX := 6621
 endif
 ifndef TILE_START
 TILE_START := 000
