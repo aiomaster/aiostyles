@@ -129,6 +129,7 @@ OSMOSIS := osmosis
 REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
+WEBREGIONDIR := $(WEBDIR)/regions/$(REGION)
 GMAPTOOL := /usr/local/bin/gmt
 JAVA_OPT := -Xmx8000M -ea -XX:MaxPermSize=256M
 STYLEPATH := $(AIOPATH)/styles
@@ -221,14 +222,14 @@ endif
 
 tar_img_dir = \
 	(tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/g$(1).${DATE}.tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH) g$(1) && \
-	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(DATE)/ && \
-	ln -sf $(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBDIR)/$(REGION)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(DATE)/ && \
+	ln -sf $(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) && \
+	md5sum -b $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 compress_gmapsupp = \
-	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBDIR)/$(REGION)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
-	ln -sf $(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBDIR)/$(REGION)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBREGIONDIR)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
+	ln -sf $(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) && \
+	md5sum -b $(WEBREGIONDIR)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 
 ifeq ($(REGION),europe)
@@ -241,9 +242,9 @@ build_exe = \
 	makensis -O${LOGPATH}/makensis_$(1)_copy.log $(REGIONPATH)/g$(1)/osmmap_copy.nsi ; \
 	(sed -i 's|^OutFile "|OutFile "$(REGIONPATH)/gmapsupps/g$(1)/|' $(REGIONPATH)/g$(1)/osmmap.nsi && \
 	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
-	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBDIR)/$(REGION)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
-	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBDIR)/$(REGION)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe && \
-	md5sum -b $(WEBDIR)/$(REGION)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBDIR)/$(REGION)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
+	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBREGIONDIR)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
+	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBREGIONDIR)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe && \
+	md5sum -b $(WEBREGIONDIR)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBREGIONDIR)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
 endif
 
 
@@ -253,21 +254,22 @@ do_stuff = \
 	mkdir -p $(LOGPATH) ; \
 	cd $(REGIONPATH)/g$(1)/ && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
+	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	$(GMAPTOOL) -w -n $(VELOMAPFID)0*.img ; \
-	mkdir -p $(WEBDIR)/$(REGION)/$(1) && \
-	{ mkdir -p $(WEBDIR)/$(REGION)/$(DATE) && \
+	mkdir -p $(WEBREGIONDIR)/$(1) && \
+	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
 	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
 	(  $(call tar_img_dir,$(1)) \
 	$(call compress_gmapsupp,$(1)) ) ; \
-	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBDIR)/$(REGION)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBDIR)/$(REGION)/$(1)/mkgmap_params_$(1) ; } ;
+	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBREGIONDIR)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; } ;
 
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
 copy_tiles = \
-	cp -a $(PART_META_PATH)/$(1)/$(TILE_PREFIX)*{$(call REGION_TILE_INDEX,$(2))}.img $(REGIONPATH)/$(1)/ ; \
-	grep -A2 -E "mapname: $(TILE_PREFIX)[0-9]($(call REGION_TILE_INDEX_PIPES,$(2)))" $(PART_META_PATH)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
+	cp -a $(PART_META_PATH)/$(1)/*{$(call REGION_TILE_INDEX,$(2))}.img $(REGIONPATH)/$(1)/ ; \
+	grep -A2 -E "mapname: [0-9]{5}($(call REGION_TILE_INDEX_PIPES,$(2)))" $(PART_META_PATH)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
 
 # bring a given areas.list to a specified postgis database table
 
@@ -297,12 +299,12 @@ endef
 # example2:	boundary	$(NOBASEMAPOPTIONS)	4				6		30		21		$(REGIONPATH)/raw_data/boundssplit/template.args	_boundary_
 ifeq ($(IS_PART_OF),false)
 handle_layer = \
-	sed 's/mapname: $(TILE_PREFIX)[0-9]/mapname: $(TILE_PREFIX)$(3)/g;s/description: \(.*\)/description: \1-$(1)/g' $(7) > $(TILEPATH)/g$(1)_template.args && \
-	$(call do_stuff,$(1),$(2) --family-id=$(4) --product-id=$(5) --family-name=$(1) --draw-priority=$(6),-c $(TILEPATH)/g$(1)_template.args)
+	sed 's/mapname: $(TILE_PREFIX)[0-9]/mapname: $(4)$(5)/g;s/description: \(.*\)/description: \1-$(1)/g' $(7) > $(TILEPATH)/g$(1)_template.args && \
+	$(call do_stuff,$(1),$(2) --draw-priority=$(6),-c $(TILEPATH)/g$(1)_template.args,$(4),$(5))
 else
 handle_layer = \
 	$(call copy_tiles,g$(1),$(8)) && \
-	$(call do_stuff,$(1),$(9) --gmapsupp --nsis --family-id=$(4) --product-id=$(5) --family-name=$(1),-c $(REGIONPATH)/g$(1)/template.args)
+	$(call do_stuff,$(1),$(9) --gmapsupp --nsis,-c $(REGIONPATH)/g$(1)/template.args,$(4),$(5))
 endif
 
 
@@ -314,7 +316,7 @@ make_layer = \
 	echo -e "Enjoy!\n" >> $(REGIONPATH)/g$(1)/HOWTO.txt ; \
 	$(call handle_layer,$(1),$(2),$(3),$(4),$(5),$(6),$(7),$(8),$(9))
 
-all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/styles.tar.bz2
+all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/styles.tar.bz2
 
 
 define make_dirs
@@ -345,7 +347,7 @@ endif
 
 clean:
 	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/release/*.gz ; \
-	find $(WEBDIR)/{$(CS_ALL_REGIONS)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
+	find $(WEBDIR)/regions/{$(CS_ALL_REGIONS)} -type d -ctime +$(EXPIRE) -exec rm -rf '{}' ';'
 
 # Clean all stuff not directly needed in region dirs
 # Warning you need the imgs of europe to create the other subcountries! 
@@ -356,14 +358,16 @@ extreme_clean: clean
 	
 
 # If something has changed in the stylepath repack it and write it to the webdir.
+$(WEBREGIONDIR)/styles.tar.bz2 : $(STYLEPATH)/*/*
+	tar cjf $(WEBREGIONDIR)/styles.tar.bz2 -C $(STYLEPATH)/../ styles
 
-$(WEBDIR)/$(REGION)/styles.tar.bz2 : $(STYLEPATH)/*/*
-	tar cjf $(WEBDIR)/$(REGION)/styles.tar.bz2 -C $(STYLEPATH)/../ styles
-
+# introduce a system of symlinks to give a more structured access to the downloadable files
+webdir_structure:
+	mkdir -p $(WEBDIR)/GPS_ready
 
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
-$(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX) : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX) : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER) $(COUNTRIES) europe))
 # include contourlines of germany if REGION is germany or europe
@@ -376,7 +380,7 @@ else
 ifeq ($(REGION),$(filter $(REGION),haiti))
 #	$(GMAPTOOL) -j -m $(DATE) -o $(REGIONPATH)/release/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img
 	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,damage,keepright}/gmapsupp.img
-	cp $(REGIONPATH)/release/gmapsupp.img $(WEBDIR)/$(REGION)/gmapsupp.img
+	cp $(REGIONPATH)/release/gmapsupp.img $(WEBREGIONDIR)/gmapsupp.img
 else
 	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
 
@@ -385,45 +389,45 @@ endif
 endif
 	$(COMPRESSOR) -f $(REGIONPATH)/release/gmapsupp.img
 	mv $(REGIONPATH)/release/gmapsupp.img.$(COMPRESS_SUFFIX) $(REGIONPATH)/release/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX)
-	cp -f $(REGIONPATH)/release/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/$(DATE)/
-	ln -sf $(WEBDIR)/$(REGION)/$(DATE)/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX)
-	md5sum -b $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX) > $(WEBDIR)/$(REGION)/gmapsupp.img.$(COMPRESS_SUFFIX).md5 &
+	cp -f $(REGIONPATH)/release/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(DATE)/
+	ln -sf $(WEBREGIONDIR)/$(DATE)/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX)
+	md5sum -b $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX).md5 &
 ifeq ($(REGION),germany)
-	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBDIR)/$(REGION)/*.$(COMPRESS_SUFFIX)
+	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBREGIONDIR)/*.$(COMPRESS_SUFFIX)
 endif
 	echo '--------------------------------------- Ende $(REGION)' >> $(PRINTFILE);date >> $(PRINTFILE);echo "-----------------------------------" >> $(PRINTFILE)
 
 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img : $(DEPENDENCY_VELOMAP)
 	rm $(REGIONPATH)/gvelomap/*
 	cp $(STYLEPATH)/velomap_style/*.txt $(REGIONPATH)/gvelomap/
-	$(call handle_layer,velomap,$(VELOMAPOPTIONS),0,$(VELOMAPFID),1,8,$(TILEPATH)/template.args,_,--index --route)
+	$(call handle_layer,velomap,$(VELOMAPOPTIONS),0,$(VELOMAPFID),2,8,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
-	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,4,45,10,$(TILEPATH)/template.args,_,--index --route)
+	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,7000,3,10,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(DEPENDENCY_ADDR)
-	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,1,5,40,20,$(TILEPATH)/template.args,_)
+	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,1,7400,3,20,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(DEPENDENCY_FIXME)
-	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),2,3,33,22,$(TILEPATH)/template.args,_)
+	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),2,7800,3,22,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(DEPENDENCY_MAXSPEED)
-	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),6,84,15,19,$(TILEPATH)/template.args,_)
+	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),6,8200,3,19,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(DEPENDENCY_BOUNDARY)
-	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),4,6,30,21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
+	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),4,8600,3,21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
 
 $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
 	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --bb $(BBOX) --nkv keyValueList="type.0" --wx $(REGIONPATH)/raw_data/osb_$(REGION).osm
 	rm -f $(REGIONPATH)/gosb/*
-	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --family-id=2323 --product-id=42 --family-name=osb  --mapname=$(TILE_PREFIX)3$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm)
+	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --mapname=90003$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm,9000,3)
 
 $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img : $(DEPENDENCY_KEEPRIGHT)
-	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),7,777,777,24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
+	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),7,9400,3,24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
 
 
 $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(DEPENDENCY_DAMAGE)
-	$(call make_layer,damage,$(NOBASEMAPOPTIONS),5,4242,2323,25,$(TILEPATH)/template.args,_)
+	$(call make_layer,damage,$(NOBASEMAPOPTIONS),5,4000,3,25,$(TILEPATH)/template.args,_)
 
 
 # contourline target not in use:
@@ -431,12 +435,12 @@ $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	cd $(REGIONPATH)/raw_data/contourlines; phyghtmap -a $(LEFT):$(BOTTOM):$(RIGHT):$(TOP) -j $(USE_CORES)
 	cd $(REGIONPATH)/gcontourlines; java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar $(NOBASEMAPOPTIONS) --style-file=$(STYLEPATH)/basemap_style --description="contour lines" --family-id=5 --product-id=25  --series-name="OSM-AllInOne-$(KURZ)-contourlines" --family-name=contourlines --mapname=63248345 --draw-priority=100  $(REGIONPATH)/raw_data/contourlines/*.osm ;\
 	makensis osmmap.nsi
-	cp $(REGIONPATH)/gcontourlines/OSM-AllInOne-$(KURZ)-contourlines.exe $(WEBDIR)/$(REGION)/
+	cp $(REGIONPATH)/gcontourlines/OSM-AllInOne-$(KURZ)-contourlines.exe $(WEBREGIONDIR)/
 	mv $(REGIONPATH)/gcontourlines/gmapsupp.img $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img
-	bzip2 -c $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img > $(WEBDIR)/$(REGION)/contourlines.img.bz2
+	bzip2 -c $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img > $(WEBREGIONDIR)/contourlines.img.bz2
 	tar cjf $(REGIONPATH)/release/gcontourlines.tar.bz2 -C $(REGIONPATH) gcontourlines
-	cp -f $(REGIONPATH)/release/gcontourlines.tar.bz2 $(WEBDIR)/$(REGION)/
-	md5sum -b $(WEBDIR)/$(REGION)/gcontourlines.tar.bz2 > $(WEBDIR)/$(REGION)/gcontourlines.tar.bz2.md5
+	cp -f $(REGIONPATH)/release/gcontourlines.tar.bz2 $(WEBREGIONDIR)/
+	md5sum -b $(WEBREGIONDIR)/gcontourlines.tar.bz2 > $(WEBREGIONDIR)/gcontourlines.tar.bz2.md5
 
 $(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.txt.bz2
 	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - --bb $(BBOX) --wx $(REGIONPATH)/raw_data/keepright.osm.gz
