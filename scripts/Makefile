@@ -255,20 +255,20 @@ compress_gmapsupp = \
 	md5sum -b $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 
-ifeq ($(REGION),europe)
+#ifeq ($(REGION),europe)
 build_exe = \
-	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi && \
+	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g;/!define INSTALLER_NAME/s/"\([^"]*\)"/"\1_setup"/' $(REGIONPATH)/g$(1)/osmmap.nsi && \
 	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi ;
-else
-build_exe = \
-	sed 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi > $(REGIONPATH)/g$(1)/osmmap_copy.nsi && \
-	makensis -O${LOGPATH}/makensis_$(1)_copy.log $(REGIONPATH)/g$(1)/osmmap_copy.nsi ; \
-	(sed -i 's|^OutFile "|OutFile "$(REGIONPATH)/gmapsupps/g$(1)/|' $(REGIONPATH)/g$(1)/osmmap.nsi && \
-	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
-	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBREGIONDIR)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
-	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBREGIONDIR)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe && \
-	md5sum -b $(WEBREGIONDIR)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBREGIONDIR)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
-endif
+#else
+#build_exe = \
+#	sed 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi > $(REGIONPATH)/g$(1)/osmmap_copy.nsi && \
+#	makensis -O${LOGPATH}/makensis_$(1)_copy.log $(REGIONPATH)/g$(1)/osmmap_copy.nsi ; \
+#	(sed -i 's|^OutFile "|OutFile "$(REGIONPATH)/gmapsupps/g$(1)/|' $(REGIONPATH)/g$(1)/osmmap.nsi && \
+#	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi && \
+#	mv $(REGIONPATH)/gmapsupps/g$(1)/*.exe $(WEBREGIONDIR)/$(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe && \
+#	ln -sf $(DATE)/OSM-AllInOne-$(KURZ)-$(1).$(DATE).exe $(WEBREGIONDIR)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe && \
+#	md5sum -b $(WEBREGIONDIR)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBREGIONDIR)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
+#endif
 
 
 # params:
