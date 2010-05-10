@@ -19,8 +19,8 @@ endif
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
 COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
-ALL_REGIONS :=canary_islands haiti europe $(REGIONLIST)
-CS_ALL_REGIONS := $(shell echo $(ALL_REGIONS)|sed 's/ /,/g')
+ALL_REGIONS :=europe $(REGIONLIST) canary_islands haiti
+CS_ALL_REGIONS := $(shell echo $(ALL_REGIONS)|tr ' ' ',')
 
 
 LAYER:=gbasemap,gaddr,gfixme,gmaxspeed,gosb,gboundary,gkeepright,gdamage,gcontourlines,gvelomap
@@ -37,8 +37,32 @@ endif
 endif
 
 
+# manage family- and product IDs
 
+# for each region there is a new FID so there is no colllision if you install multiple regions in mapsource
+# we add to each FID simply the index of the region in the regionlist of this makefile
+REGION_LIST_INDEX:=$(shell i=0;for regions in $(ALL_REGIONS); do if [ $$region = "$(REGION)" ];then echo $$i; break; else let i++; fi;done)
 
+VELOMAP_FID:=$(shell expr 6621 + $(REGION_LIST_INDEX))
+VELOMAP_PID:=2
+BASEMAP_FID:=$(shell expr 7000 + $(REGION_LIST_INDEX))
+BASEMAP_PID:=3
+ADDR_FID:=$(shell expr 7400 + $(REGION_LIST_INDEX))
+ADDR_PID:=3
+FIXME_FID:=$(shell expr 7800 + $(REGION_LIST_INDEX))
+FIXME_PID:=4
+MAXSPEED_FID:=$(shell expr 8200 + $(REGION_LIST_INDEX))
+MAXSPEED_PID:=3
+OSB_FID:=$(shell expr 8600 + $(REGION_LIST_INDEX))
+OSB_PID:=4
+BOUNDARY_FID:=$(shell expr 9000 + $(REGION_LIST_INDEX))
+BOUNDARY_PID:=3
+KEEPRIGHT_FID:=$(shell expr 9400 + $(REGION_LIST_INDEX))
+KEEPRIGHT_PID:=4
+DAMAGE_FID:=$(shell expr 4000 + $(REGION_LIST_INDEX))
+DAMAGE_PID:=5
+CONTOURLINES_FID:=$(shell expr 3000 + $(REGION_LIST_INDEX))
+CONTOURLINES_PID:=6
 
 
 # if we want to start some compressing tasks in a subshell to work parallel we use & instead of ; to separate shell commands
@@ -95,9 +119,8 @@ endif
 # Use the first 4 numbers of the mapid as Prefix and the 5th to distinguish between the layers. The last 3 numbers are to number the tiles.
 # 6324 0 023 is the first Tile of the basemap.
 
-VELOMAPFID := 6621
 ifndef TILE_PREFIX
-TILE_PREFIX := $(VELOMAPFID)
+TILE_PREFIX := $(VELOMAP_FID)
 endif
 ifndef TILE_START
 TILE_START := 000
@@ -174,7 +197,7 @@ endif
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --tdbfile --gmapsupp --nsis --keep-going
 GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000 --transparent 
 NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent 
-VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --reduce-point-density-polygon=8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --description="VeloMap_$(KURZ)" --series-name="VeloMap_$(KURZ)"
+VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --reduce-point-density-polygon=8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --description="VeloMap_$(KURZ)"
 
 
 # The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
@@ -198,8 +221,8 @@ SPLITTER_OPTIONS_BOUNDARY := --split-file=$(REGIONPATH)/raw_data/boundssplit/are
 SPLITTER_OPTIONS_KEEPRIGHT := --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list $(GEONAMES)
 else
 SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(REGIONPATH)/raw_data/splittercache $(GEONAMES)
-SPLITTER_OPTIONS_BOUNDARY := --mapid=$(TILE_PREFIX)4$(TILE_START) --max-nodes=1000000 $(GEONAMES)
-SPLITTER_OPTIONS_KEEPRIGHT := --mapid=$(TILE_PREFIX)7$(TILE_START) --max-nodes=200000 $(GEONAMES)
+SPLITTER_OPTIONS_BOUNDARY := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 $(GEONAMES)
+SPLITTER_OPTIONS_KEEPRIGHT := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=200000 $(GEONAMES)
 endif
 
 # You can specify different Compressors for the result
@@ -229,7 +252,7 @@ tar_img_dir = \
 compress_gmapsupp = \
 	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBREGIONDIR)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
 	ln -sf $(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBREGIONDIR)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	md5sum -b $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 
 ifeq ($(REGION),europe)
@@ -255,9 +278,9 @@ do_stuff = \
 	cd $(REGIONPATH)/g$(1)/ && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="OSM-AllInOne-$(KURZ)-$(1)" --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	$(GMAPTOOL) -w -n $(VELOMAPFID)0*.img ; \
-	mkdir -p $(WEBREGIONDIR)/$(1) && \
+	mkdir -p $(WEBREGIONDIR)/$(1) && cd $(WEBREGIONDIR) && \
 	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
 	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
@@ -267,9 +290,11 @@ do_stuff = \
 
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
+# Rename the imgs to match the family-id schema
 copy_tiles = \
 	cp -a $(PART_META_PATH)/$(1)/*{$(call REGION_TILE_INDEX,$(2))}.img $(REGIONPATH)/$(1)/ ; \
-	grep -A2 -E "mapname: [0-9]{5}($(call REGION_TILE_INDEX_PIPES,$(2)))" $(PART_META_PATH)/tiles/$(1)_template.args | sed 's/^--$$//g;/mapname:/h;/input-file:/{g;s/mapname: \([0-9]*\)/input-file: \1.img/}' > $(REGIONPATH)/$(1)/template.args
+	for i in `ls *.img`;do mv $$i `echo $$i|sed 's/^[0-9]\{5\}/$(3)$(4)/g'`; done ; \
+	grep -A2 -E "mapname: [0-9]{5}($(call REGION_TILE_INDEX_PIPES,$(2)))" $(PART_META_PATH)/tiles/$(1)_template.args | awk --posix '/mapname/{sub("[0-9]{5}","$(3)$(4)",$2);mn=$$2;print;getline;print;getline;print $$1" "mn".img\n"}' > $(REGIONPATH)/$(1)/template.args
 
 # bring a given areas.list to a specified postgis database table
 
@@ -294,17 +319,17 @@ define process_splitter_files
 endef
 
 # make_layer takes the following parameters $(1)-$(9) that differ for every layer:
-# params: 	name		mkgmap_options		layernumber used for TileIDs	family-id	product-id	draw-priority	template.args						PG_TABLE_SELECTOR	extra_opts while combine premade tiles
+# params: 	name		mkgmap_options		series-name	family-id	product-id	draw-priority	template.args						PG_TABLE_SELECTOR	extra_opts while combine premade tiles
 # example1: 	basemap		$(GBASEMAPOPTIONS)	0				4		45		20		$(TILEPATH)/template.args				_			--index --route
 # example2:	boundary	$(NOBASEMAPOPTIONS)	4				6		30		21		$(REGIONPATH)/raw_data/boundssplit/template.args	_boundary_
 ifeq ($(IS_PART_OF),false)
 handle_layer = \
 	sed 's/mapname: $(TILE_PREFIX)[0-9]/mapname: $(4)$(5)/g;s/description: \(.*\)/description: \1-$(1)/g' $(7) > $(TILEPATH)/g$(1)_template.args && \
-	$(call do_stuff,$(1),$(2) --draw-priority=$(6),-c $(TILEPATH)/g$(1)_template.args,$(4),$(5))
+	$(call do_stuff,$(1),$(2) --draw-priority=$(6),-c $(TILEPATH)/g$(1)_template.args,$(4),$(5),$(3))
 else
 handle_layer = \
-	$(call copy_tiles,g$(1),$(8)) && \
-	$(call do_stuff,$(1),$(9) --gmapsupp --nsis,-c $(REGIONPATH)/g$(1)/template.args,$(4),$(5))
+	$(call copy_tiles,g$(1),$(8),$(4),$(5)) && \
+	$(call do_stuff,$(1),$(9) --gmapsupp --nsis,-c $(REGIONPATH)/g$(1)/template.args,$(4),$(5),$(3))
 endif
 
 
@@ -400,37 +425,37 @@ endif
 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img : $(DEPENDENCY_VELOMAP)
 	rm $(REGIONPATH)/gvelomap/*
 	cp $(STYLEPATH)/velomap_style/*.txt $(REGIONPATH)/gvelomap/
-	$(call handle_layer,velomap,$(VELOMAPOPTIONS),0,$(VELOMAPFID),2,8,$(TILEPATH)/template.args,_,--index --route)
+	$(call handle_layer,velomap,$(VELOMAPOPTIONS),VeloMap_$(KURZ),$(VELOMAP_FID),$(VELOMAP_PID),8,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
-	$(call make_layer,basemap,$(GBASEMAPOPTIONS),0,7000,3,10,$(TILEPATH)/template.args,_,--index --route)
+	$(call make_layer,basemap,$(GBASEMAPOPTIONS),OSM_AiO_basemap,$(BASEMAP_FID),$(BASEMAP_PID),10,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(DEPENDENCY_ADDR)
-	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,1,7400,3,20,$(TILEPATH)/template.args,_)
+	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,OSM_AiO_addr,$(ADDR_FID),$(ADDR_PID),20,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(DEPENDENCY_FIXME)
-	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),2,7800,3,22,$(TILEPATH)/template.args,_)
+	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),OSM_AiO_fixme,$(FIXME_FID),$(FIXME_PID),22,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(DEPENDENCY_MAXSPEED)
-	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),6,8200,3,19,$(TILEPATH)/template.args,_)
+	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),OSM_AiO_maxspeed,$(MAXSPEED_FID),$(MAXSPEED_PID),19,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(DEPENDENCY_BOUNDARY)
-	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),4,8600,3,21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
+	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),OSM_AiO_boundary,$(BOUNDARY_FID),$(BOUNDARY_PID),21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
 
 $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
 	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --bb $(BBOX) --nkv keyValueList="type.0" --wx $(REGIONPATH)/raw_data/osb_$(REGION).osm
 	rm -f $(REGIONPATH)/gosb/*
-	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --mapname=90003$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm,9000,3)
+	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --mapname=$(OSB_FID)$(OSB_PID)$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm,$(OSB_FID),$(OSB_PID),OSM_AiO_osb)
 
 $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img : $(DEPENDENCY_KEEPRIGHT)
-	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),7,9400,3,24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
+	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),OSM_AiO_keepright,$(KEEPRIGHT_FID),$(KEEPRIGHT_PID),24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
 
 
 $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(DEPENDENCY_DAMAGE)
-	$(call make_layer,damage,$(NOBASEMAPOPTIONS),5,4000,3,25,$(TILEPATH)/template.args,_)
+	$(call make_layer,damage,$(NOBASEMAPOPTIONS),OSM_AiO_damage,$(DAMAGE_FID),$(DAMAGE_PID),25,$(TILEPATH)/template.args,_)
 
 
-# contourline target not in use:
+# contourline target not in use and really deprecated:
 $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	cd $(REGIONPATH)/raw_data/contourlines; phyghtmap -a $(LEFT):$(BOTTOM):$(RIGHT):$(TOP) -j $(USE_CORES)
 	cd $(REGIONPATH)/gcontourlines; java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar $(NOBASEMAPOPTIONS) --style-file=$(STYLEPATH)/basemap_style --description="contour lines" --family-id=5 --product-id=25  --series-name="OSM-AllInOne-$(KURZ)-contourlines" --family-name=contourlines --mapname=63248345 --draw-priority=100  $(REGIONPATH)/raw_data/contourlines/*.osm ;\
