@@ -194,10 +194,10 @@ DEPENDENCY_DAMAGE := $(PART_META_PATH)/gmapsupps/gdamage/gmapsupp.img
 endif
 
 # We want other options for the overlays than for the basemaplayer containing the routing etc.
-OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --tdbfile --gmapsupp --nsis --keep-going
-GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000 --transparent 
-NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds --transparent 
-VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --reduce-point-density-polygon=8 --suppress-dead-end-nodes --index --transparent --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --description="VeloMap_$(KURZ)"
+OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --tdbfile --gmapsupp --nsis --keep-going --transparent
+GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=polygons,no-sea-sectors,close-gaps=2000
+NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds 
+VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=2.8 --reduce-point-density-polygon=8 --suppress-dead-end-nodes --index --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --location-autofill=1 --route --description="VeloMap_$(KURZ)"
 
 
 # The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
@@ -246,19 +246,19 @@ endif
 tar_img_dir = \
 	(tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/g$(1).${DATE}.tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH) g$(1) && \
 	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(DATE)/ && \
-	ln -sf $(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) && \
+	ln -sf ../$(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) && \
 	md5sum -b $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 compress_gmapsupp = \
 	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBREGIONDIR)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
-	ln -sf $(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) && \
+	ln -sf ../$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) && \
 	md5sum -b $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 
 #ifeq ($(REGION),europe)
 build_exe = \
-	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g;/!define INSTALLER_NAME/s/"\([^"]*\)"/"\1_setup"/' $(REGIONPATH)/g$(1)/osmmap.nsi && \
-	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/osmmap.nsi ;
+	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g;/!define INSTALLER_NAME/s/"\([^"]*\)"/"\1_setup"/' $(REGIONPATH)/g$(1)/*.nsi && \
+	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/*.nsi ;
 #else
 #build_exe = \
 #	sed 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi > $(REGIONPATH)/g$(1)/osmmap_copy.nsi && \
@@ -275,12 +275,12 @@ build_exe = \
 # name,options,source
 do_stuff = \
 	mkdir -p $(LOGPATH) ; \
-	cd $(REGIONPATH)/g$(1)/ && \
+	cd $(REGIONPATH)/g$(1) && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
 	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
-	$(GMAPTOOL) -w -n $(4)0*.img ; \
-	mkdir -p $(WEBREGIONDIR)/$(1) && cd $(WEBREGIONDIR) && \
+	if [ "$(1)" = "velomap" -o "$(1)" = "basemap" ];then $(GMAPTOOL) -wn $(REGIONPATH)/g$(1)/*.img;fi ; \
+	mkdir -p $(WEBREGIONDIR)/$(1) && \
 	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
 	$(call build_exe,$(1)) \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
@@ -390,6 +390,14 @@ $(WEBREGIONDIR)/styles.tar.bz2 : $(STYLEPATH)/*/*
 # introduce a system of symlinks to give a more structured access to the downloadable files
 webdir_structure:
 	mkdir -p $(WEBDIR)/GPS_ready
+
+# to make a new tiles table for example for the keepright splits of europe do
+# make TABLE_SELECTOR=_keepright_ REGION=europe postgis_tiles_table
+TABLE_SELECTOR:=_
+postgis_tiles_table:
+	psql -d aio -c "CREATE TABLE tiles$(TABLE_SELECTOR)$(REGION) (id integer);"
+	psql -d aio -c "SELECT AddGeometryColumn('tiles$(TABLE_SELECTOR)$(REGION)','the_geom',4326,'POLYGON',2);"
+
 
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
