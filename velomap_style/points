@@ -185,7 +185,7 @@ access=no { set access=yes; set motorcar=yes; set motorcycle=yes; set bicycle=ye
 place=capitol | place=capital				   {set cityxx=yes} [0x0100 resolution 14 continue with_actions ]
 place=city & population > 999999 & cityxx!=yes {set cityxx=yes}	[0x0200 resolution 14 continue with_actions ]
 place=city & population > 599999 & cityxx!=yes {set cityxx=yes} [0x0300 resolution 15 continue with_actions ]
-place=city & population > 399999 & cityxx!=yes {set cityxx=yes} [0x0400 resolution 16 continue with_actions ]
+place=city & population > 399999 & cityxx!=yes {set cityxx=yes} [0x0400 resolution 17 continue with_actions ]
 place=city & population > 199999 & cityxx!=yes {set cityxx=yes} [0x0500 resolution 17 continue with_actions ]
 place=city & population >  99999 & cityxx!=yes {set cityxx=yes} [0x0600 resolution 18 continue with_actions ]
 place=city & population >  49999 & cityxx!=yes {set cityxx=yes} [0x0700 resolution 18 continue with_actions ]
@@ -600,10 +600,10 @@ entrance=yes | barrier=entrance		[0x4314 resolution 24 continue]
 #missing bump_gate, block, border_controll,kissing_gate, entrance, lift_gate, sally_port, hampshire_gate
 
 # Traffic
-highway=traffic_signal | crossing=traffic_signal | highway=traffic_signals | crossing=traffic_signals | highway=traffic_lights | crossing=traffic_lights |	highway=traffic_light | crossing=traffic_light	| 	highway=traffic_light | crossing=traffic_light
-{ add mkgmap:road-speed = '-1'; add mkgmap:road-class = '-1'; }		[0x11819 resolution 24]
+highway=traffic_signal | crossing=traffic_signal | highway=traffic_signals | crossing=traffic_signals | highway=traffic_lights | crossing=traffic_lights |	highway=traffic_light | crossing=traffic_light	| 	highway=traffic_light | crossing=traffic_light { add mkgmap:road-speed = '-1'; add mkgmap:road-class = '-1' }		[0x11819 resolution 24]
+
 # highway=crossing 																		[0x290d resolution 24]
-highway=stop 																			[0x1181a resolution 24]
+highway=stop {add mkgmap:road-speed	= '-1'}												[0x1181a resolution 24]
 traffic_sign = city_limit 																[0x1181b resolution 24]
 # highway=speed_camera 		{name 'maxspeed ${maxspeed} km/h'} 							[0x5601 resolution 24]
 highway=motorway_junction & proposed!=* {name '${ref} ${name}' | '${ref}' | '${name}'}	[0x1181c resolution 24]
@@ -614,9 +614,9 @@ amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x2f0b re
 # amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x1180e resolution 22]
 
 amenity=parking 			{name 'carpark ${name}'  | 'carpark'  }						[0x2f0b resolution 24]
-railway=crossing 								{ add mkgmap:road-speed = '-2'; add mkgmap:road-speed-min = '1' }		[0x11705 resolution 24]
-railway=level_crossing 							{ add mkgmap:road-speed = '-2'; add mkgmap:road-speed-min = '1' }		[0x11705 resolution 24]
-railway=mini_roundabout							{ add mkgmap:road-speed = '-2'; add mkgmap:road-speed-min = '1' }		[0x11705 resolution 24]
+railway=crossing 								{ add mkgmap:road-speed = '-1' }		[0x11705 resolution 24]
+railway=level_crossing 							{ add mkgmap:road-speed = '-1' }		[0x11705 resolution 24]
+railway=mini_roundabout							{ add mkgmap:road-speed = '-1' }		[0x11705 resolution 24]
 
 
 
