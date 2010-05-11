@@ -215,14 +215,15 @@ endif
 
 # The Tilesplitter options:
 GEONAMES:=--geonames-file=$(AIOPATH)/geonames/cities15000.zip
+SPLITTER_CACHE:=$(REGIONPATH)/raw_data/splittercache
 ifeq ($(USE_OLD_AREAS_LIST),true)
-SPLITTER_OPTIONS := --split-file=$(AREAS_LIST_FILE) --cache=$(REGIONPATH)/raw_data/splittercache $(GEONAMES)
-SPLITTER_OPTIONS_BOUNDARY := --split-file=$(REGIONPATH)/raw_data/boundssplit/areas.list $(GEONAMES)
-SPLITTER_OPTIONS_KEEPRIGHT := --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list $(GEONAMES)
+SPLITTER_OPTIONS := --split-file=$(AREAS_LIST_FILE) --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
+SPLITTER_OPTIONS_BOUNDARY := --split-file=$(REGIONPATH)/raw_data/boundssplit/areas.list --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
+SPLITTER_OPTIONS_KEEPRIGHT := --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
 else
-SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(REGIONPATH)/raw_data/splittercache $(GEONAMES)
-SPLITTER_OPTIONS_BOUNDARY := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 $(GEONAMES)
-SPLITTER_OPTIONS_KEEPRIGHT := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=200000 $(GEONAMES)
+SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
+SPLITTER_OPTIONS_BOUNDARY := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
+SPLITTER_OPTIONS_KEEPRIGHT := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=200000 --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
 endif
 
 # You can specify different Compressors for the result
@@ -244,10 +245,11 @@ COMPRESS_SUFFIX:=7z
 endif
 
 tar_img_dir = \
-	(tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/g$(1).${DATE}.tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH) g$(1) && \
-	cp -f $(REGIONPATH)/release/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(DATE)/ && \
-	ln -sf ../$(DATE)/g$(1).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	(mkdir -p $(REGIONPATH)/release/$(1)_$(REGION) ; rm $(REGIONPATH)/release/$(1)_$(REGION)/* ; cp -a $(REGIONPATH)/g$(1)/* $(REGIONPATH)/release/$(1)_$(REGION) && \
+	tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH)/release $(1)_$(REGION) && \
+	cp -f $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(DATE)/ && \
+	ln -sf ../$(DATE)/$(1)_$(REGION).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/$(1)_$(REGION).tar.$(COMPRESS_SUFFIX) && \
+	md5sum -b $(WEBREGIONDIR)/$(1)/$(1)_$(REGION).tar.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/$(1)_$(REGION).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
 
 compress_gmapsupp = \
 	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBREGIONDIR)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
@@ -278,7 +280,8 @@ do_stuff = \
 	cd $(REGIONPATH)/g$(1) && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
+	mv $(1).TYP `echo $(1)|sed 's/^\(.\{3\}\).*/\1/'`$(5)$(4).TYP ; \
 	if [ "$(1)" = "velomap" -o "$(1)" = "basemap" ];then $(GMAPTOOL) -wn $(REGIONPATH)/g$(1)/*.img;fi ; \
 	mkdir -p $(WEBREGIONDIR)/$(1) && \
 	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
@@ -347,7 +350,8 @@ all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(WEBREGIONDIR)/gmapsupp.img.
 
 define make_dirs
 	mkdir -p $(1)/{$(LAYER)}
-	mkdir -p $(1)/raw_data/{splittercache,boundssplit,keeprightsplit,contourlines}
+	mkdir -p $(1)/raw_data/{boundssplit,keeprightsplit,contourlines}
+	mkdir -p $(1)/raw_data/splittercache/{basemap,bounds,keepright,addr,maxspeed,fixme,osb}
 	mkdir -p $(1)/gmapsupps/{$(LAYER)}
 	mkdir -p $(1)/tiles
 	mkdir -p $(1)/release
