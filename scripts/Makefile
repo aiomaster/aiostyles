@@ -414,20 +414,21 @@ $(WEBREGIONDIR)/styles.tar.bz2 : $(STYLEPATH)/*/*
 
 # introduce a system of symlinks to give a more structured access to the downloadable files
 
-define link_to_gps_ready_dir
-	for i in $(ALL_REGIONS); do ln -sf ../../regions/$(i)/$(1)/$(1)_$(i).img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(1)/gps_ready/$(1)_$(i).img.$(COMPRESS_SUFFIX); done
+define link_to_webdir
+	for i in $(ALL_REGIONS); do ln -sf ../../regions/$$i/$(1)/$(1)_$$i.img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(1)/gps_ready/$(1)_$$i.img.$(COMPRESS_SUFFIX) ; ln -sf ../../regions/$$i/$(1)/$(1)_$$i.$(COMPRESS_SUFFIX) $(WEBDIR)/$(1)/mapsource/$(1)_$$i.$(COMPRESS_SUFFIX) ; done
 endef
 
 webdir_structure:
-	mkdir -p $(WEBDIR)/{velomap,basemap,addr,fixme,keepright,osb,maxspeed,boundary}/{gps_ready,mapsource}
-	$(call link_to_gps_ready_dir,velomap)
-	$(call link_to_gps_ready_dir,basemap)
-	$(call link_to_gps_ready_dir,addr)
-	$(call link_to_gps_ready_dir,fixme)
-	$(call link_to_gps_ready_dir,keepright)
-	$(call link_to_gps_ready_dir,osb)
-	$(call link_to_gps_ready_dir,maxspeed)
-	$(call link_to_gps_ready_dir,boundary)
+	mkdir -p $(WEBDIR)/{gmapsupp,velomap,basemap,addr,fixme,keepright,osb,maxspeed,boundary}/{gps_ready,mapsource}
+	$(call link_to_webdir,gmapsupp) && rm -rf $(WEBDIR)/gmapsupp/mapsource
+	$(call link_to_webdir,velomap)
+	$(call link_to_webdir,basemap)
+	$(call link_to_webdir,addr)
+	$(call link_to_webdir,fixme)
+	$(call link_to_webdir,keepright)
+	$(call link_to_webdir,osb)
+	$(call link_to_webdir,maxspeed)
+	$(call link_to_webdir,boundary)
 
 # to make a new tiles table for example for the keepright splits of europe do
 # make TABLE_SELECTOR=_keepright_ REGION=europe postgis_tiles_table
