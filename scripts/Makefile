@@ -228,7 +228,7 @@ endif
 
 # You can specify different Compressors for the result
 # Default is gzip
-
+# ...obsolete!
 COMPRESSOR:=gzip
 
 ifeq ($(COMPRESSOR),zip)
@@ -244,23 +244,37 @@ ifeq ($(COMPRESSOR),p7zip)
 COMPRESS_SUFFIX:=7z
 endif
 
+# this is used for all compressions now:
+COMPR:=7z a -tzip -mmt=$(USE_CORES) -mx=1
+COMPRESS_SUFFIX:=zip
+
+
+copy_and_symlink = \
+	cp -f $(REGIONPATH)/release/$(2).$(DATE).$(3) $(WEBREGIONDIR)/$(DATE)/ && \
+	ln -sf ../$(DATE)/$(2).$(DATE).$(3) $(WEBREGIONDIR)/$(1)/$(2).$(3) && \
+	md5sum -b $(WEBREGIONDIR)/$(1)/$(2).$(3) > $(WEBREGIONDIR)/$(1)/$(2).$(3).md5
+
+# obsolete if you can include the whole directory in one archive without tar
 tar_img_dir = \
-	(mkdir -p $(REGIONPATH)/release/$(1)_$(REGION) ; rm $(REGIONPATH)/release/$(1)_$(REGION)/* ; cp -a $(REGIONPATH)/g$(1)/* $(REGIONPATH)/release/$(1)_$(REGION) && \
 	tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH)/release $(1)_$(REGION) && \
-	cp -f $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(DATE)/ && \
-	ln -sf ../$(DATE)/$(1)_$(REGION).$(DATE).tar.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/$(1)_$(REGION).tar.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBREGIONDIR)/$(1)/$(1)_$(REGION).tar.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/$(1)_$(REGION).tar.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	$(call copy_and_symlink,$(1),$(1)_$(REGION),tar.$(COMPRESS_SUFFIX))
+
+zip_img_dir = \
+	cd $(REGIONPATH)/release/ && \
+	$(COMPR) $(1)_$(REGION).$(DATE).zip $(1)_$(REGION) && \
+	$(call copy_and_symlink,$(1),$(1)_$(REGION),$(COMPRESS_SUFFIX))
 
 compress_gmapsupp = \
-	($(COMPRESSOR) -c $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img > $(WEBREGIONDIR)/$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) && \
-	ln -sf ../$(DATE)/g$(1).$(DATE).img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) && \
-	md5sum -b $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/$(1)/g$(1).img.$(COMPRESS_SUFFIX).md5 ) $(SHELL_EXECUTOR)
+	cd $(REGIONPATH)/gmapsupps/g$(1) && \
+	($(COMPR) $(1)_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img && mv $(1)_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) && \
+	$(call copy_and_symlink,$(1),$(1)_$(REGION),img.$(COMPRESS_SUFFIX)) ) $(SHELL_EXECUTOR)
+
 
 
 #ifeq ($(REGION),europe)
 build_exe = \
 	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g;/!define INSTALLER_NAME/s/"\([^"]*\)"/"\1_setup"/' $(REGIONPATH)/g$(1)/*.nsi && \
-	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/*.nsi ;
+	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/*.nsi
 #else
 #build_exe = \
 #	sed 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi > $(REGIONPATH)/g$(1)/osmmap_copy.nsi && \
@@ -272,6 +286,17 @@ build_exe = \
 #	md5sum -b $(WEBREGIONDIR)/OSM-AllInOne-$(KURZ)-$(1).exe > $(WEBREGIONDIR)/$(1)/OSM-AllInOne-$(KURZ)-$(1).exe.md5 ) $(SHELL_EXECUTOR)
 #endif
 
+pack_results = \
+	mkdir -p $(WEBREGIONDIR)/$(1) && \
+	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
+	$(call build_exe,$(1)) ; \
+	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
+	(  ( \
+		mkdir -p $(REGIONPATH)/release/$(1)_$(REGION) ; rm $(REGIONPATH)/release/$(1)_$(REGION)/* ; cp -a $(REGIONPATH)/g$(1)/* $(REGIONPATH)/release/$(1)_$(REGION) && \
+		$(call zip_img_dir,$(1)) \
+	   ) $(SHELL_EXECUTOR) \
+	   ($(call compress_gmapsupp,$(1)) ) $(SHELL_EXECUTOR) \
+	) ; }
 
 # params:
 # name,options,source
@@ -283,13 +308,9 @@ do_stuff = \
 	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	mv $(1).TYP `echo $(1)|sed 's/^\(.\{3\}\).*/\1/'`$(5)$(4).TYP ; \
 	if [ "$(1)" = "velomap" -o "$(1)" = "basemap" ];then $(GMAPTOOL) -wn $(REGIONPATH)/g$(1)/*.img;fi ; \
-	mkdir -p $(WEBREGIONDIR)/$(1) && \
-	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
-	$(call build_exe,$(1)) \
-	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
-	(  $(call tar_img_dir,$(1)) \
-	$(call compress_gmapsupp,$(1)) ) ; \
-	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBREGIONDIR)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; } ;
+	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; \
+	$(call pack_results,$(1)) ;
+
 
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
@@ -406,30 +427,25 @@ postgis_tiles_table:
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
 $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX) : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+	cd $(REGIONPATH)/release
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER) $(COUNTRIES) europe))
 # include contourlines of germany if REGION is germany or europe
 ifeq ($(REGION),$(filter $(REGION),germany europe))
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img $(PATH_TO_REGIONS)/germany/gmapsupps/ghoehe/gmapsupp.img
+	$(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img $(PATH_TO_REGIONS)/germany/gmapsupps/ghoehe/gmapsupp.img
 else
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed,keepright}/gmapsupp.img
+	$(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed,keepright}/gmapsupp.img
 endif
 else
 ifeq ($(REGION),$(filter $(REGION),haiti))
-#	$(GMAPTOOL) -j -m $(DATE) -o $(REGIONPATH)/release/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,damage,keepright}/gmapsupp.img
+	$(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,damage,keepright}/gmapsupp.img
 	cp $(REGIONPATH)/release/gmapsupp.img $(WEBREGIONDIR)/gmapsupp.img
 else
-	cd $(REGIONPATH)/release; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
-
-#	$(GMAPTOOL) -j -m $(DATE) -o $(REGIONPATH)/release/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/../germany/gmapsupps/ghoehe/gmapsupp.img
+	$(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
 endif
 endif
-	$(COMPRESSOR) -f $(REGIONPATH)/release/gmapsupp.img
-	mv $(REGIONPATH)/release/gmapsupp.img.$(COMPRESS_SUFFIX) $(REGIONPATH)/release/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX)
-	cp -f $(REGIONPATH)/release/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/$(DATE)/
-	ln -sf $(WEBREGIONDIR)/$(DATE)/gmapsupp.img.$(DATE).$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX)
-	md5sum -b $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX) > $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX).md5 &
+	$(COMPR) gmapsupp_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img
+	$(call copy_and_symlink,.,gmapsupp_$(REGION),img.$(COMPRESS_SUFFIX))
 ifeq ($(REGION),germany)
 	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBREGIONDIR)/*.$(COMPRESS_SUFFIX)
 endif
