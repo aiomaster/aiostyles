@@ -366,7 +366,7 @@ make_layer = \
 	echo -e "Enjoy!\n" >> $(REGIONPATH)/g$(1)/HOWTO.txt ; \
 	$(call handle_layer,$(1),$(2),$(3),$(4),$(5),$(6),$(7),$(8),$(9))
 
-all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/styles.tar.bz2
+all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(WEBREGIONDIR)/gmapsupp/gmapsupp.img.$(COMPRESS_SUFFIX) $(WEBREGIONDIR)/styles.tar.bz2
 
 
 define make_dirs
