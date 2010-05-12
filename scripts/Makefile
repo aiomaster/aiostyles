@@ -461,9 +461,9 @@ endif
 	mkdir -p $(WEBREGIONDIR)/gmapsupp
 	$(COMPR) gmapsupp_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img
 	$(call copy_and_symlink,gmapsupp,gmapsupp_$(REGION),img.$(COMPRESS_SUFFIX))
-ifeq ($(REGION),germany)
-	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBREGIONDIR)/*.$(COMPRESS_SUFFIX)
-endif
+#ifeq ($(REGION),germany)
+#	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBREGIONDIR)/*.$(COMPRESS_SUFFIX)
+#endif
 	echo '--------------------------------------- Ende $(REGION)' >> $(PRINTFILE);date >> $(PRINTFILE);echo "-----------------------------------" >> $(PRINTFILE)
 
 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img : $(DEPENDENCY_VELOMAP)
