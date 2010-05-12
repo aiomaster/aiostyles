@@ -413,8 +413,21 @@ $(WEBREGIONDIR)/styles.tar.bz2 : $(STYLEPATH)/*/*
 	tar cjf $(WEBREGIONDIR)/styles.tar.bz2 -C $(STYLEPATH)/../ styles
 
 # introduce a system of symlinks to give a more structured access to the downloadable files
+
+define link_to_gps_ready_dir
+	for i in $(ALL_REGIONS); do ln -sf ../../regions/$(i)/$(1)/$(1)_$(i).img.$(COMPRESS_SUFFIX) $(WEBDIR)/$(1)/gps_ready/$(1)_$(i).img.$(COMPRESS_SUFFIX); done
+endef
+
 webdir_structure:
-	mkdir -p $(WEBDIR)/GPS_ready
+	mkdir -p $(WEBDIR)/{velomap,basemap,addr,fixme,keepright,osb,maxspeed,boundary}/{gps_ready,mapsource}
+	$(call link_to_gps_ready_dir,velomap)
+	$(call link_to_gps_ready_dir,basemap)
+	$(call link_to_gps_ready_dir,addr)
+	$(call link_to_gps_ready_dir,fixme)
+	$(call link_to_gps_ready_dir,keepright)
+	$(call link_to_gps_ready_dir,osb)
+	$(call link_to_gps_ready_dir,maxspeed)
+	$(call link_to_gps_ready_dir,boundary)
 
 # to make a new tiles table for example for the keepright splits of europe do
 # make TABLE_SELECTOR=_keepright_ REGION=europe postgis_tiles_table
@@ -426,7 +439,7 @@ postgis_tiles_table:
 
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
-$(WEBREGIONDIR)/gmapsupp.img.$(COMPRESS_SUFFIX) : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(WEBREGIONDIR)/gmapsupp/gmapsupp.img.$(COMPRESS_SUFFIX) : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
 	cd $(REGIONPATH)/release
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER) $(COUNTRIES) europe))
@@ -444,8 +457,9 @@ else
 	$(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img
 endif
 endif
+	mkdir -p $(WEBREGIONDIR)/gmapsupp
 	$(COMPR) gmapsupp_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img
-	$(call copy_and_symlink,.,gmapsupp_$(REGION),img.$(COMPRESS_SUFFIX))
+	$(call copy_and_symlink,gmapsupp,gmapsupp_$(REGION),img.$(COMPRESS_SUFFIX))
 ifeq ($(REGION),germany)
 	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBREGIONDIR)/*.$(COMPRESS_SUFFIX)
 endif
