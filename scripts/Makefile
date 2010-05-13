@@ -252,7 +252,8 @@ COMPRESS_SUFFIX:=zip
 copy_and_symlink = \
 	cp -f $(REGIONPATH)/release/$(2).$(DATE).$(3) $(WEBREGIONDIR)/$(DATE)/ && \
 	ln -sf ../$(DATE)/$(2).$(DATE).$(3) $(WEBREGIONDIR)/$(1)/$(2).$(3) && \
-	md5sum -b $(WEBREGIONDIR)/$(1)/$(2).$(3) > $(WEBREGIONDIR)/$(1)/$(2).$(3).md5
+	md5sum -b $(WEBREGIONDIR)/$(1)/$(2).$(3) > $(WEBREGIONDIR)/$(1)/$(2).$(3).md5 ; \
+	if [ "$(3)" = "img.$(COMPRESS_SUFFIX)" ]; then ln -sf ../../regions/$(REGION)/$(DATE)/$(2).$(DATE).$(3) $(WEBDIR)/$(1)/gps_ready/$(2).$(3) ; else ln -sf ../../regions/$(REGION)/$(DATE)/$(2).$(DATE).$(3) $(WEBDIR)/$(1)/mapsource/$(2).$(3) ; fi
 
 # obsolete if you can include the whole directory in one archive without tar
 tar_img_dir = \
