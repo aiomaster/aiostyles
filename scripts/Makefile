@@ -306,8 +306,8 @@ do_stuff = \
 	cd $(REGIONPATH)/g$(1) && \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) $(1).TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
-	mv $(1).TYP `echo $(1)|sed 's/^\(.\{3\}\).*/\1/'`$(5)$(4).TYP ; \
+	mv $(1).TYP `echo $(1)|sed 's/^\(.\{3\}\).*/\1/'`$(4)$(5).TYP ; \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) *.TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	if [ "$(1)" = "velomap" -o "$(1)" = "basemap" ];then $(GMAPTOOL) -wn $(REGIONPATH)/g$(1)/*.img;fi ; \
 	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; \
 	$(call pack_results,$(1)) ;
@@ -469,34 +469,34 @@ endif
 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img : $(DEPENDENCY_VELOMAP)
 	rm $(REGIONPATH)/gvelomap/* ; \
 	cp $(STYLEPATH)/velomap_style/*.txt $(REGIONPATH)/gvelomap/
-	$(call handle_layer,velomap,$(VELOMAPOPTIONS),VeloMap_$(KURZ),$(VELOMAP_FID),$(VELOMAP_PID),8,$(TILEPATH)/template.args,_,--index --route)
+	$(call handle_layer,velomap,$(VELOMAPOPTIONS),VeloMap_$(REGION),$(VELOMAP_FID),$(VELOMAP_PID),8,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
-	$(call make_layer,basemap,$(GBASEMAPOPTIONS),OSM_AiO_basemap,$(BASEMAP_FID),$(BASEMAP_PID),10,$(TILEPATH)/template.args,_,--index --route)
+	$(call make_layer,basemap,$(GBASEMAPOPTIONS),OSM_AiO_basemap_$(REGION),$(BASEMAP_FID),$(BASEMAP_PID),10,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(DEPENDENCY_ADDR)
-	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,OSM_AiO_addr,$(ADDR_FID),$(ADDR_PID),20,$(TILEPATH)/template.args,_)
+	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,OSM_AiO_addr_$(REGION),$(ADDR_FID),$(ADDR_PID),20,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(DEPENDENCY_FIXME)
-	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),OSM_AiO_fixme,$(FIXME_FID),$(FIXME_PID),22,$(TILEPATH)/template.args,_)
+	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),OSM_AiO_fixme_$(REGION),$(FIXME_FID),$(FIXME_PID),22,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(DEPENDENCY_MAXSPEED)
-	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),OSM_AiO_maxspeed,$(MAXSPEED_FID),$(MAXSPEED_PID),19,$(TILEPATH)/template.args,_)
+	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),OSM_AiO_maxspeed_$(REGION),$(MAXSPEED_FID),$(MAXSPEED_PID),19,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(DEPENDENCY_BOUNDARY)
-	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),OSM_AiO_boundary,$(BOUNDARY_FID),$(BOUNDARY_PID),21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
+	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),OSM_AiO_boundary_$(REGION),$(BOUNDARY_FID),$(BOUNDARY_PID),21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
 
 $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
 	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --bb $(BBOX) --nkv keyValueList="type.0" --wx $(REGIONPATH)/raw_data/osb_$(REGION).osm
 	rm -f $(REGIONPATH)/gosb/*
-	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --mapname=$(OSB_FID)$(OSB_PID)$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm,$(OSB_FID),$(OSB_PID),OSM_AiO_osb)
+	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --mapname=$(OSB_FID)$(OSB_PID)$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm,$(OSB_FID),$(OSB_PID),OSM_AiO_osb_$(REGION))
 
 $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img : $(DEPENDENCY_KEEPRIGHT)
-	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),OSM_AiO_keepright,$(KEEPRIGHT_FID),$(KEEPRIGHT_PID),24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
+	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),OSM_AiO_keepright_$(REGION),$(KEEPRIGHT_FID),$(KEEPRIGHT_PID),24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
 
 
 $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(DEPENDENCY_DAMAGE)
-	$(call make_layer,damage,$(NOBASEMAPOPTIONS),OSM_AiO_damage,$(DAMAGE_FID),$(DAMAGE_PID),25,$(TILEPATH)/template.args,_)
+	$(call make_layer,damage,$(NOBASEMAPOPTIONS),OSM_AiO_damage_$(REGION),$(DAMAGE_FID),$(DAMAGE_PID),25,$(TILEPATH)/template.args,_)
 
 
 # contourline target not in use and really deprecated:
