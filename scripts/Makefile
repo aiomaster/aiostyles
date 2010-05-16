@@ -16,6 +16,9 @@ ifndef REGION
 REGION := europe
 endif
 
+# default abbreviation is the whole Region
+KURZ:=$(REGION)
+
 BUNDESLAENDER :=baden-wuerttemberg bayern berlin brandenburg bremen hamburg hessen mecklenburg-vorpommern niedersachsen nordrhein-westfalen rheinland-pfalz saarland sachsen-anhalt sachsen schleswig-holstein thueringen
 COUNTRIES :=germany austria switzerland france italy united_kingdom albania andorra azores belarus belgium bosnia-herzegovina bulgaria croatia cyprus czech_republic denmark estonia finland greece hungary iceland isle_of_man kosovo latvia liechtenstein lithuania luxembourg macedonia malta moldova monaco montenegro netherlands norway poland portugal romania serbia slovakia slovenia spain sweden turkey ukraine
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
@@ -123,7 +126,7 @@ ifndef TILE_PREFIX
 TILE_PREFIX := 6621
 endif
 ifndef TILE_START
-TILE_START := 000
+TILE_START := 001
 endif
 
 #if we use existing tiles from europe we get the right one from the postgis database
@@ -307,7 +310,7 @@ do_stuff = \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
 	mv $(1).TYP `echo $(1)|sed 's/^\(.\{3\}\).*/\1/'`$(4)$(5).TYP ; \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) *.TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --overview-mapnumber=$(4)$(5)000 --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) *.TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
 	if [ "$(1)" = "velomap" -o "$(1)" = "basemap" ];then $(GMAPTOOL) -wn $(REGIONPATH)/g$(1)/*.img;fi ; \
 	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; \
 	$(call pack_results,$(1)) ;
