@@ -248,12 +248,12 @@ COMPRESS_SUFFIX:=7z
 endif
 
 # this is used for all compressions now:
-COMPR:=7z a -tzip -mmt=$(USE_CORES) -mx=1
+COMPR:=7z a -l -tzip -mmt=$(USE_CORES) -mx=1
 COMPRESS_SUFFIX:=zip
 
 
-copy_and_symlink = \
-	cp -f $(REGIONPATH)/release/$(2).$(DATE).$(3) $(WEBREGIONDIR)/$(DATE)/ && \
+move_and_symlink = \
+	mv $(REGIONPATH)/release/$(2).$(DATE).$(3) $(WEBREGIONDIR)/$(DATE)/ && \
 	ln -sf ../$(DATE)/$(2).$(DATE).$(3) $(WEBREGIONDIR)/$(1)/$(2).$(3) && \
 	md5sum -b $(WEBREGIONDIR)/$(1)/$(2).$(3) > $(WEBREGIONDIR)/$(1)/$(2).$(3).md5 ; \
 	if [ "$(3)" = "img.$(COMPRESS_SUFFIX)" ]; then ln -sf ../../regions/$(REGION)/$(DATE)/$(2).$(DATE).$(3) $(WEBDIR)/$(1)/gps_ready/$(2).$(3) ; else ln -sf ../../regions/$(REGION)/$(DATE)/$(2).$(DATE).$(3) $(WEBDIR)/$(1)/mapsource/$(2).$(3) ; fi
@@ -261,17 +261,18 @@ copy_and_symlink = \
 # obsolete if you can include the whole directory in one archive without tar
 tar_img_dir = \
 	tar -I $(COMPRESSOR) -cf $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).tar.$(COMPRESS_SUFFIX) -C $(REGIONPATH)/release $(1)_$(REGION) && \
-	$(call copy_and_symlink,$(1),$(1)_$(REGION),tar.$(COMPRESS_SUFFIX))
+	$(call move_and_symlink,$(1),$(1)_$(REGION),tar.$(COMPRESS_SUFFIX))
 
 zip_img_dir = \
+	ln -s $(REGIONPATH)/g$(1) $(REGIONPATH)/release/$(1)_$(REGION) && \
 	cd $(REGIONPATH)/release/ && \
 	$(COMPR) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).zip $(1)_$(REGION) && \
-	$(call copy_and_symlink,$(1),$(1)_$(REGION),$(COMPRESS_SUFFIX))
+	$(call move_and_symlink,$(1),$(1)_$(REGION),$(COMPRESS_SUFFIX))
 
 compress_gmapsupp = \
 	cd $(REGIONPATH)/gmapsupps/g$(1) && \
 	($(COMPR) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img && \
-	$(call copy_and_symlink,$(1),$(1)_$(REGION),img.$(COMPRESS_SUFFIX)) ) $(SHELL_EXECUTOR)
+	$(call move_and_symlink,$(1),$(1)_$(REGION),img.$(COMPRESS_SUFFIX)) ) $(SHELL_EXECUTOR)
 
 
 
@@ -295,10 +296,7 @@ pack_results = \
 	{ mkdir -p $(WEBREGIONDIR)/$(DATE) && \
 	$(call build_exe,$(1)) ; \
 	mv $(REGIONPATH)/g$(1)/gmapsupp.img $(REGIONPATH)/gmapsupps/g$(1)/gmapsupp.img && \
-	(  ( \
-		mkdir -p $(REGIONPATH)/release/$(1)_$(REGION) ; rm $(REGIONPATH)/release/$(1)_$(REGION)/* ; cp -a $(REGIONPATH)/g$(1)/* $(REGIONPATH)/release/$(1)_$(REGION) && \
-		$(call zip_img_dir,$(1)) \
-	   ) $(SHELL_EXECUTOR) \
+	(  ( $(call zip_img_dir,$(1)) ) $(SHELL_EXECUTOR) \
 	   ($(call compress_gmapsupp,$(1)) ) $(SHELL_EXECUTOR) \
 	) ; }
 
@@ -463,7 +461,7 @@ endif
 endif
 	mkdir -p $(WEBREGIONDIR)/gmapsupp && \
 	cd $(REGIONPATH)/gmapsupps/gmapsupp ; $(COMPR) $(REGIONPATH)/release/gmapsupp_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img && \
-	$(call copy_and_symlink,gmapsupp,gmapsupp_$(REGION),img.$(COMPRESS_SUFFIX))
+	$(call move_and_symlink,gmapsupp,gmapsupp_$(REGION),img.$(COMPRESS_SUFFIX))
 #ifeq ($(REGION),germany)
 #	ncftpput -b -f ~/.ncftp/juergen gmapsupps/germany $(WEBREGIONDIR)/*.$(COMPRESS_SUFFIX)
 #endif
