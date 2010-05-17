@@ -178,9 +178,9 @@ LOGPATH := ${AIOPATH}/logfiles/${REGION}/$(DATE)
 ifeq ($(IS_PART_OF),false)
 DEPENDENCY_VELOMAP := $(TILEPATH)/template.args
 DEPENDENCY_BASEMAP := $(TILEPATH)/template.args
-DEPENDENCY_ADDR := $(TILEPATH)/template.args
+DEPENDENCY_ADDR := $(REGIONPATH)/raw_data/addrsplit/template.args
 DEPENDENCY_FIXME := $(TILEPATH)/template.args
-DEPENDENCY_MAXSPEED := $(TILEPATH)/template.args
+DEPENDENCY_MAXSPEED := $(REGIONPATH)/raw_data/maxspeedsplit/template.args
 DEPENDENCY_BOUNDARY := $(REGIONPATH)/raw_data/boundssplit/template.args
 DEPENDENCY_KEEPRIGHT := $(REGIONPATH)/raw_data/keeprightsplit/template.args
 DEPENDENCY_DAMAGE := $(TILEPATH)/template.args
@@ -223,10 +223,14 @@ ifeq ($(USE_OLD_AREAS_LIST),true)
 SPLITTER_OPTIONS := --split-file=$(AREAS_LIST_FILE) --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
 SPLITTER_OPTIONS_BOUNDARY := --split-file=$(REGIONPATH)/raw_data/boundssplit/areas.list --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
 SPLITTER_OPTIONS_KEEPRIGHT := --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
+SPLITTER_OPTIONS_MAXSPEED := --split-file=$(REGIONPATH)/raw_data/maxspeedsplit/areas.list --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
+SPLITTER_OPTIONS_ADDR := --split-file=$(REGIONPATH)/raw_data/addrsplit/areas.list --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
 else
 SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
 SPLITTER_OPTIONS_BOUNDARY := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
 SPLITTER_OPTIONS_KEEPRIGHT := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=200000 --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
+SPLITTER_OPTIONS_MAXSPEED := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
+SPLITTER_OPTIONS_ADDR := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
 endif
 
 # You can specify different Compressors for the result
@@ -264,7 +268,7 @@ tar_img_dir = \
 	$(call move_and_symlink,$(1),$(1)_$(REGION),tar.$(COMPRESS_SUFFIX))
 
 zip_img_dir = \
-	ln -s $(REGIONPATH)/g$(1) $(REGIONPATH)/release/$(1)_$(REGION) && \
+	ln -sfT $(REGIONPATH)/g$(1) $(REGIONPATH)/release/$(1)_$(REGION) && \
 	cd $(REGIONPATH)/release/ && \
 	$(COMPR) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).zip $(1)_$(REGION) && \
 	$(call move_and_symlink,$(1),$(1)_$(REGION),$(COMPRESS_SUFFIX))
@@ -373,7 +377,7 @@ all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaps
 
 define make_dirs
 	mkdir -p $(1)/{$(LAYER)}
-	mkdir -p $(1)/raw_data/{boundssplit,keeprightsplit,contourlines}
+	mkdir -p $(1)/raw_data/{boundssplit,keeprightsplit,maxspeedsplit,addrsplit,fixme,osb,contourlines}
 	mkdir -p $(1)/raw_data/splittercache/{basemap,bounds,keepright,addr,maxspeed,fixme,osb}
 	mkdir -p $(1)/gmapsupps/{$(LAYER),gmapsupp}
 	mkdir -p $(1)/tiles
@@ -476,13 +480,13 @@ $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img : $(DEPENDENCY_BASEMAP)
 	$(call make_layer,basemap,$(GBASEMAPOPTIONS),OSM_AiO_basemap_$(REGION),$(BASEMAP_FID),$(BASEMAP_PID),10,$(TILEPATH)/template.args,_,--index --route)
 
 $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img : $(DEPENDENCY_ADDR)
-	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,OSM_AiO_addr_$(REGION),$(ADDR_FID),$(ADDR_PID),20,$(TILEPATH)/template.args,_)
+	$(call make_layer,addr,$(NOBASEMAPOPTIONS) --add-pois-to-areas,OSM_AiO_addr_$(REGION),$(ADDR_FID),$(ADDR_PID),20,$(REGIONPATH)/raw_data/addrsplit/template.args,_addr_)
 
 $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img : $(DEPENDENCY_FIXME)
 	$(call make_layer,fixme,$(NOBASEMAPOPTIONS),OSM_AiO_fixme_$(REGION),$(FIXME_FID),$(FIXME_PID),22,$(TILEPATH)/template.args,_)
 
 $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(DEPENDENCY_MAXSPEED)
-	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),OSM_AiO_maxspeed_$(REGION),$(MAXSPEED_FID),$(MAXSPEED_PID),19,$(TILEPATH)/template.args,_)
+	$(call make_layer,maxspeed,$(NOBASEMAPOPTIONS),OSM_AiO_maxspeed_$(REGION),$(MAXSPEED_FID),$(MAXSPEED_PID),19,$(REGIONPATH)/raw_data/maxspeedsplit/template.args,_maxspeed_)
 
 $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(DEPENDENCY_BOUNDARY)
 	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),OSM_AiO_boundary_$(REGION),$(BOUNDARY_FID),$(BOUNDARY_PID),21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
@@ -523,11 +527,26 @@ $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
 	cd $(REGIONPATH)/raw_data/boundssplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_BOUNDARY) $(REGIONPATH)/raw_data/bounds.osm.gz 2> $(LOGPATH)/splitter_boundary.log
 	$(call process_splitter_files,$(REGIONPATH)/raw_data/boundssplit,_boundary_)
 
+$(REGIONPATH)/raw_data/maxspeedsplit/template.args : $(TILEPATH)/template.args
+	cd $(REGIONPATH)/raw_data/maxspeedsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_MAXSPEED) $(REGIONPATH)/raw_data/maxspeed.osm.gz 2> $(LOGPATH)/splitter_maxspeed.log
+	$(call process_splitter_files,$(REGIONPATH)/raw_data/maxspeedsplit,_maxspeed_)
+
+$(REGIONPATH)/raw_data/addrsplit/template.args : $(TILEPATH)/template.args
+	cd $(REGIONPATH)/raw_data/addrsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_ADDR) $(REGIONPATH)/raw_data/addr.osm.gz 2> $(LOGPATH)/splitter_addr.log
+	$(call process_splitter_files,$(REGIONPATH)/raw_data/addrsplit,_addr_)
+
+# Lets split the file and filter some stuff with osmosis to split it later.
 $(TILEPATH)/template.args : $(DATAPATH)
 	echo "$(REGION) Auspacken Start:" >> $(PRINTFILE);date >> $(PRINTFILE)
 	mkdir -p $(LOGPATH)
 	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
-	>($(OSMOSIS) --rx - --way-key-value keyValueList="boundary.administrative,boundary.national,boundary.political" --used-node --write-xml $(REGIONPATH)/raw_data/bounds.osm.gz) \
+	>($(OSMOSIS) --rx - --t \
+	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
+	--wk keyList="boundary" --un --wx $(REGIONPATH)/raw_data/bounds.osm.gz \
+	--wk keyList="maxspeed" --un --wx $(REGIONPATH)/raw_data/maxspeed.osm.gz \
+	--wk keyList="addr:housenumber,addr:interpolation" --un --s --wx $(REGIONPATH)/raw_data/addr_lines.osm.gz \
+	--nk keyList="addr:housenumber" --s --wx $(REGIONPATH)/raw_data/addr_points.osm.gz ) \
 	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	$(OSMOSIS) --rx $(REGIONPATH)/raw_data/addr_lines.osm.gz --rx $(REGIONPATH)/raw_data/addr_points.osm.gz --m --wx $(REGIONPATH)/raw_data/addr.osm.gz
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
 	$(call process_splitter_files,$(TILEPATH),_)
