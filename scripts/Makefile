@@ -150,8 +150,7 @@ TOP := $(word 3, $(CHOORDS) )
 RIGHT := $(word 4, $(CHOORDS) )
 BBOX := bottom=$(BOTTOM) left=$(LEFT) top=$(TOP) right=$(RIGHT)
 
-#OSMOSIS := $(AIOPATH)/osmosis-0.31/bin/osmosis
-OSMOSIS := osmosis
+OSMOSIS := $(AIOPATH)/osmosis-0.35.1/bin/osmosis
 REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
