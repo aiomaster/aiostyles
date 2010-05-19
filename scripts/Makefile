@@ -446,7 +446,7 @@ postgis_tiles_table:
 
 # Generate the gmapsupp by combining all layer-gmapsupp.img-files.
 
-$(REGIONPATH)/gmapsupps/gmapsupp/gmapsupp.img : $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img
+$(REGIONPATH)/gmapsupps/gmapsupp/gmapsupp.img : $(REGIONPATH)/gmapsupps/gaddr/gmapsupp.img $(REGIONPATH)/gmapsupps/gfixme/gmapsupp.img $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img $(REGIONPATH)/gmapsupps/gbasemap/gmapsupp.img | $(REGIONPATH)/gmapsupps/gosb/gmapsupp.img $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img
 # This is an OR Statemant in Makefilesyntax:
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER) $(COUNTRIES) europe))
 # include contourlines of germany if REGION is germany or europe
