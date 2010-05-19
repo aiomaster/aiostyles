@@ -540,13 +540,22 @@ $(TILEPATH)/template.args : $(DATAPATH)
 	echo "$(REGION) Auspacken Start:" >> $(PRINTFILE);date >> $(PRINTFILE)
 	mkdir -p $(LOGPATH)
 	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
-	>($(OSMOSIS) --rx - --t outPipe.1=points \
+	>($(OSMOSIS) --rx - --t \
 	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
 	--wk keyList="boundary" --un --wx $(REGIONPATH)/raw_data/bounds.osm.gz \
 	--wk keyList="maxspeed" --un --wx $(REGIONPATH)/raw_data/maxspeed.osm.gz \
-	--wk keyList="addr:housenumber,addr:interpolation" --un --s --b 2147483647 \
-	--nk inPipe.0=points keyList="addr:housenumber" --s --b 2147483647 \
-	--m --wx $(REGIONPATH)/raw_data/addr.osm.gz ) \
-	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	--wk keyList="addr:housenumber,addr:interpolation" --un --s --wx $(REGIONPATH)/raw_data/addr_lines.osm.gz \
+	--nk keyList="addr:housenumber" --s --wx $(REGIONPATH)/raw_data/addr_points.osm.gz \
+	) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	$(OSMOSIS) --rx $(REGIONPATH)/raw_data/addr_lines.osm.gz --rx $(REGIONPATH)/raw_data/addr_points.osm.gz --m --wx $(REGIONPATH)/raw_data/addr.osm.gz
+#	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
+#	>($(OSMOSIS) --rx - --t outPipe.1=points \
+#	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
+#	--wk keyList="boundary" --un --wx $(REGIONPATH)/raw_data/bounds.osm.gz \
+#	--wk keyList="maxspeed" --un --wx $(REGIONPATH)/raw_data/maxspeed.osm.gz \
+#	--wk keyList="addr:housenumber,addr:interpolation" --un --s --b 2147483647 \
+#	--nk inPipe.0=points keyList="addr:housenumber" --s --b 2147483647 \
+#	--m --wx $(REGIONPATH)/raw_data/addr.osm.gz ) \
+#	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	echo "USE_OLD_AREAS_LIST=$(USE_OLD_AREAS_LIST)" >> $(LOGPATH)/time_splitter
 	$(call process_splitter_files,$(TILEPATH),_)
