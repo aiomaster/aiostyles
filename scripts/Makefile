@@ -86,12 +86,10 @@ endif
 
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
 DATAPATH := /osm/geofabrik-extrakte/europe/germany/$(REGION).osm.bz2
-KURZ := DE
 endif
 
 ifeq ($(REGION),$(filter $(REGION),$(COUNTRIES)))
 DATAPATH := /osm/geofabrik-extrakte/europe/$(REGION).osm.bz2
-KURZ := EU
 endif
 
 ifeq ($(REGION),germany)
@@ -119,8 +117,7 @@ DATAPATH := /osm/geofabrik-extrakte/europe.osm.bz2
 KURZ := EU
 endif
 
-# Use the first 4 numbers of the mapid as Prefix and the 5th to distinguish between the layers. The last 3 numbers are to number the tiles.
-# 6324 0 023 is the first Tile of the basemap.
+# Use the first 4 numbers of the mapid as template for the Family-Id and the 5th as template for the Product-Id of the map. The last 3 numbers are to number the tiles.
 
 ifndef TILE_PREFIX
 TILE_PREFIX := 6621
@@ -320,7 +317,7 @@ do_stuff = \
 
 
 # if we reuse made tiles from bigger areas we have to copy them into our directory and make a new template.args containing only the needed (and copied) tiles
-# Rename the imgs to match the family-id schema
+# Rename the imgs to match the family-id schema and change the mapid with gmaptool to prevent mapsource from crashing
 copy_tiles = \
 	cp -a $(PART_META_PATH)/$(1)/*{$(call REGION_TILE_INDEX,$(2))}.img $(REGIONPATH)/$(1)/ ; \
 	cd $(REGIONPATH)/$(1)/ ; \
@@ -451,7 +448,7 @@ $(REGIONPATH)/gmapsupps/gmapsupp/gmapsupp.img : $(REGIONPATH)/gmapsupps/gaddr/gm
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER) $(COUNTRIES) europe))
 # include contourlines of germany if REGION is germany or europe
 ifeq ($(REGION),$(filter $(REGION),germany europe))
-	cd $(REGIONPATH)/gmapsupps/gmapsupp ; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed}/gmapsupp.img $(PATH_TO_REGIONS)/germany/gmapsupps/ghoehe/gmapsupp.img
+	cd $(REGIONPATH)/gmapsupps/gmapsupp ; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed,keepright}/gmapsupp.img $(PATH_TO_REGIONS)/germany/gmapsupps/ghoehe/gmapsupp.img
 else
 	cd $(REGIONPATH)/gmapsupps/gmapsupp ; $(MKGMAP) --gmapsupp $(REGIONPATH)/gmapsupps/g{basemap,addr,fixme,osb,boundary,maxspeed,keepright}/gmapsupp.img
 endif
@@ -539,6 +536,9 @@ $(REGIONPATH)/raw_data/addrsplit/template.args : $(TILEPATH)/template.args
 $(TILEPATH)/template.args : $(DATAPATH)
 	echo "$(REGION) Auspacken Start:" >> $(PRINTFILE);date >> $(PRINTFILE)
 	mkdir -p $(LOGPATH)
+# now let the magic begin, clean the TILEPATH and bzcat the .osm.bz2 file to a pipe with 2 Readers (produced by tee)
+# The first reader is osmosis that filters boundary,maxspeed and addresses to separat files.
+# The second one is the splitter that splits the full .osm file directly for use with basemap and velomap.
 	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
 	>($(OSMOSIS) --rx - --t \
 	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
@@ -548,6 +548,7 @@ $(TILEPATH)/template.args : $(DATAPATH)
 	--nk keyList="addr:housenumber" --s --wx $(REGIONPATH)/raw_data/addr_points.osm.gz \
 	) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	$(OSMOSIS) --rx $(REGIONPATH)/raw_data/addr_lines.osm.gz --rx $(REGIONPATH)/raw_data/addr_points.osm.gz --m --wx $(REGIONPATH)/raw_data/addr.osm.gz
+# The following method omit writing temporary files like addr_lines.osm.gz and addr_points.osm.gz to disk by using big caches. The size of the cache is the maximum number of objects and fits exacly into an integer value. The problem is, that it leads to heap space errors... :(
 #	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
 #	>($(OSMOSIS) --rx - --t outPipe.1=points \
 #	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
