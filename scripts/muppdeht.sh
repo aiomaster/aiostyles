@@ -52,7 +52,7 @@ EUROPEPARAMS=$1
   if [ $DOW -ne 1 ]; then
   	EUROPEPARAMS="$EUROPEPARAMS  USE_OLD_AREAS_LIST=true"
   fi
-  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile make PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfile.log
+  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile make -j2 PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfile.log
   EU_RET=$?
 
 # if europe has succeded we can extract the countries
