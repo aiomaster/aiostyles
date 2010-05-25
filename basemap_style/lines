@@ -40,7 +40,7 @@ highway=*
 highway=footway|highway=cycleway|highway=track|highway=path|highway=bridleway|highway=byway|highway=pedestrian {name '${name} (${ref})' | '${ref}' | '${name}' }
 
 #constructions
-highway = construction | (highway=* & construction=* & construction!=minor) [0x08 resolution 22]
+highway = construction | (highway=* & construction=* & construction!=minor & construction!=no ) [0x08 resolution 22]
 
 (highway=path & sac_scale=*) | (highway=* & mtb:scale>1) {add bicycle = no}
 (highway=footway | highway=pedestrian ) & bicycle!=yes & bicycle!=designated {add bicycle = no}
