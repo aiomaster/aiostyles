@@ -185,11 +185,7 @@ access=no { set access=yes; set motorcar=yes; set motorcycle=yes; set bicycle=ye
 place=capitol | place=capital				   {set cityxx=yes} [0x0100 resolution 14 continue with_actions ]
 place=city & population > 999999 & cityxx!=yes {set cityxx=yes}	[0x0200 resolution 14 continue with_actions ]
 place=city & population > 599999 & cityxx!=yes {set cityxx=yes} [0x0300 resolution 15 continue with_actions ]
-<<<<<<< HEAD
-place=city & population > 399999 & cityxx!=yes {set cityxx=yes} [0x0400 resolution 16 continue with_actions ]
-=======
 place=city & population > 399999 & cityxx!=yes {set cityxx=yes} [0x0400 resolution 17 continue with_actions ]
->>>>>>> a6f08d6f3d8c08e4f863e87bd9b5d427075032a3
 place=city & population > 199999 & cityxx!=yes {set cityxx=yes} [0x0500 resolution 17 continue with_actions ]
 place=city & population >  99999 & cityxx!=yes {set cityxx=yes} [0x0600 resolution 18 continue with_actions ]
 place=city & population >  49999 & cityxx!=yes {set cityxx=yes} [0x0700 resolution 18 continue with_actions ]
@@ -506,7 +502,7 @@ amenity=university 					[0x6410 resolution 24 continue]
 amenity=townhall 					[0x3003 resolution 24 continue]
 # also 0x2c29 and 0x2c9 is found as hall/auditorium.
 amenity=hospital | healthcare=hospital	[0x3002 resolution 24 continue]
-amenity=hospital | healthcare=hospital	[0x11802 resolution 22 continue]
+amenity=hospital | healthcare=hospital	[0x11802 resolution 23 continue]
 amenity=library 					[0x2c03 resolution 24 continue]
 amenity=courthouse 					[0x3004 resolution 24 continue]
 amenity=concert_hall 				[0x2c09 resolution 24 continue]
@@ -574,9 +570,9 @@ highway=bus_stop | amenity=bus_stop	| highway=busstop | amenity=busstop					{ na
 highway=gate | barrier=gate 		[0x4313 resolution 24]
 highway=bollard | barrier=bollard 	[0x1181e resolution 24]
 highway=residential & ( noexit=yes | deadend=yes | no_exit=yes ) [0x11700 resolution 24]
-noexit=yes 							[0x11700 resolution 22]
-no_exit=yes 						[0x11700 resolution 22]
-deadend=yes 						[0x11700 resolution 22]
+noexit=yes 							[0x11700 resolution 23]
+no_exit=yes 						[0x11700 resolution 23]
+deadend=yes 						[0x11700 resolution 23]
 
 mountainpass=yes | mountain_pass=yes | highway=mountainpass | highway=mountain_pass	[0x2f1b resolution 24 continue]
 mountainpass=yes | mountain_pass=yes | highway=mountainpass | highway=mountain_pass	[0x1191f resolution 20 continue]
@@ -604,17 +600,10 @@ entrance=yes | barrier=entrance		[0x4314 resolution 24 continue]
 #missing bump_gate, block, border_controll,kissing_gate, entrance, lift_gate, sally_port, hampshire_gate
 
 # Traffic
-<<<<<<< HEAD
-highway=traffic_signal | crossing=traffic_signal | highway=traffic_signals | crossing=traffic_signals | highway=traffic_lights | crossing=traffic_lights |	highway=traffic_light | crossing=traffic_light	| 	highway=traffic_light | crossing=traffic_light
-{ add mkgmap:road-speed = '-1'; add mkgmap:road-class = '-1'; }		[0x11819 resolution 24]
-# highway=crossing 																		[0x290d resolution 24]
-highway=stop 																			[0x1181a resolution 24]
-=======
 highway=traffic_signal | crossing=traffic_signal | highway=traffic_signals | crossing=traffic_signals | highway=traffic_lights | crossing=traffic_lights |	highway=traffic_light | crossing=traffic_light	| 	highway=traffic_light | crossing=traffic_light { add mkgmap:road-speed = '-1'; add mkgmap:road-class = '-1' }		[0x11819 resolution 24]
 
 # highway=crossing 																		[0x290d resolution 24]
 highway=stop {add mkgmap:road-speed	= '-1'}												[0x1181a resolution 24]
->>>>>>> a6f08d6f3d8c08e4f863e87bd9b5d427075032a3
 traffic_sign = city_limit 																[0x1181b resolution 24]
 # highway=speed_camera 		{name 'maxspeed ${maxspeed} km/h'} 							[0x5601 resolution 24]
 highway=motorway_junction & proposed!=* {name '${ref} ${name}' | '${ref}' | '${name}'}	[0x1181c resolution 24]
@@ -625,15 +614,9 @@ amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x2f0b re
 # amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x1180e resolution 22]
 
 amenity=parking 			{name 'carpark ${name}'  | 'carpark'  }						[0x2f0b resolution 24]
-<<<<<<< HEAD
-railway=crossing 								{ add mkgmap:road-speed = '-2'; add mkgmap:road-speed-min = '1' }		[0x11705 resolution 24]
-railway=level_crossing 							{ add mkgmap:road-speed = '-2'; add mkgmap:road-speed-min = '1' }		[0x11705 resolution 24]
-railway=mini_roundabout							{ add mkgmap:road-speed = '-2'; add mkgmap:road-speed-min = '1' }		[0x11705 resolution 24]
-=======
 railway=crossing 								{ add mkgmap:road-speed = '-1' }		[0x11705 resolution 24]
 railway=level_crossing 							{ add mkgmap:road-speed = '-1' }		[0x11705 resolution 24]
 railway=mini_roundabout							{ add mkgmap:road-speed = '-1' }		[0x11705 resolution 24]
->>>>>>> a6f08d6f3d8c08e4f863e87bd9b5d427075032a3
 
 
 

@@ -1,14 +1,14 @@
 About the velomap.org Maps - Please Read - Short Installation Help - See my Homepage for detailed instructions
 
-Please don't askme questions on how to install the maps. Everything is well explained on velomap.org in the Tutorials Section. Just as a reminder, you need admin rights to install, and switch off Windows Defender as well disable Windows UAC for the time of install on Windows Vista/7. Otherwise the maps will not install. On Vista and Windows 7 you have to rightclick install.bat and select "run as administrator" even when being logged in as adminstrator.
+Please don't askme questions on how to install the maps. Everything is well explained on velomap.org in the Tutorials Section. In principal you just need to run velomap*_setup.exe
+There are many internet forums dedicated to Garmin maps, those are your best bet when having problems with the installation.
 
 Also note that you can't simply click in mapsource to select maps if you have added contourlines, but you have to drag the map selection tool over the area you want to send to your GPS. If you can't see streets on your GPS but mainly background stuff, you have not followed this step.
 
-You can install the maps from any folder you wan't, but never move the folder with the installed maps inside without first running uninstall.bat. Therefore move the maps to the place you want to have them BEFORE installing.
-I take no responsibility whatsoever if your Mapsource installation does not start anymore (though for around 99.5% of users everything runs o.k., and the rest should read the tutorials one more time...
-If you are unsure, open up install_with*.bat with a text editor and look what it does!
+You can install the maps to any folder you wan't, but never move the folder with the installed maps inside without first uinstalling.
+I take no responsibility whatsoever if your Mapsource installation does not start anymore (though for around 99.9% of users everything runs o.k., and the rest should read the tutorials one more time...
 
-There is currently only 1 TYP-File (bike*.typ). Openmtmap TYP-Files are incompatible.
+There is currently only 1 TYP-File (velo*.typ). Openmtmap TYP-Files are incompatible.
 
 
 You can also look at the maps with Qlandkarte GT from www.qlandkarte.org. Qlandkarte does not need to have maps installed, but can open them.
