@@ -153,10 +153,10 @@ DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
 WEBREGIONDIR := $(WEBDIR)/regions/$(REGION)
 GMAPTOOL := /usr/local/bin/gmt
-JAVA_OPT := -Xmx8000M -ea -XX:MaxPermSize=256M -Dlog.config=$(AIOPATH)/logging.properties
+JAVA_OPT := -Xmx8000M -ea -XX:MaxPermSize=256M
 STYLEPATH := $(AIOPATH)/styles
 TILEPATH := $(REGIONPATH)/tiles
-MKGMAP := java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar
+MKGMAP := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties-jar $(AIOPATH)/mkgmap.jar
 MKGMAP_basemap := $(MKGMAP)
 MKGMAP_addr := $(MKGMAP)
 MKGMAP_fixme := $(MKGMAP)
@@ -166,7 +166,7 @@ MKGMAP_boundary := $(MKGMAP)
 MKGMAP_keepright := $(MKGMAP)
 MKGMAP_damage := $(MKGMAP)
 MKGMAP_contourlines := $(MKGMAP)
-MKGMAP_velomap := java $(JAVA_OPT) -jar $(AIOPATH)/styles/mkgmap_velo.jar
+MKGMAP_velomap := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties -jar $(AIOPATH)/styles/mkgmap_velo.jar
 SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar
 LOGPATH := ${AIOPATH}/logfiles/${REGION}/$(DATE)
 
@@ -308,8 +308,8 @@ do_stuff = \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
 	mv $(1).TYP `echo $(1)|sed 's/^\(.\{3\}\).*/\1/'`$(4)$(5).TYP ; \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --overview-mapnumber=$(4)$(5)000 --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) *.TYP 2> $(LOGPATH)/mkgmap_$(1).log && \
-	mv $(REGIONPATH)/g$(1)/mkgmap.log* $(LOGPATH)/mkgmap_$(1)_error.log ; \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --overview-mapnumber=$(4)$(5)000 --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) *.TYP && \
+	mv $(REGIONPATH)/g$(1)/mkgmap.log $(LOGPATH)/mkgmap_$(1).log ; \
 	if [ "$(1)" = "velomap" -o "$(1)" = "basemap" ];then $(GMAPTOOL) -wn $(REGIONPATH)/g$(1)/*.img;fi ; \
 	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; \
 	$(call pack_results,$(1)) ;

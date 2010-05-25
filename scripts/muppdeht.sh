@@ -48,23 +48,29 @@ else
 
 EUROPEPARAMS=$1
 
+DATE=`date +%Y%m%d`
+
 # Jeden Montag rechne komplett neu. Sonst benutze die alten Splittergrenzen.
   if [ $DOW -ne 1 ]; then
   	EUROPEPARAMS="$EUROPEPARAMS  USE_OLD_AREAS_LIST=true"
   fi
-  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile make -j2 PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfile.log
+  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile_europe_$DATE make PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfiles/logfile.log
   EU_RET=$?
+
+# Make the logfile of the european basemap run of mkgmap public
+
+  cat ${AIOPATH}/logfiles/europe/$DATE/mkgmap_basemap.log|sed 's|/osm/garmin/aio/regions/europe/tiles/||g' > /osm/wwwroot/aio/mkgmap_europe_basemap.log
 
 # if europe has succeded we can extract the countries
   if [ ${EU_RET} -eq 0 ]; then
 
 # lets do it parallel with the parallel processing shell script
   rm -r $AIOPATH/ppss_dir
-  echo "germany $BUNDESLAENDER $COUNTRIES" | tr ' ' '\n' | ${AIOPATH}/ppss -f - -p 2 -c "ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/\$ITEM/time_makefile make PRINTFILE=${PRINT} REGION=\$ITEM >> ${AIOPATH}/logfile.log"
+  echo "germany $BUNDESLAENDER $COUNTRIES" | tr ' ' '\n' | /usr/bin/time -o ${AIOPATH}/logfiles/time_makefile_countries_$DATE ${AIOPATH}/ppss -f - -p 2 -c "ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/\$ITEM/time_makefile_\$ITEM_$DATE make PRINTFILE=${PRINT} REGION=\$ITEM >> ${AIOPATH}/logfiles/logfile.log"
 
   fi
 
-  echo "------------------`date`---------------------" >> ${AIOPATH}/logfile.log
+  echo "------------------`date`---------------------" >> ${AIOPATH}/logfiles/logfile.log
   cat ${PRINT}
 
   rm $LOCKFILE
