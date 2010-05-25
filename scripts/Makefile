@@ -156,7 +156,7 @@ GMAPTOOL := /usr/local/bin/gmt
 JAVA_OPT := -Xmx8000M -ea -XX:MaxPermSize=256M
 STYLEPATH := $(AIOPATH)/styles
 TILEPATH := $(REGIONPATH)/tiles
-MKGMAP := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties-jar $(AIOPATH)/mkgmap.jar
+MKGMAP := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties -jar $(AIOPATH)/mkgmap.jar
 MKGMAP_basemap := $(MKGMAP)
 MKGMAP_addr := $(MKGMAP)
 MKGMAP_fixme := $(MKGMAP)
