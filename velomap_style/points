@@ -152,6 +152,12 @@
 # Delete List
 ( highway=proposed | proposed=* ) & highway=* {set highway=grsz}
 
+# Correct wrong tags
+amenity=drinking-water { set amenity=drinking_water }
+amenity=Bar { set amenity=bar }
+leisure=Freibad { set leisure=water_park }
+leisure=Schwimmbad{ set leisure=water_park }
+
 # Naming
 elevation=* { add ele='${elevation}' }
 ( natural=peak | natural=summit | natural=mountain ) & ele=* { set name='${name}, ${ele}' | '${ele}' }
@@ -164,6 +170,14 @@ elevation=* { add ele='${elevation}' }
 { set ref='${ref|def:}(${route_ref})';  name '${name|def:} ${ref|def:}-${operator|def:}'; }
 (highway=bus_stop | railway=tram_stop | railway=halt | railway=station) & (name=*|ref=*|operator=*)
 { set ref='${ref|def:}(${route_ref})';  name '${name|def:} ${ref|def:} ${operator|def:}'; }
+
+addr:housename=* & name!=* {name '${addr:housename}'}
+addr:housenumber=* {set name= '${name} (${addr:housenumber})' | '${addr:housenumber}' }
+
+opening_hours=* {set addr:city = '${addr:city} open ${opening_hours}' | 'open ${opening_hours}'}
+note=* {set addr:city = '${addr:city}  (${note})' | '${note}'}
+# addr:city=* {add addr:housenumber=""; add addr:street=""}
+
 
 # Remove access rights for motorcars/motorcycles:
 motorcar=no | motorcar=private {delete motorcar}
@@ -356,7 +370,7 @@ shop=doityourself 						{set shopmatch=no} [0x2e0f resolution 24 continue with_a
 shop=supermarket | amenity=supermarket 	{set shopmatch=no} [0x2e03 resolution 24 continue with_actions]
 shop=bakery | shop=bakers | shop=baker 	{set shopmatch=no} [0x2e02 resolution 24 continue with_actions]
 shop=organic 							{set shopmatch=no} [0x2e0a resolution 24 continue with_actions]
-shop=butchers | shop=butcher 			{set shopmatch=no} [0x2e11 resolution 24 continue with_actions]
+shop=butchers | shop=butcher | shop=seafood	{set shopmatch=no} [0x2e11 resolution 24 continue with_actions]
 shop=optician 							{set shopmatch=no} [0x2e12 resolution 24 continue with_actions]
 shop=toys 								{set shopmatch=no} [0x2e13 resolution 24 continue with_actions]
 shop=video 								{set shopmatch=no} [0x2e14 resolution 24 continue with_actions]
@@ -687,11 +701,11 @@ military=bunker [0x5801 resolution 24]
 # Natural and Points for Orientation
 natural=beach 				[0x2c1e resolution 24 continue]
 natural=beach 				[0x11916 resolution 22 continue]
-natural=cliff 				[0x2c13 resolution 24 continue]
+# natural=cliff 				[0x2c13 resolution 24 continue]
 natural=rock | natural=rocks [0x2c12 resolution 24 continue]
 natural=geyser 				[0x2c1f resolution 24 continue]
 natural=geysir 				[0x2c1f resolution 24 continue]
-natural=glacier 			[0x2c19 resolution 24 continue]
+# natural=glacier 			[0x2c19 resolution 24 continue]
 natural=cave_entrance 		[0x6619 resolution 22 continue]
 natural=cave 				[0x6619 resolution 22 continue]
 natural=stream				[0x6512 resolution 24 continue]

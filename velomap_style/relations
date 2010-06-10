@@ -28,6 +28,7 @@ route=bicycle & ( route=tcn | network=tcn | tcn=yes )		{ apply {  add extremecar
 route=bicycle & ( route=lcn | network=lcn | lcn=yes )		{ apply {  add extremecarver5=bike; set extremecarver6=lcn; add extremecarver3=lcn; add extremecarver4=route; add cyclelayer=lcn; add route_name_bike3 = '${name}'; add ref = '${ref}' } }
 route=bicycle & network!=icn & network!=ncn & network!=tcn & network!=rcn & network!=lcn & ncn!=yes & icn!=yes & rcn!=yes & lcn!=yes & tcn!=yes	{ apply {  add extremecarver5=bike; add extremecarver6=xcn; set extremecarver3=xcn; add extremecarver4=route; add cyclelayer=xcn; add route_name_bike3 = '${name}'; add ref = '${ref}' } }
 
+type=associatedStreet { apply { add addr:street='${name}' } }
 
 # (type=boundary | type=multipolygon) & boundary=administrative & admin_level=1 { apply { set mkgmap:boundary1_name='$(mkgmap:boundary1_name)/${name:en}' | '$(mkgmap:boundary1_name)/${name}' | '${name:en}' | '${name}' | ; set boundary=administrative; set admin_level_1=yes ; set admin_level_copy=yes }}
 (type=boundary | type=multipolygon) & boundary=administrative & admin_level=2 { apply { set mkgmap:boundary2_name='$(mkgmap:boundary2_name)/${name:en}' | '$(mkgmap:boundary2_name)/${name}' | '${name:en}' | '${name}' | ; set boundary=administrative; set admin_level_2=yes ; set admin_level_copy=yes }}

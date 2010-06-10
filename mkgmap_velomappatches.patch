@@ -1,0 +1,503 @@
+Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
+===================================================================
+--- uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(revision 1652)
++++ uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(working copy)
+@@ -43,7 +43,7 @@
+ 
+ 	// A map has a display priority that determines which map is on top
+ 	// when two maps cover the same area.
+-	private static final int DEFAULT_DISPLAY_PRIORITY = 0x19;
++	private static final int DEFAULT_DISPLAY_PRIORITY = 0x1F;
+ 
+ 	static final int MAP_LEVEL_REC_SIZE = 4;
+ 	private static final char POLYLINE_REC_LEN = 2;
+@@ -55,6 +55,7 @@
+ 	static final int SUBDIV_REC_SIZE = 14;
+ 	static final int SUBDIV_REC_SIZE2 = 16;
+ 
++	private static final int POI_FLAG_DETAILED = 0x02;
+ 	private static final int POI_FLAG_TRANSPARENT = 0x2;
+ 
+ 	// Bounding box.  All units are in map units.
+@@ -172,7 +173,7 @@
+ 		writer.put(getPoiDisplayFlags());
+ 
+ 		writer.put3(displayPriority);
+-		writer.putInt(0x110301);
++		writer.putInt(0x170401);
+ 
+ 		writer.putChar((char) 1);
+ 		writer.put((byte) 0);
+@@ -229,10 +230,13 @@
+ 	public void config(EnhancedProperties props) {
+ 		String key = "draw-priority";
+ 		if (props.containsKey(key))
+-			setDisplayPriority(props.getProperty(key, 0x19));
++			setDisplayPriority(props.getProperty(key, 0x1f));
+ 
+ 		if (props.containsKey("transparent"))
+ 			poiDisplayFlags |= POI_FLAG_TRANSPARENT;
++
++		if (props.containsKey("detailed-map"))
++			poiDisplayFlags |= POI_FLAG_DETAILED;
+ 	}
+ 	
+ 	/**
+Index: uk/me/parabola/mkgmap/build/MapBuilder.java
+===================================================================
+--- uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1652)
++++ uk/me/parabola/mkgmap/build/MapBuilder.java	(working copy)
+@@ -92,6 +92,9 @@
+ public class MapBuilder implements Configurable {
+ 	private static final Logger log = Logger.getLogger(MapBuilder.class);
+ 	private static final int CLEAR_TOP_BITS = (32 - 15);
++	
++	private static final int MIN_SIZE_LINE = 2;
++	private static final int MIN_SIZE_POLYGON = 15;
+ 
+ 	private final java.util.Map<MapPoint,POIRecord> poimap = new HashMap<MapPoint,POIRecord>();
+ 	private final java.util.Map<MapPoint,City> cityMap = new HashMap<MapPoint,City>();
+@@ -111,6 +114,7 @@
+ 	private String regionAbbr;
+ 
+ 	private double reducePointError;
++	private double reducePointErrorPolygon;
+ 	private boolean mergeLines;
+ 
+ 	private int		locationAutofillLevel;
+@@ -132,6 +136,9 @@
+ 		regionName = props.getProperty("region-name", null);
+ 		regionAbbr = props.getProperty("region-abbr", null);
+ 		reducePointError = props.getProperty("reduce-point-density", 2.6);
++ 		reducePointErrorPolygon = props.getProperty("reduce-point-density-polygon", -1);
++		if (reducePointErrorPolygon == -1)
++			reducePointErrorPolygon = reducePointError;
+ 		mergeLines = props.containsKey("merge-lines");
+ 
+ 		makePOIIndex = props.getProperty("make-poi-index", false);
+@@ -334,7 +341,10 @@
+ 			if(p.isExit()) {
+ 				processExit(map, (MapExitPoint)p);
+ 			}
+-			else if(!p.isCity() && !p.hasExtendedType() && (p.isRoadNamePOI() || poiAddresses)) {
++			else if(!p.isCity() && !p.hasExtendedType() && (p.isRoadNamePOI() || poiAddresses)
++				&& ((p.getType() < 0x1c00) || (p.getType() >= 0x1d00))
++				&& (p.getType() < 0x4100)) {
++
+ 				boolean doAutofill;
+ 				if(locationAutofillLevel > 0 || p.isRoadNamePOI())
+ 					doAutofill = true;
+@@ -353,7 +363,7 @@
+ 					CountryStr = locator.fixCountryString(CountryStr);
+ 
+ 				boolean guessed = false;
+-				if(CountryStr == null || RegionStr == null || (ZipStr == null && CityStr == null))
++				if((CountryStr == null || RegionStr == null || (ZipStr == null && CityStr == null)) & p.getStreet() != null)
+ 				{
+ 						MapPoint nextCity = locator.findByCityName(p);
+ 						
+@@ -440,11 +450,6 @@
+ 					Label streetName = lbl.newLabel(p.getStreet());
+ 					r.setStreetName(streetName);			  
+ 				}
+-				else if (guessed && locationAutofillLevel > 0)
+-				{
+-					Label streetName = lbl.newLabel("FIX MY ADDRESS");
+-					r.setStreetName(streetName);		
+-				}
+ 
+ 				if(p.getHouseNumber() != null)
+ 				{
+@@ -697,9 +702,9 @@
+ 		//
+ 		// We use it to add copyright information that there is no room for
+ 		// elsewhere.
+-		map.addInfo("OSM Street map");
+-		map.addInfo("http://www.openstreetmap.org/");
+-		map.addInfo("Map data licenced under Creative Commons Attribution ShareAlike 2.0");
++		map.addInfo("Openmtbmap - http://openmtbmap.org/");
++		map.addInfo("Map data from http://openstreetmap.org/");
++		map.addInfo("Map and data licenced under Creative Commons Attribution ShareAlike 2.0");
+ 		map.addInfo("http://creativecommons.org/licenses/by-sa/2.0/");
+ 
+ 		// Pad the version number with spaces so that version
+@@ -713,7 +718,7 @@
+ 		// There has to be (at least) two copyright messages or else the map
+ 		// does not show up.  The second one will be displayed at startup,
+ 		// although the conditions where that happens are not known.
+-		map.addCopyright("program licenced under GPL v2");
++		map.addCopyright("openmtbmap.org");
+ 
+ 		// This one gets shown when you switch on, so put the actual
+ 		// map copyright here.
+@@ -887,7 +892,7 @@
+ 		if (enableLineCleanFilters && (res < 24)) {
+ 			filters.addFilter(new PreserveHorizontalAndVerticalLinesFilter());
+ 			filters.addFilter(new RoundCoordsFilter());
+-			filters.addFilter(new SizeFilter());
++			filters.addFilter(new SizeFilter(MIN_SIZE_LINE));
+ 			if(reducePointError > 0)
+ 				filters.addFilter(new DouglasPeuckerFilter(reducePointError));
+ 		}
+@@ -926,11 +931,11 @@
+ 		if (enableLineCleanFilters && (res < 24)) {
+ 			filters.addFilter(new PreserveHorizontalAndVerticalLinesFilter());
+ 			filters.addFilter(new RoundCoordsFilter());
+-			filters.addFilter(new SizeFilter());
++			filters.addFilter(new SizeFilter(MIN_SIZE_POLYGON));
+ 			//DouglasPeucker behaves at the moment not really optimal at low zooms, but acceptable.
+ 			//Is there an similar algorithm for polygons?
+-			if(reducePointError > 0)
+-				filters.addFilter(new DouglasPeuckerFilter(reducePointError));
++			if(reducePointErrorPolygon > 0)
++				filters.addFilter(new DouglasPeuckerFilter(reducePointErrorPolygon));
+ 		}
+ 		filters.addFilter(new PolygonSplitterFilter());
+ 		filters.addFilter(new RemoveEmpty());
+@@ -1074,4 +1079,4 @@
+ 			map.addMapObject(pg);
+ 		}
+ 	}
+-}
++}
+\ No newline at end of file
+Index: uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
+===================================================================
+--- uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1652)
++++ uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(working copy)
+@@ -76,7 +76,7 @@
+ 
+ 	public void init(CommandArgs args) {
+ 		areaName = args.get("area-name", null);
+-		mapsetName = args.get("mapset-name", "OSM map set");
++		mapsetName = args.get("mapset-name", "Openmtbmap mapset");
+ 		overallDescription = args.getDescription();
+ 	}
+ 
+Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
+===================================================================
+--- uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(revision 1652)
++++ uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(working copy)
+@@ -33,6 +33,7 @@
+ 	private String seriesName;
+ 	private String id;
+ 	private int productId;
++	private int familyIdd;
+ 
+ 	private boolean hasIndex;
+ 	private boolean hasTyp;
+@@ -44,7 +45,8 @@
+ 	public void init(CommandArgs args) {
+ 		int familyId = args.get("family-id", 0);
+ 		productId = args.get("product-id", 1);
+-
++		familyIdd = args.get("family-id", 1);
++		
+ 		baseFilename = args.get("overview-mapname", "osmmap");
+ 		seriesName = args.get("series-name", "OSM map");
+ 
+@@ -86,12 +88,12 @@
+ 			w = new FileWriter(nsisFilename);
+ 			PrintWriter pw = new PrintWriter(w);
+ 
+-			pw.format(Locale.ROOT, "!define DEFAULT_DIR \"C:\\Garmin\\Maps\\%s\"\n", seriesName);
++			pw.format(Locale.ROOT, "!define DEFAULT_DIR \"C:\\Garmin\\%s\"\n", seriesName);
+ 			pw.format(Locale.ROOT, "!define INSTALLER_DESCRIPTION \"%s\"\n", seriesName);
+-			pw.format(Locale.ROOT, "!define INSTALLER_NAME \"%s\"\n", seriesName);
++			pw.format(Locale.ROOT, "!define INSTALLER_NAME \"%s_setup\"\n", seriesName);
+ 			pw.format(Locale.ROOT, "!define MAPNAME \"%s\"\n", baseFilename);
+ 			pw.format(Locale.ROOT, "!define PRODUCT_ID \"%s\"\n", productId);
+-			pw.format(Locale.ROOT, "!define REG_KEY \"%s\"\n", seriesName);
++			pw.format(Locale.ROOT, "!define REG_KEY \"FAMILY_%s\"\n", familyIdd);
+ 			pw.println();
+ 
+ 			pw.format(Locale.ROOT, "SetCompressor /SOLID lzma\n");
+@@ -103,7 +105,7 @@
+ 
+ 			pw.format(Locale.ROOT, "; Installer pages\n");
+ 			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_WELCOME\n");
+-			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_LICENSE %s\n", licenseFilename);
++			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_LICENSE copyright.txt\n");
+ 			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_DIRECTORY\n");
+ 			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_INSTFILES\n");
+ 			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_FINISH\n");
+@@ -119,22 +121,27 @@
+ 			pw.format(Locale.ROOT, "Name \"${INSTALLER_DESCRIPTION}\"\n");
+ 			pw.format(Locale.ROOT, "OutFile \"${INSTALLER_NAME}.exe\"\n");
+ 			pw.format(Locale.ROOT, "InstallDir \"${DEFAULT_DIR}\"\n");
++			pw.format(Locale.ROOT, "InstallDirRegKey HKLM \"SOFTWARE\\Garmin\\MapSource\\Families\\${REG_KEY}\\${PRODUCT_ID}\" \"LOC\"\n");
+ 			pw.println();
+ 
+ 			// Install files
+ 			pw.format(Locale.ROOT, "Section \"MainSection\" SectionMain\n");
+ 			pw.format(Locale.ROOT, "  SetOutPath \"$INSTDIR\"\n");
+-			pw.format(Locale.ROOT, "  File \"${MAPNAME}.img\"\n");
++			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}.img\" $INSTDIR\n");
++			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\*.txt\" $INSTDIR\n");
++			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\*.bat\" $INSTDIR\n");
++			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\*.TYP\" $INSTDIR\n");
++			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\gmt.exe\" $INSTDIR\n");
+ 			if (hasIndex) {
+-				pw.format(Locale.ROOT, "  File \"${MAPNAME}_mdr.img\"\n");
+-				pw.format(Locale.ROOT, "  File \"${MAPNAME}.mdx\"\n");
++				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}_mdr.img\" $INSTDIR\n");
++				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}.mdx\" $INSTDIR\n");
+ 			}
+ 			if (hasTyp)
+-				pw.format(Locale.ROOT, "  File \"%s\"\n", typName);
++				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\%s\" $INSTDIR\n", typName);
+ 
+-			pw.format(Locale.ROOT, "  File \"${MAPNAME}.tdb\"\n");
++			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}.tdb\" $INSTDIR\n");
+ 			for (String file : mapList)
+-				pw.format(Locale.ROOT, "  File \"%s.img\"\n", file);
++				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\%s.img\" $INSTDIR\n", file);
+ 
+ 
+ 			// Registry values
+@@ -152,7 +159,8 @@
+ 			pw.format(Locale.ROOT, "  WriteRegStr " + HKLM_FAMILIES + "\\${PRODUCT_ID}\" \"TDB\" \"$INSTDIR\\${MAPNAME}.tdb\"\n");
+ 
+ 			pw.println();
+-			pw.format(Locale.ROOT, "  WriteUninstaller \"$INSTDIR\\Uninstall.exe\"\n");
++			// pw.format(Locale.ROOT, "  WriteUninstaller \"$INSTDIR\\Uninstall.exe\"\n");
++			pw.format(Locale.ROOT, "  WriteUninstaller \"$INSTDIR\\%s_Uninstall.exe\"\n", seriesName);
+ 			pw.println();
+ 			pw.format(Locale.ROOT, "SectionEnd\n");
+ 			pw.println();
+@@ -160,6 +168,11 @@
+ 			// Un-install files
+ 			pw.format(Locale.ROOT, "Section \"Uninstall\"\n");
+ 			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\${MAPNAME}.img\"\n");
++			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\*.txt\"\n");
++			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\*.bat\"\n");
++			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\*.TYP\"\n");
++			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\gmt.exe\"\n");
++			
+ 			if (hasIndex) {
+ 				pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\${MAPNAME}_mdr.img\"\n");
+ 				pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\${MAPNAME}.mdx\"\n");
+@@ -170,7 +183,8 @@
+ 			for (String file : mapList) {
+ 				pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\%s.img\"\n", file);
+ 			}
+-			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\Uninstall.exe\"\n");
++			// pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\Uninstall.exe\"\n");
++			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\%s_Uninstall.exe\"\n", seriesName);
+ 			pw.println();
+ 			pw.format(Locale.ROOT, "  RmDir \"$INSTDIR\"\n");
+ 
+Index: uk/me/parabola/mkgmap/filters/SizeFilter.java
+===================================================================
+--- uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1652)
++++ uk/me/parabola/mkgmap/filters/SizeFilter.java	(working copy)
+@@ -24,13 +24,16 @@
+  */
+ public class SizeFilter implements MapFilter {
+ 
+-	// Minsize==1 may cause small holes in QLandkarte, but does not at etrex!
+-	private static final int MIN_SIZE = 1;
++	private int size;
+ 
+ 	private int minSize;
++	
++	public SizeFilter(int s) {
++		size = s;
++	}
+ 
+ 	public void init(FilterConfig config) {
+-		minSize = MIN_SIZE * (1<<config.getShift());
++		minSize = size * (1<<config.getShift());
+ 	}
+ 
+ 	/**
+Index: uk/me/parabola/mkgmap/general/MapShape.java
+===================================================================
+--- uk/me/parabola/mkgmap/general/MapShape.java	(revision 1652)
++++ uk/me/parabola/mkgmap/general/MapShape.java	(working copy)
+@@ -29,6 +29,7 @@
+ public class MapShape extends MapLine {// So top code can link objects from here
+ 
+ 	private int poiType;
++	private String poiName;
+ 	
+ 	public MapShape() {
+ 	}
+@@ -55,6 +56,16 @@
+ 	{
+ 		return this.poiType;
+ 	}
++
++	public void setPoiName(String name)
++	{
++		this.poiName = name;
++	}
++
++	public String getPoiName()
++	{
++		return this.poiName;
++	}
+ 	
+ 	/**
+ 	 * Checks if a point is contained within this shape. Points on the
+Index: uk/me/parabola/mkgmap/main/MapMaker.java
+===================================================================
+--- uk/me/parabola/mkgmap/main/MapMaker.java	(revision 1652)
++++ uk/me/parabola/mkgmap/main/MapMaker.java	(working copy)
+@@ -164,7 +164,7 @@
+ 			}
+ 			
+ 			for (MapShape shape : src.getShapes()) {
+-				String shapeName = shape.getName();
++				String pointName = shape.getPoiName();
+ 
+ 				int pointType = shape.getPoiType();
+ 				
+@@ -174,15 +174,15 @@
+ 
+ 				
+ 				// We don't want to add unnamed cities !!
+-				if(MapPoint.isCityType(pointType) && shapeName == null)
++				if(MapPoint.isCityType(pointType) && pointName == null)
+ 					continue;
+ 				
+ 				// check if there is not already a poi in that shape 
+ 							
+-				if(poiMap.findPointInShape(shape, pointType, shapeName) == null) {
++				if(poiMap.findPointInShape(shape, pointType, pointName) == null) {
+ 					MapPoint newPoint = new MapPoint();
+ 					
+-					newPoint.setName(shapeName);
++					newPoint.setName(pointName);
+ 					newPoint.setType(pointType);
+ 
+ 					copyAddressInformation(shape, newPoint);
+@@ -191,7 +191,7 @@
+ 
+ 					src.getPoints().add(newPoint);
+ 
+-					log.info("created POI ", shapeName, "from shape");
++					log.info("created POI ", pointName, "from shape");
+ 				}
+ 			}
+ 		}
+Index: uk/me/parabola/mkgmap/osmstyle/StyledConverter.java
+===================================================================
+--- uk/me/parabola/mkgmap/osmstyle/StyledConverter.java	(revision 1652)
++++ uk/me/parabola/mkgmap/osmstyle/StyledConverter.java	(working copy)
+@@ -113,6 +113,7 @@
+ 	private final Rule relationRules;
+ 
+ 	private final boolean ignoreMaxspeeds;
++	private final boolean addPoisToAreas;
+ 	private boolean driveOnLeft;
+ 	private boolean driveOnRight;
+ 	private final boolean checkRoundabouts;
+@@ -164,6 +165,7 @@
+ 		relationRules = style.getRelationRules();
+ 
+ 		ignoreMaxspeeds = props.getProperty("ignore-maxspeeds") != null;
++		addPoisToAreas = props.getProperty("add-pois-to-areas") != null;
+ 		driveOnLeft = props.getProperty("drive-on-left") != null;
+ 		NODHeader.setDriveOnLeft(driveOnLeft);
+ 		driveOnRight = props.getProperty("drive-on-right") != null;
+@@ -272,10 +274,13 @@
+ 			GType foundType = makeGTypeFromTags(way);
+ 			if(foundType == null)
+ 				return;
+-			addConvertedWay(way, foundType);
++			addConvertedWay(way, foundType, null);
+ 			return;
+ 		}
+ 
++		final Way wayForPoiConversion = new Way(way.getId());
++ 		wayForPoiConversion.copyTags(way);
++
+ 		preConvertRules(way);
+ 
+ 		wayRules.resolveType(way, new TypeResult() {
+@@ -289,21 +294,40 @@
+ 					// originalWay.put(el, way);
+ 				}
+ 				postConvertRules(el, type);
+-				addConvertedWay((Way) el, type);
++				addConvertedWay((Way) el, type, wayForPoiConversion);
+ 			}
+ 		});
+ 	}
+ 
+-	private void addConvertedWay(Way way, GType foundType) {
++	private boolean poiFound; // This is a dirty hack!!!
++	private void addConvertedWay(final Way way, final GType foundType, final Way wayForPoiConversion) {
+ 		if (foundType.getFeatureKind() == GType.POLYLINE) {
+ 		    if(foundType.isRoad() &&
+ 			   !MapObject.hasExtendedType(foundType.getType()))
+ 				addRoad(way, foundType);
+ 		    else
+ 				addLine(way, foundType);
++		} else {
++			if (addPoisToAreas) {
++				poiFound = false;
++				nodeRules.resolveType(wayForPoiConversion, new TypeResult() {
++					boolean first = true;
++					public void add(Element el, GType type) {
++						if (first) {
++							postConvertRules(wayForPoiConversion, type);
++							addShape(way, foundType, type, wayForPoiConversion.getName());
++							poiFound = true;
++							first = false;
++						}
++					}
++				});
++				if (!poiFound) {
++					addShape(way, foundType, null, null);
++				}
++			} else {
++				addShape(way, foundType, null, null);
++			}
+ 		}
+-		else
+-			addShape(way, foundType);
+ 	}
+ 
+ 	/**
+@@ -500,19 +524,16 @@
+ 		clipper.clipLine(line, lineAdder);
+ 	}
+ 
+-	private void addShape(Way way, GType gt) {
++	private void addShape(Way way, GType gt, GType gtPoi, String namePoi) {
+ 		final MapShape shape = new MapShape();
+ 		elementSetup(shape, gt, way);
+ 		shape.setPoints(way.getPoints());
+ 
+ 		clipper.clipShape(shape, collector);
+-		
+-		nodeRules.resolveType(way, new TypeResult() {
+-			public void add(Element el, GType type) {
+-				if(type != null)
+-			shape.setPoiType(type.getType());
+-			}
+-		});
++
++		shape.setPoiName(namePoi);
++		if (gtPoi != null)
++			shape.setPoiType(gtPoi.getType());
+ 	}
+ 
+ 	private void addPoint(Node node, GType gt) {
+Index: uk/me/parabola/mkgmap/reader/osm/xml/OsmMapDataSource.java
+===================================================================
+--- uk/me/parabola/mkgmap/reader/osm/xml/OsmMapDataSource.java	(revision 1652)
++++ uk/me/parabola/mkgmap/reader/osm/xml/OsmMapDataSource.java	(working copy)
+@@ -84,7 +84,9 @@
+ 	 */
+ 	public String[] copyrightMessages() {
+ 		return new String[] {
+-				"OpenStreetMap.org contributors",
++				"Map compiled under CCBYSA 2.0 by http://openmtbmap.org",
++				"Redistribution only by mentioning openmtbmap.org and Openstreetmap.org contributors",
++				"Map Data CCBYSA 2.0 from OpenStreetMap.org contributors",
+ 				"See: http://wiki.openstreetmap.org/index.php/Attribution"
+ 		};
+ 	}
