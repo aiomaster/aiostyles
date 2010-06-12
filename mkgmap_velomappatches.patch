@@ -11,15 +11,7 @@ Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
  
  	static final int MAP_LEVEL_REC_SIZE = 4;
  	private static final char POLYLINE_REC_LEN = 2;
-@@ -55,6 +55,7 @@
- 	static final int SUBDIV_REC_SIZE = 14;
- 	static final int SUBDIV_REC_SIZE2 = 16;
- 
-+	private static final int POI_FLAG_DETAILED = 0x02;
- 	private static final int POI_FLAG_TRANSPARENT = 0x2;
- 
- 	// Bounding box.  All units are in map units.
-@@ -172,7 +173,7 @@
+@@ -172,7 +172,7 @@
  		writer.put(getPoiDisplayFlags());
  
  		writer.put3(displayPriority);
@@ -28,7 +20,7 @@ Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
  
  		writer.putChar((char) 1);
  		writer.put((byte) 0);
-@@ -229,10 +230,13 @@
+@@ -229,7 +229,7 @@
  	public void config(EnhancedProperties props) {
  		String key = "draw-priority";
  		if (props.containsKey(key))
@@ -37,12 +29,6 @@ Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
  
  		if (props.containsKey("transparent"))
  			poiDisplayFlags |= POI_FLAG_TRANSPARENT;
-+
-+		if (props.containsKey("detailed-map"))
-+			poiDisplayFlags |= POI_FLAG_DETAILED;
- 	}
- 	
- 	/**
 Index: uk/me/parabola/mkgmap/build/MapBuilder.java
 ===================================================================
 --- uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1652)
@@ -115,18 +101,24 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
 -		map.addInfo("OSM Street map");
 -		map.addInfo("http://www.openstreetmap.org/");
 -		map.addInfo("Map data licenced under Creative Commons Attribution ShareAlike 2.0");
-+		map.addInfo("Openmtbmap - http://openmtbmap.org/");
++		map.addInfo("Openmtbmap - CCBYSA 2.0 http://openmtbmap.org/");
 +		map.addInfo("Map data from http://openstreetmap.org/");
-+		map.addInfo("Map and data licenced under Creative Commons Attribution ShareAlike 2.0");
++		map.addInfo("Map and Map data licenced under Creative Commons Attribution ShareAlike 2.0");
  		map.addInfo("http://creativecommons.org/licenses/by-sa/2.0/");
  
  		// Pad the version number with spaces so that version
-@@ -713,7 +718,7 @@
+@@ -708,12 +713,12 @@
+ 		map.addInfo("Map created with mkgmap-r"
+ 				+ String.format("%-10s", Version.VERSION));
+ 
+-		map.addInfo("Program released under the GPL");
++		map.addInfo("Mkgmap is released under the GPL");
+ 
  		// There has to be (at least) two copyright messages or else the map
  		// does not show up.  The second one will be displayed at startup,
  		// although the conditions where that happens are not known.
 -		map.addCopyright("program licenced under GPL v2");
-+		map.addCopyright("openmtbmap.org");
++		map.addCopyright("Map CCBYSA 2.0 by http://openmtbmap.org");
  
  		// This one gets shown when you switch on, so put the actual
  		// map copyright here.
@@ -154,13 +146,6 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  		}
  		filters.addFilter(new PolygonSplitterFilter());
  		filters.addFilter(new RemoveEmpty());
-@@ -1074,4 +1079,4 @@
- 			map.addMapObject(pg);
- 		}
- 	}
--}
-+}
-\ No newline at end of file
 Index: uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
 ===================================================================
 --- uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1652)
@@ -196,23 +181,27 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  		baseFilename = args.get("overview-mapname", "osmmap");
  		seriesName = args.get("series-name", "OSM map");
  
-@@ -86,12 +88,12 @@
+@@ -86,12 +88,17 @@
  			w = new FileWriter(nsisFilename);
  			PrintWriter pw = new PrintWriter(w);
  
 -			pw.format(Locale.ROOT, "!define DEFAULT_DIR \"C:\\Garmin\\Maps\\%s\"\n", seriesName);
 +			pw.format(Locale.ROOT, "!define DEFAULT_DIR \"C:\\Garmin\\%s\"\n", seriesName);
  			pw.format(Locale.ROOT, "!define INSTALLER_DESCRIPTION \"%s\"\n", seriesName);
--			pw.format(Locale.ROOT, "!define INSTALLER_NAME \"%s\"\n", seriesName);
-+			pw.format(Locale.ROOT, "!define INSTALLER_NAME \"%s_setup\"\n", seriesName);
+ 			pw.format(Locale.ROOT, "!define INSTALLER_NAME \"%s\"\n", seriesName);
  			pw.format(Locale.ROOT, "!define MAPNAME \"%s\"\n", baseFilename);
++			pw.format(Locale.ROOT, "!define MAP_URL \"http://openmtbmap.org\"\n");
++			pw.format(Locale.ROOT, "!define MAP_COPYRIGHT \"Copyright (C) CCBYSA 2.0 http://openmtbmap.org\"\n");
++			pw.format(Locale.ROOT, "!define INSTALL_MSG \"This install wizard will guide you through the installation of the ${INSTALLER_DESCRIPTION} for Garmin Basecamp and Mapsource. The map you downloaded is copyrighted under CCBYSA 2.0 by ${MAP_URL}. It is recommended that you close all other applications before starting Setup.  This will make it possible to update relevant system files without having to reboot your computer. If you paid something for Downloading this map, make use of your 14 day return right or other applicable rights and download the map directly from ${MAP_URL} Click Next to continue.\"\n");
++			pw.format(Locale.ROOT, "!define MUI_WELCOMEPAGE_TITLE \"${INSTALLER_DESCRIPTION} Setup\"\n");
++			pw.format(Locale.ROOT, "!define MUI_WELCOMEPAGE_TEXT \"${INSTALL_MSG}\"\n");
  			pw.format(Locale.ROOT, "!define PRODUCT_ID \"%s\"\n", productId);
 -			pw.format(Locale.ROOT, "!define REG_KEY \"%s\"\n", seriesName);
 +			pw.format(Locale.ROOT, "!define REG_KEY \"FAMILY_%s\"\n", familyIdd);
  			pw.println();
  
  			pw.format(Locale.ROOT, "SetCompressor /SOLID lzma\n");
-@@ -103,7 +105,7 @@
+@@ -103,7 +110,7 @@
  
  			pw.format(Locale.ROOT, "; Installer pages\n");
  			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_WELCOME\n");
@@ -221,7 +210,7 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_DIRECTORY\n");
  			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_INSTFILES\n");
  			pw.format(Locale.ROOT, "!insertmacro MUI_PAGE_FINISH\n");
-@@ -119,22 +121,27 @@
+@@ -119,12 +126,17 @@
  			pw.format(Locale.ROOT, "Name \"${INSTALLER_DESCRIPTION}\"\n");
  			pw.format(Locale.ROOT, "OutFile \"${INSTALLER_NAME}.exe\"\n");
  			pw.format(Locale.ROOT, "InstallDir \"${DEFAULT_DIR}\"\n");
@@ -231,31 +220,15 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			// Install files
  			pw.format(Locale.ROOT, "Section \"MainSection\" SectionMain\n");
  			pw.format(Locale.ROOT, "  SetOutPath \"$INSTDIR\"\n");
--			pw.format(Locale.ROOT, "  File \"${MAPNAME}.img\"\n");
-+			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}.img\" $INSTDIR\n");
-+			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\*.txt\" $INSTDIR\n");
-+			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\*.bat\" $INSTDIR\n");
-+			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\*.TYP\" $INSTDIR\n");
-+			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\gmt.exe\" $INSTDIR\n");
+ 			pw.format(Locale.ROOT, "  File \"${MAPNAME}.img\"\n");
++			pw.format(Locale.ROOT, "  File \"*.txt\"\n");
++			pw.format(Locale.ROOT, "  File \"*.bat\"\n");
++			pw.format(Locale.ROOT, "  File \"*.TYP\"\n");
++			pw.format(Locale.ROOT, "  File \"*.exe\"\n");
  			if (hasIndex) {
--				pw.format(Locale.ROOT, "  File \"${MAPNAME}_mdr.img\"\n");
--				pw.format(Locale.ROOT, "  File \"${MAPNAME}.mdx\"\n");
-+				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}_mdr.img\" $INSTDIR\n");
-+				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}.mdx\" $INSTDIR\n");
- 			}
- 			if (hasTyp)
--				pw.format(Locale.ROOT, "  File \"%s\"\n", typName);
-+				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\%s\" $INSTDIR\n", typName);
- 
--			pw.format(Locale.ROOT, "  File \"${MAPNAME}.tdb\"\n");
-+			pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\${MAPNAME}.tdb\" $INSTDIR\n");
- 			for (String file : mapList)
--				pw.format(Locale.ROOT, "  File \"%s.img\"\n", file);
-+				pw.format(Locale.ROOT, "  CopyFiles \"$EXEDIR\\%s.img\" $INSTDIR\n", file);
- 
- 
- 			// Registry values
-@@ -152,7 +159,8 @@
+ 				pw.format(Locale.ROOT, "  File \"${MAPNAME}_mdr.img\"\n");
+ 				pw.format(Locale.ROOT, "  File \"${MAPNAME}.mdx\"\n");
+@@ -152,7 +164,8 @@
  			pw.format(Locale.ROOT, "  WriteRegStr " + HKLM_FAMILIES + "\\${PRODUCT_ID}\" \"TDB\" \"$INSTDIR\\${MAPNAME}.tdb\"\n");
  
  			pw.println();
@@ -265,19 +238,21 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			pw.println();
  			pw.format(Locale.ROOT, "SectionEnd\n");
  			pw.println();
-@@ -160,6 +168,11 @@
+@@ -160,6 +173,13 @@
  			// Un-install files
  			pw.format(Locale.ROOT, "Section \"Uninstall\"\n");
  			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\${MAPNAME}.img\"\n");
 +			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\*.txt\"\n");
 +			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\*.bat\"\n");
 +			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\*.TYP\"\n");
++			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\*.nsi\"\n");
 +			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\gmt.exe\"\n");
++			pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\${INSTALLER_NAME}.exe\"\n");
 +			
  			if (hasIndex) {
  				pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\${MAPNAME}_mdr.img\"\n");
  				pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\${MAPNAME}.mdx\"\n");
-@@ -170,7 +183,8 @@
+@@ -170,7 +190,8 @@
  			for (String file : mapList) {
  				pw.format(Locale.ROOT, "  Delete \"$INSTDIR\\%s.img\"\n", file);
  			}
@@ -287,6 +262,20 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			pw.println();
  			pw.format(Locale.ROOT, "  RmDir \"$INSTDIR\"\n");
  
+@@ -209,10 +230,10 @@
+ 			w = new FileWriter(licenseFilename);
+ 			PrintWriter pw = new PrintWriter(w);
+ 
+-			pw.format(Locale.ROOT, "OSM Street map\n");
+-			pw.format(Locale.ROOT, "http://www.openstreetmap.org/\n");
++			pw.format(Locale.ROOT, "Openmtbmap.org Maps\n");
++			pw.format(Locale.ROOT, "http://www.openmtbmap.org/\n");
+ 			pw.println();
+-			pw.format(Locale.ROOT, "Map data licenced under Creative Commons Attribution ShareAlike 2.0\n");
++			pw.format(Locale.ROOT, "Map data licenced under Creative Commons Attribution ShareAlike 2.0 by http://openmtbmap.org\n");
+ 			pw.format(Locale.ROOT, "http://creativecommons.org/licenses/by-sa/2.0/\n");
+ 			pw.println();
+ 			pw.format(Locale.ROOT, "Map created with mkgmap-r" + Version.VERSION +"\n");
 Index: uk/me/parabola/mkgmap/filters/SizeFilter.java
 ===================================================================
 --- uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1652)
@@ -496,7 +485,7 @@ Index: uk/me/parabola/mkgmap/reader/osm/xml/OsmMapDataSource.java
  		return new String[] {
 -				"OpenStreetMap.org contributors",
 +				"Map compiled under CCBYSA 2.0 by http://openmtbmap.org",
-+				"Redistribution only by mentioning openmtbmap.org and Openstreetmap.org contributors",
++				"Redistribution only by attributing 'http://openmtbmap.org' and 'Openstreetmap.org contributors'",
 +				"Map Data CCBYSA 2.0 from OpenStreetMap.org contributors",
  				"See: http://wiki.openstreetmap.org/index.php/Attribution"
  		};
