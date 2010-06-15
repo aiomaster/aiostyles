@@ -5,7 +5,7 @@
 
 
 
-
+route=road & network=e-road { apply { add int_ref='${ref'; add int_ref='${int_ref'} } 
 
 route=mtb	& network=icn				{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; set ref = '${ref}' } }
 route=mountainbike 	& network=icn		{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; set ref = '${ref}' } }
