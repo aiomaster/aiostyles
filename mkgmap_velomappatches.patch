@@ -276,6 +276,36 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			pw.format(Locale.ROOT, "http://creativecommons.org/licenses/by-sa/2.0/\n");
  			pw.println();
  			pw.format(Locale.ROOT, "Map created with mkgmap-r" + Version.VERSION +"\n");
+Index: uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
+===================================================================
+--- uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(revision 1652)
++++ uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(working copy)
+@@ -66,6 +66,7 @@
+ 		coords.addAll(points);
+ 
+ //#if (Node version)
++/*
+ //Don't touch Coords, which are nodes.
+ //So points at crossings will not be moved
+ 		// For now simplify all points, which are not nodes
+@@ -86,13 +87,13 @@
+ 		}
+ 		// Simplify the rest
+ 		douglasPeucker(coords, 0, endIndex, maxErrorDistance);
+-
++*/
+ //#else Straight version
+ //Do the douglasPeucker on the whole line. 
+ //Deletes more points, but may lead to incorrect display of crossings at given high error distances
+-/*		
+-		douglasPeucker(coords, 0, n, maxErrorDistance);
+-	*/	
++
++		douglasPeucker(coords, 0, coords.size()-1, maxErrorDistance);
++
+ //#endif
+ 		MapLine newline = line.copy();
+ 
 Index: uk/me/parabola/mkgmap/filters/SizeFilter.java
 ===================================================================
 --- uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1652)
