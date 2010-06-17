@@ -11,7 +11,8 @@
 # 2b05 to 2b09
 # 2a15 to 2a1f
 # 2f17 to 2f1f
-#
+# 2c15 to 2c1f and 2c0c to 2e0f
+# 2e1c to 2e1f and 2e0c to 2e0f
 # 1860a and up (18600 to 18609 seems to be shown)
 # 1761? not shown.
 # Could try 0x1a??? as well as 0x1b???
@@ -410,23 +411,23 @@ shop=computer 							{set shopmatch=no} [0x2e0b resolution 24 continue with_acti
 shop=electronics 						{set shopmatch=no} [0x2e0b resolution 24 continue with_actions]
 shop=electronic 						{set shopmatch=no} [0x2e0b resolution 24 continue with_actions]
 shop=hifi 								{set shopmatch=no} [0x2e0b resolution 24 continue with_actions]
-shop=florist 							{set shopmatch=no} [0x2e0c resolution 24 continue with_actions]
 shop=boat 								{set shopmatch=no} [0x2f09 resolution 24 continue with_actions]
 
-shop=bicycle 							{set shopmatch=no} 	[0x2f03 default_name='bicycle_shop' resolution 24 continue with_actions]
+shop=bicycle 								{set shopmatch=no} 	[0x2f03 default_name='bicycle_shop' resolution 24 continue with_actions]
 shop=bicycle 													[0x1151b default_name='bicycle_shop' resolution 22 continue]
 shop=bicycle_repair | amenity=bicycle_repair {set shopmatch=no} [0x2f03 default_name='bicycle_repair' resolution 24 continue with_actions]
 shop=bicycle_repair | amenity=bicycle_repair					[0x1151b default_name='bicycle_repair' resolution 22]
 
 shop=car_repair {name 'carrepair ${name}'; set shopmatch=no} [0x2f13 resolution 24 continue with_actions]
-shop=car_wrecker 						{set shopmatch=no} [0x2f13 resolution 24 continue with_actions]
-amenity=car_wash 						{set shopmatch=no} [0x2f0e resolution 24 continue with_actions]
-shop=motorcycle 						{set shopmatch=no} [0x2f07 resolution 24 continue with_actions]
+shop=car_wrecker 						{set shopmatch=no} 	[0x2f13 resolution 24 continue with_actions]
+amenity=car_wash 						{set shopmatch=no} 	[0x2f0e resolution 24 continue with_actions]
+shop=motorcycle 						{set shopmatch=no} 	[0x2f07 resolution 24 continue with_actions]
 # 2f0f is found as garmin Dealer
-amenity=car_repair 						{set shopmatch=no} [0x2f13 resolution 24 continue with_actions]
+amenity=car_repair 						{set shopmatch=no} 	[0x2f13 resolution 24 continue with_actions]
 
 
 shop=hairdresser 						{set shopmatch=yes} [0x350f resolution 24 continue with_actions]
+shop=florist 							{set shopmatch=yes} [0x350d resolution 24 continue with_actions]
 # shop=doityourself 					{set shopmatch=yes} [0x3510 resolution 24 continue with_actions]
 shop=butchers | shop=butcher | shop=seafood	{set shopmatch=yes} 
 															[0x3511 resolution 24 continue with_actions]
@@ -435,7 +436,7 @@ shop=toys 								{set shopmatch=yes} [0x3513 resolution 24 continue with_action
 shop=video 								{set shopmatch=yes} [0x3514 resolution 24 continue with_actions]
 shop=videos								{set shopmatch=yes} [0x3514 resolution 24 continue with_actions]
 shop=dvd 								{set shopmatch=yes} [0x3514 resolution 24 continue with_actions]
-shop=outdoor 							{set shopmatch=yes} [0x3515 resolution 23 continue with_actions]
+shop=outdoor 							{set shopmatch=yes} [0x3515 resolution 22 continue with_actions]
 shop=beverages | shop=alcohol 			{set shopmatch=yes} [0x3516 resolution 24 continue with_actions]
 shop=books 								{set shopmatch=yes} [0x3517 resolution 24 continue with_actions]
 shop=book 								{set shopmatch=yes} [0x3517 resolution 24 continue with_actions]
@@ -447,20 +448,21 @@ shop=kiosk 								{set shopmatch=yes} [0x351a resolution 24 continue with_actio
 shop=chemist 							{set shopmatch=yes} [0x351c resolution 24 continue with_actions]
 shop=stationary 						{set shopmatch=yes} [0x351d resolution 24 continue with_actions]
 shop=shoes 								{set shopmatch=yes} [0x351e resolution 24 continue with_actions]
-shop=sports 							{set shopmatch=yes} [0x351f resolution 23 continue with_actions]
+shop=sports 							{set shopmatch=yes} [0x351f resolution 22 continue with_actions]
 
 shop=* & shopmatch=yes 										[0x350e resolution 24 continue]
 shop=* 	& shopmatch!=*										[0x2e00 resolution 24]
 # taxi needs to be added somewhere
 
 
-( natural=peak | natural=summit ) & ele>4000 & wiki=*									{set peakcopy=yes} 	[0x11517 resolution 18 continue with_actions]
-( natural=peak | natural=summit ) & wiki=*	& ele<4001					& peakcopy!=yes	{set peakcopy=yes} 	[0x11517 resolution 19 continue with_actions]
-( natural=peak | natural=summit ) & ele>2000 				& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 20 continue with_actions]
-( natural=peak | natural=summit ) & ele=*					& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 21 continue with_actions]
+( natural=peak | natural=summit ) & ele>4000 & wiki=*									{set peakcopy=yes} 	[0x11517 resolution 23-18 continue with_actions]
+( natural=peak | natural=summit ) & wiki=*	& ele<4001					& peakcopy!=yes	{set peakcopy=yes} 	[0x11517 resolution 23-19 continue with_actions]
+( natural=peak | natural=summit ) & ele>2000 				& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-20 continue with_actions]
+( natural=peak | natural=summit ) & ele=*					& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-21 continue with_actions]
 ( natural=peak | natural=summit )  	 																	   	[0x6616 resolution 24 continue]
-natural=mountain & peakcopy!=yes																		   	[0x2c15 resolution 24 continue]
-natural=mountain & peakcopy!=yes				   															[0x11517 resolution 22 continue]
+# natural=mountain & peakcopy!=yes																		   	[0x2c15 resolution 24 continue]
+natural=mountain & peakcopy!=yes																		   	[0x6615 resolution 24 continue]
+natural=mountain & peakcopy!=yes				   															[0x11517 resolution 23-22 continue]
 
 man_made=observatory [0x6415 resolution 22 continue]
 
@@ -542,14 +544,15 @@ cuisine=* 		& cuisinematch!=*															[0x2a00 resolution 24 continue with_
 # missing amenity=brothel
 
 amenity=bicycle_rental 	{ name '${name} ${spaces} ${network}' }				[0x2f02 resolution 24 continue]
-amenity=bicycle_rental 	{ name '${name} ${spaces} ${network}' }				[0x1151c resolution 22 continue]
+amenity=bicycle_rental 	{ name '${name} ${spaces} ${network}' }				[0x1151c resolution 24-22 continue]
+amenity=bicycle_rental 	{ name '${name} ${spaces} ${network}' }				[0x1960b resolution 22-22 continue]
 
 amenity=WLAN 	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
 amenity=Wlan 	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
 amenity=wlan 	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
 amenity=wifi	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
-amenity=arts_centre 														[0x2f14 resolution 24 continue]
-amenity=arts_center 														[0x2f14 resolution 24 continue]
+amenity=arts_centre | amenity=arts_center									[0x2f14 resolution 24 continue]
+
 
 amenity=bank 		{name 'Bank ${operator} ${name}' | 'Bank ${name}' | 'Bank' }	[0x2f06 resolution 23 continue]
 amenity=atm 		{name 'ATM ${operator} ${name}' | 'ATM ${name}' | 'ATM' }		[0x2f06 resolution 24 continue]
@@ -644,7 +647,7 @@ mountainpass=yes | mountain_pass=yes | highway=mountainpass | highway=mountain_p
 
 # barrier=cycle_barrier				[0x2f1c resolution 22]
 # barrier=cattle_grid	| barrier=cattel_grid	[0x2f1d resolution 24]
-barrier=toll_booth					[0x291c resolution 24 continue]
+barrier=toll_booth					[0x291c resolution 23 continue]
 # barrier=toll_booth				[0x11506 resolution 24 continue]
 # barrier=stile						[0x2f1f resolution 24]
 # barrier=bump_gate					[0x2918 resolution 24]
@@ -654,8 +657,8 @@ barrier=toll_booth					[0x291c resolution 24 continue]
 # barrier=hampshiregate				[0x291a resolution 24]
 # barrier=sally_port				[0x291b resolution 24]
 # barrier=sallyport					[0x291b resolution 24]
-barrier=border_controll | amenity=border_controll | amenity=bordercontroll | barrier=bordercontroll	| barrier=border_control | amenity=border_control | amenity=bordercontrol | barrier=bordercontrol	[0x291c resolution 22 continue]
-# barrier=border_controll | amenity=border_controll | amenity=bordercontroll | barrier=bordercontroll	| barrier=border_control | amenity=border_control | amenity=bordercontrol | barrier=bordercontrol	[0x11506 resolution 22]
+barrier=border_controll | amenity=border_controll | amenity=bordercontroll | barrier=bordercontroll	| barrier=border_control | amenity=border_control | amenity=bordercontrol | barrier=bordercontrol	[0x291c resolution 24 continue]
+barrier=border_controll | amenity=border_controll | amenity=bordercontroll | barrier=bordercontroll	| barrier=border_control | amenity=border_control | amenity=bordercontrol | barrier=bordercontrol	[0x11506 resolution 22]
 entrance=yes | barrier=entrance		[0x4314 resolution 24 continue]
 # barrier=kissing_gate				[0x291e resolution 24]
 # barrier=kissinggate 				[0x291e resolution 24]
@@ -674,9 +677,9 @@ traffic_sign = city_limit 																[0x330e resolution 24]
 # highway=speed_camera 		{name 'maxspeed ${maxspeed} km/h'} 							[0x5601 resolution 24]
 highway=motorway_junction & proposed!=* {name '${ref} ${name}' | '${ref}' | '${name}'}	[0x320c resolution 24]
 highway=motorway_exit & proposed!=* 	{name '${ref} ${name}' | '${ref}' | '${name}'}	[0x2700 resolution 24]
-highway=services 			{name '${ref} ${name}' | '${ref}' | '${name}'}				[0x2f0a resolution 24]
-amenity=fuel 				{name '${operator}: ${name}' | '${name}' | '${operator}'}	[0x2f01 resolution 24]
-amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x2f0b resolution 24 continue]
+highway=services 			{name '${ref} ${name}' | '${ref}' | '${name}'}				[0x2f0a resolution 23]
+amenity=fuel 				{name '${operator}: ${name}' | '${name}' | '${operator}'}	[0x2f01 resolution 23]
+amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x2f0b resolution 23 continue]
 # amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x331e resolution 22]
 
 amenity=parking 			{name 'carpark ${name}'  | 'carpark'  }						[0x2f0b resolution 24]
@@ -688,8 +691,8 @@ railway=mini_roundabout							{ add mkgmap:road-speed = '-1' }		[0x3406 resoluti
 
 
 
-leisure=golf_course 				[0x2d05 resolution 24 continue]
-leisure=golfcourse 					[0x2d05 resolution 24 continue]
+leisure=golf_course 				[0x2d05 resolution 23 continue]
+leisure=golfcourse 					[0x2d05 resolution 23 continue]
 leisure=marina 	| amenity=ferry_termina | amenity=harbour	[0x4300 resolution 22 continue]
 leisure=park 						[0x2c06 resolution 24 continue]
 leisure=pitch 						[0x2911 resolution 24 continue]
@@ -707,7 +710,6 @@ aeroway=terminal 						[0x2f04 resolution 24]
 # 0x5904=heliport
 
 power_source=wind |  powersource=wind | power=wind	| man_made=power_wind | man_made=windpower | man_made=wind_power 	[0x1151e resolution 22]
-
 power=generator & (power_source=hydro | power_source=tidal | power_source=wave | power_source=geothermal) 				[0x3205 resolution 24]
 power=generator & (power_source=nuclear | power_source=fusion) 															[0x3204 resolution 24]
 power=generator & (power_source=biofuel | power_source=oil | power_source=coal | power_source=gas | power_source=waste) [0x3202 resolution 24]
@@ -735,14 +737,14 @@ man_made=communications_tower & height>100				[0x11513 resolution 21]
 man_made=communications_tower & ( height>50 | url=* )	[0x11513 resolution 22]
 man_made=communications_tower							[0x11513 resolution 23]
 man_made=mast											[0x11513 resolution 23]
-# Not sure if antenna is correct osm notation
-# man_made=surveillance 	[0x2c16 resolution 24]
-man_made=gasometer 			[0x3401 resolution 24]
-man_made=works 	| man_made=mineshaft			[0x3401 resolution 24]
-amenity=prison 				[0x3207 resolution 24]
-man_made=survey_point 		[0x4315 resolution 24]
+
+# man_made=surveillance 				[0x2c16 resolution 24]
+man_made=gasometer 						[0x3401 resolution 24]
+man_made=works 	| man_made=mineshaft	[0x3401 resolution 24]
+amenity=prison 							[0x3207 resolution 24]
+man_made=survey_point 					[0x4315 resolution 24]
 # survey war 2c18
-amenity=grit_bin 			[0x3201 resolution 24]
+amenity=grit_bin 						[0x3201 resolution 24]
 
 leisure=hunting_blind | amenity=hunting_stand | amenity=hochstand | amenity=hunting_blind | amenity=blind | building=hunting_blind 	[0x3407 resolution 22]
 
@@ -751,21 +753,21 @@ leisure=hunting_blind | amenity=hunting_stand | amenity=hochstand | amenity=hunt
 military=bunker [0x5801 resolution 24]
 
 # Natural and Points for Orientation
-natural=beach 				[0x2c1e resolution 24 continue]
+natural=beach 				[0x341e resolution 24 continue]
 natural=beach 				[0x11516 resolution 22 continue]
 # natural=cliff 			[0x2c13 resolution 24 continue]
 natural=rock | natural=rocks [0x2c12 resolution 24 continue]
-natural=geyser 				[0x2c1f resolution 24 continue]
-natural=geysir 				[0x2c1f resolution 24 continue]
+natural=geyser 				[0x341f resolution 24 continue]
+natural=geysir 				[0x341f resolution 24 continue]
 # natural=glacier 			[0x2c19 resolution 24 continue]
 natural=cave_entrance 		[0x640c resolution 22 continue]
 natural=cave 				[0x11502 resolution 22 continue]
 natural=stream				[0x6512 resolution 24 continue]
 # 6619 wird mit Symbol angezeigt
-natural=volcano 			[0x2c1a resolution 24 continue]
+natural=volcano 			[0x341a resolution 24 continue]
 natural=volcano 			[0x3310 resolution 23-22 continue]
 natural=volcano 			[0x18610 resolution 22-22 continue]
-natural=wetland 			[0x2c1b resolution 24 continue]
+natural=wetland 			[0x341b resolution 24 continue]
 
 
 
@@ -821,23 +823,23 @@ sport=*					[0x2d0a resolution 24]
 
 tourism=viewpoint 		[0x5200 resolution 22 continue]
 # all 0x521? are found as attraction landmark
-tourism=attraction 		[0x10d04 resolution 22 continue]
-# tourism=attraction 		[0x3317 resolution 22]
+tourism=attraction 		[0x10d04 resolution 24 continue]
+tourism=attraction 		[0x3317 resolution 22]
 
 
-tourism=guest_house { name '${name} ${operator} guesthouse' | '${name} guesthouse' | 'guesthouse' } 	[0x2b02 resolution 24]
+tourism=guest_house { name '${name} ${operator} guesthouse' | '${name} guesthouse' | 'guesthouse' } 	[0x2b02 resolution 23]
 tourism=camp_site 	 { name '${name} ${operator}' | '${name}' | 'campsite' }							[0x2b03 resolution 24 continue]
 tourism=camp_site 	 { name '${name} ${operator}' | '${name}' | 'campsite' }							[0x11511 resolution 21 continue]
-# tourism=caravan_site { name '${name} ${operator} caravan ' | '${name} caravan ' | 'caravan_site' }		[0x2b03 resolution 24 continue]
+# tourism=caravan_site { name '${name} ${operator} caravan ' | '${name} caravan ' | 'caravan_site' }	[0x2b03 resolution 24 continue]
 tourism=caravan_site { name '${name} ${operator} caravan ' | '${name} caravan ' | 'caravan_site' }		[0x10c03 resolution 22]
 tourism=hostel { name '${name} ${operator} hostel ' | '${name} hostel ' | 'hostel' } 					[0x2b01 resolution 24 continue]
 tourism=hostel { name '${name} ${operator} hostel ' | '${name} hostel ' | 'hostel' } 					[0x11510 resolution 22]
 
-tourism=hotel  { name '${name} ${operator}' | '${name}' | '${operator}' | 'hotel' } 					[0x2b00 resolution 24]
-tourism=motel  { name '${name} ${operator} motel' | '${name} motel' | '${operator} motel' | 'motel' } 	[0x2b00 resolution 24]
+tourism=hotel  { name '${name} ${operator}' | '${name}' | '${operator}' | 'hotel' } 					[0x2b00 resolution 23]
+tourism=motel  { name '${name} ${operator} motel' | '${name} motel' | '${operator} motel' | 'motel' } 	[0x2b00 resolution 23]
 tourism=picnic_site {name 'picnic ${name}' | 'picnic' }	[0x4a00 resolution 22]
 tourism=picnic	 {name 'picnic ${name}' | 'picnic' }	[0x4a00 resolution 22]
-amenity=bbq    { name 'bbq ${name}' | 'bbq' }  			[0x4a00 resolution 23]
+amenity=bbq    { name 'bbq ${name}' | 'bbq' }  			[0x4a00 resolution 22]
 
 tourism=resort 											[0x2b06 resolution 24 continue]
 tourism=theme_park {name '${name} theme_park' }			[0x2c01 resolution 24 continue]
@@ -876,7 +878,7 @@ amenity=refuge | tourism=refuge | building=refuge		{ name '${name} refuge' | 're
 
 
 information=office	{name 'infooffice ${name}' | 'infooffice' }		[0x2f0c resolution 24 continue]
-information=office	{name 'infooffice ${name}' | 'infooffice' }		[0x3319 resolution 22]
+information=office	{name 'infooffice ${name}' | 'infooffice' }		[0x3319 resolution 23-22]
 
 information=mtbmap	{name 'mtbmap ${name}' | 'mtbmap' }				[0x4c01 resolution 22]
 information=cyclemap	{name 'cyclemap ${name}' | 'cyclemap' }		[0x4c01 resolution 22]
@@ -895,8 +897,8 @@ information=citymap	{name 'citymap ${name}' | 'citymap' }			[0x4c01 resolution 2
 information=map	{name 'infomap ${name}' | 'infomap' }				[0x4c01 resolution 22]
 information=board 	{name 'inboard ${name}' | 'infoboard' }			[0x4c00 resolution 22]
 ( information=guidepost | amenity=guidepost ) & bicycle=yes			[0x330b resolution 24]
-( information=guidepost | amenity=guidepost ) & bicycle!=yes		[0x2c1d resolution 24]
-amenity=signpost | information=signpost								[0x2c1d resolution 24]
+( information=guidepost | amenity=guidepost ) & bicycle!=yes		[0x341d resolution 24]
+amenity=signpost | information=signpost								[0x341d resolution 24]
 
 tourism=information     										[0x4c00 resolution 24]
 historic=wayside_cross 											[0x11509 resolution 24]
