@@ -1,0 +1,25 @@
+About the www.velomap.org Maps - Please Read.
+
+ Copyrights:
+- Map Data
+All maptiles are compiled with mkgmap (http://www.mkgmap.org.uk/) using map data from openstreetmap.org. OpenStreetMap data can be used freely under the terms of the http://creativecommons.org/licenses/by-sa/2.0/ You can use and edit the map data by visiting openstreetmap.org. All map data is published CCBYSA 2.0 by openstreetmap.org and Constributors.
+
+-SRTM Contourlines Data
+The Contourlines data is provided by Jonathan de Ferranti where available and SRTM3" where no files are provided by www.viewfinderpanoramas.org Compiled also with mkgmap. All Copyrights to the contourdata remains with Jonathan de Ferranti.
+
+- VeloMaps Copyright
+The VeloMaps may be used according to http://creativecommons.org/licenses/by-sa/2.0/ by attributing www.velomap.org and attributing the exact date of map creation. If you distribute VeloMaps without proper attribution you break the copyright of www.velomap.org and I reserve my right to enforce legal action.
+
+- Openmtbmap Contourlines compatible with Velomaps copyright
+The sale or distribution of the openmtbmap contourlines is not allowed! Non commercial distribution not asking for any service charge or other charges (also not cost of shipping or cost of hardware) while attributing http://openmtbmap.org, www.viewfinderpanoramas.org and explicitely providing the date of the contourline map creation is permitted.
+
+
+-------------------------------------------------------
+
+General Notes:
+The maps work best on your PC when using Mapsource 6.16 or Basecamp 3 - See here for Installation Guide:  www.velomap.org/tutorials/install-mapsource/
+Please don't complain that something does not work until having read the tutorials. To achieve good maps, I have to do things a bit differently to what you are used to. So read the tutorials. Autorouting is for MTBiking and Hiking only. The autorouting does not respect local laws but instead aims to provide the best / most beautiful to reach the destination.
+
+No VeloMap has yet caused any damage to a Garmin GPS. However I cannot guarantee for this. By installing/using these maps you accept that you may not sue www.velomap.org for anything.
+
+-- Autorouting uses different Format than other maps, please read this - if you don't know this information autorouting will fail: www.velomap.org/about-2/autorouting/
