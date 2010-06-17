@@ -409,7 +409,6 @@ extreme_clean: clean
 	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/{$(LAYER)}/*.img ; \
 	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/tiles/*.osm.gz
 
-	
 
 # If something has changed in the stylepath repack it and write it to the webdir.
 $(WEBREGIONDIR)/styles.tar.bz2 : $(STYLEPATH)/*/*
