@@ -215,18 +215,19 @@ endif
 # The Tilesplitter options:
 GEONAMES:=--geonames-file=$(AIOPATH)/geonames/cities15000.zip
 SPLITTER_CACHE:=$(REGIONPATH)/raw_data/splittercache
+SPLITTER_COMMON_OPTIONS:=--max-threads=$(USE_CORES)
 ifeq ($(USE_OLD_AREAS_LIST),true)
-SPLITTER_OPTIONS := --split-file=$(AREAS_LIST_FILE) --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
-SPLITTER_OPTIONS_BOUNDARY := --split-file=$(REGIONPATH)/raw_data/boundssplit/areas.list --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
-SPLITTER_OPTIONS_KEEPRIGHT := --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
-SPLITTER_OPTIONS_MAXSPEED := --split-file=$(REGIONPATH)/raw_data/maxspeedsplit/areas.list --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
-SPLITTER_OPTIONS_ADDR := --split-file=$(REGIONPATH)/raw_data/addrsplit/areas.list --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
+SPLITTER_OPTIONS := $(SPLITTER_COMMON_OPTIONS) --split-file=$(AREAS_LIST_FILE) --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
+SPLITTER_OPTIONS_BOUNDARY := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/boundssplit/areas.list --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
+SPLITTER_OPTIONS_KEEPRIGHT := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
+SPLITTER_OPTIONS_MAXSPEED := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/maxspeedsplit/areas.list --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
+SPLITTER_OPTIONS_ADDR := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/addrsplit/areas.list --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
 else
-SPLITTER_OPTIONS := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
-SPLITTER_OPTIONS_BOUNDARY := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
-SPLITTER_OPTIONS_KEEPRIGHT := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=200000 --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
-SPLITTER_OPTIONS_MAXSPEED := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
-SPLITTER_OPTIONS_ADDR := --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
+SPLITTER_OPTIONS := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
+SPLITTER_OPTIONS_BOUNDARY := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
+SPLITTER_OPTIONS_KEEPRIGHT := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=200000 --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
+SPLITTER_OPTIONS_MAXSPEED := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
+SPLITTER_OPTIONS_ADDR := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
 endif
 
 # You can specify different Compressors for the result
