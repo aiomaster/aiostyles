@@ -7,23 +7,23 @@
 
 route=road & network=e-road { apply { add int_ref='${ref'; add int_ref='${int_ref'} } 
 
-route=mtb	& network=icn				{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; set ref = '${ref}' } }
-route=mountainbike 	& network=icn		{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; set ref = '${ref}' } }
-route=mtb	& network=ncn				{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=ncn; add extremecarver4=route; add route_name_mtb1 = '${name}'; set mtblayer=ncn; set ref = '${ref}' } }
-route=mountainbike 	& network=ncn		{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=ncn; add extremecarver4=route; add route_name_mtb1 = '${name}'; set mtblayer=ncn; set ref = '${ref}' } }
-route=mtb	& network=rcn				{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=rcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=rcn; set ref = '${ref}' } }
-route=mountainbike 	& network=rcn		{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=rcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=rcn; set ref = '${ref}' } }
-route=mtb	& network=tcn				{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=tcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=tcn; set ref = '${ref}' } }
-route=mountainbike 	& network=tcn		{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=tcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=tcn; set ref = '${ref}' } }
-route=mtb	& network=lcn				{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=lcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=lcn; set ref = '${ref}' } }
-route=mountainbike 	& network=lcn		{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=lcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=lcn; set ref = '${ref}' } }
-route=mtb | route=mountainbike			{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=xcn; set ref = '${ref}' } }
-route=bicycle & network=mtb 			{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=xcn; set ref = '${ref}' } }
-route=bicycle & mtb=yes		 			{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=xcn; set ref = '${ref}' } }
+route=mtb	& network=icn				{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; add ref = '${ref}' } }
+route=mountainbike 	& network=icn		{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; add ref = '${ref}' } }
+route=mtb	& network=ncn				{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=ncn; add extremecarver4=route; add route_name_mtb1 = '${name}'; set mtblayer=ncn; add ref = '${ref}' } }
+route=mountainbike 	& network=ncn		{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=ncn; add extremecarver4=route; add route_name_mtb1 = '${name}'; set mtblayer=ncn; add ref = '${ref}' } }
+route=mtb	& network=rcn				{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=rcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=rcn; add ref = '${ref}' } }
+route=mountainbike 	& network=rcn		{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=rcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=rcn; add ref = '${ref}' } }
+route=mtb	& network=tcn				{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=tcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=tcn; add ref = '${ref}' } }
+route=mountainbike 	& network=tcn		{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=tcn; add extremecarver4=route; add route_name_mtb2 = '${name}'; add mtblayer=tcn; add ref = '${ref}' } }
+route=mtb	& network=lcn				{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=lcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=lcn; add ref = '${ref}' } }
+route=mountainbike 	& network=lcn		{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=lcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=lcn; add ref = '${ref}' } }
+route=mtb | route=mountainbike			{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=xcn; add ref = '${ref}' } }
+route=bicycle & network=mtb 			{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=xcn; add ref = '${ref}' } }
+route=bicycle & mtb=yes		 			{ apply { set extremecarver=mr; add extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; add route_name_mtb3 = '${name}'; add mtblayer=xcn; add ref = '${ref}' } }
 
-route=bicycle & ( route=icn | network=icn | icn=yes )		{ apply {  add extremecarver5=bike; set extremecarver6=icn; set extremecarver3=icn; add extremecarver4=route; set cyclelayer=icn; set route_name_bike1 = '${name}'; set ref = '${ref}' } }
-route=bicycle & ( route=ncn | network=ncn | ncn=yes )		{ apply {  add extremecarver5=bike; set extremecarver6=ncn; set extremecarver3=ncn; add extremecarver4=route; set cyclelayer=ncn; set route_name_bike1 = '${name}'; set ref = '${ref}' } } 
-route=bicycle & ( route=rcn | network=rcn | rcn=yes )	 	{ apply {  add extremecarver5=bike; set extremecarver6=rcn; add extremecarver3=rcn; add extremecarver4=route; add cyclelayer=rcn; add route_name_bike2 = '${name}'; set ref = '${ref}' } } 
+route=bicycle & ( route=icn | network=icn | icn=yes )		{ apply {  add extremecarver5=bike; set extremecarver6=icn; set extremecarver3=icn; add extremecarver4=route; set cyclelayer=icn; set route_name_bike1 = '${name}'; add ref = '${ref}' } }
+route=bicycle & ( route=ncn | network=ncn | ncn=yes )		{ apply {  add extremecarver5=bike; set extremecarver6=ncn; set extremecarver3=ncn; add extremecarver4=route; set cyclelayer=ncn; set route_name_bike1 = '${name}'; add ref = '${ref}' } } 
+route=bicycle & ( route=rcn | network=rcn | rcn=yes )	 	{ apply {  add extremecarver5=bike; set extremecarver6=rcn; add extremecarver3=rcn; add extremecarver4=route; add cyclelayer=rcn; add route_name_bike2 = '${name}'; add ref = '${ref}' } } 
 route=bicycle & ( route=tcn | network=tcn | tcn=yes )		{ apply {  add extremecarver5=bike; set extremecarver6=tcn; add extremecarver3=tcn; add extremecarver4=route; add cyclelayer=tcn; add route_name_bike2 = '${name}'; add ref = '${ref}' } }
 route=bicycle & ( route=lcn | network=lcn | lcn=yes )		{ apply {  add extremecarver5=bike; set extremecarver6=lcn; add extremecarver3=lcn; add extremecarver4=route; add cyclelayer=lcn; add route_name_bike3 = '${name}'; add ref = '${ref}' } }
 route=bicycle & network!=icn & network!=ncn & network!=tcn & network!=rcn & network!=lcn & ncn!=yes & icn!=yes & rcn!=yes & lcn!=yes & tcn!=yes	{ apply {  add extremecarver5=bike; add extremecarver6=xcn; set extremecarver3=xcn; add extremecarver4=route; add cyclelayer=xcn; add route_name_bike3 = '${name}'; add ref = '${ref}' } }
@@ -39,10 +39,10 @@ type=associatedStreet { apply { add addr:street='${name}' } }
 (type=boundary | type=multipolygon) & boundary=administrative & admin_level=8 { apply { set mkgmap:boundary8_name='$(mkgmap:boundary8_name)/${name:en}' | '$(mkgmap:boundary8_name)/${name}' | '${name:en}' | '${name}' | ; set boundary=administrative; set admin_level_8=yes ; set admin_level_copy=yes }}
 (type=boundary | type=multipolygon) & boundary=national_park { apply { set mkgmap:boundary99_name='$(mkgmap:boundary99_name)/${name:en}' | '$(mkgmap:boundary99_name)/${name}' | '${name:en}' | '${name}'; set boundary99=yes }}
 
-( route=ferry | line=ferry ) & name=*	{ apply { set name1 = '${name} ferry' | 'ferry'; add fromrelation=yes; add route1=ferry; set toll=yes } }
-( route=ferry | line=ferry ) & name!=* 	{ apply { add fromrelation=yes; add route=ferry; set toll=yes } }
+( route=ferry | line=ferry ) & name=*	{ apply { set name1 = '${name} ferry' | 'ferry'; add fromrelation=yes; add route1=ferry } }
+( route=ferry | line=ferry ) & name!=* 	{ apply { add fromrelation=yes; add route=ferry } }
 
-route=shuttle_train & name=*	{ apply { set name1 = '${name} s_train' | 'shuttle_train'; add fromrelation=yes; add route1=shuttle_train; set toll=yes } }
+route=shuttle_train & name=*	{ apply { set name1 = '${name} s_train' | 'shuttle_train'; add fromrelation=yes; add route1=shuttle_train } }
 
 (route=subway|route=train|route=tram) & (ref=* | name=*)
 {  add ref='${name}'; 
@@ -80,14 +80,14 @@ route=hiking & route!=mtb & route!=bicycle & network!=icn & network!=ncn & netwo
 # route=bicycle & ( route=lcn | network=lcn | lcn=yes )	& network!=icn & network!=ncn & network!=tcn & network!=rcn	{ apply { add extremecarver5=bike; set extremecarver3=lcn; add extremecarver4=route; add cyclelayer=lcn; add route_name = '${name}'; add ref = '${ref}' } }
 # route=bicycle & ( route=tcn | network=tcn | tcn=yes )	& network!=icn & network!=ncn & network!=rcn				{ apply { add extremecarver5=bike; set extremecarver3=tcn; add extremecarver4=route; set cyclelayer=tcn; add route_name = '${name}'; add ref = '${ref}' } }
 route=bicycle & ( route=rcn | network=rcn | rcn=yes )	& network!=icn & network!=ncn								{ apply { add extremecarver5=bike; set extremecarver3=rcn; add extremecarver4=route; add cyclelayer=rcn; add route_name = '${name}'; add ref = '${ref}' } }
-route=bicycle & ( route=ncn | network=ncn | ncn=yes )	& network!=icn												{ apply { add extremecarver5=bike; set extremecarver3=ncn; add extremecarver4=route; set cyclelayer=ncn; set route_name = '${name}'; set ref = '${ref}' } } 
-route=bicycle & ( route=icn | network=icn | icn=yes )																{ apply { add extremecarver5=bike; set extremecarver3=icn; add extremecarver4=route; set cyclelayer=icn; set route_name = '${name}'; set ref = '${ref}' } }
+route=bicycle & ( route=ncn | network=ncn | ncn=yes )	& network!=icn												{ apply { add extremecarver5=bike; set extremecarver3=ncn; add extremecarver4=route; set cyclelayer=ncn; set route_name = '${name}'; add ref = '${ref}' } } 
+route=bicycle & ( route=icn | network=icn | icn=yes )																{ apply { add extremecarver5=bike; set extremecarver3=icn; add extremecarver4=route; set cyclelayer=icn; set route_name = '${name}'; add ref = '${ref}' } }
 
-route=bicycle & network=mtb 									{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; set route_name = '${name}'; set ref = '${ref}' } }
-route=bicycle & mtb=yes		 									{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; set route_name = '${name}'; set ref = '${ref}' } }
-( route=mtb | route=mountainbike )								{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; set route_name = '${name}'; set ref = '${ref}' } }
-( route=mtb | route=mountainbike )	& network=lcn				{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=lcn; add extremecarver4=route; set route_name = '${name}'; set ref = '${ref}' } }
-( route=mtb | route=mountainbike )	& network=rcn				{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=rcn; add extremecarver4=route; set route_name = '${name}'; set ref = '${ref}' } }
-( route=mtb | route=mountainbike )	& network=ncn				{ apply { set extremecarver=mr; set extremecarver6=mr; set extremecarver2=ncn; add extremecarver4=route; set route_name = '${name}'; set ref = '${ref}' } }
-( route=mtb | route=mountainbike )	& network=icn				{ apply { set extremecarver=mr; set extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name = '${name}'; set ref = '${ref}' } }
+route=bicycle & network=mtb 									{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; set route_name = '${name}'; add ref = '${ref}' } }
+route=bicycle & mtb=yes		 									{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; set route_name = '${name}'; add ref = '${ref}' } }
+( route=mtb | route=mountainbike )								{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=xcn; add extremecarver4=route; set route_name = '${name}'; add ref = '${ref}' } }
+( route=mtb | route=mountainbike )	& network=lcn				{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=lcn; add extremecarver4=route; set route_name = '${name}'; add ref = '${ref}' } }
+( route=mtb | route=mountainbike )	& network=rcn				{ apply { set extremecarver=mr; set extremecarver6=mr; add extremecarver2=rcn; add extremecarver4=route; set route_name = '${name}'; add ref = '${ref}' } }
+( route=mtb | route=mountainbike )	& network=ncn				{ apply { set extremecarver=mr; set extremecarver6=mr; set extremecarver2=ncn; add extremecarver4=route; set route_name = '${name}'; add ref = '${ref}' } }
+( route=mtb | route=mountainbike )	& network=icn				{ apply { set extremecarver=mr; set extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name = '${name}'; add ref = '${ref}' } }
 

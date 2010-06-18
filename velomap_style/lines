@@ -1683,7 +1683,7 @@ highway=track & (class:bicycle=0 | class:bicycle=-1) [0x10309 resolution 23-22 c
 highway=track & (class:bicycle=0 | class:bicycle=-1) [0x10804 resolution 24 continue]
 highway=track & class:bicycle=0 	[0x01 road_class=0 road_speed=1 resolution 24]
 highway=track & class:bicycle=-1 	[0x01 road_class=0 road_speed=1 resolution 24]
-highway=track & (class:bicycle=-2 | class:bicycle=-3) [0x10309 resolution 24-23 continue]
+highway=track & (class:bicycle=-2 | class:bicycle=-3) [0x10309 resolution 23 continue]
 highway=track & class:bicycle=-2 	[0x01 road_class=0 road_speed=0 resolution 24]
 highway=track & class:bicycle=-3 	[0x01 resolution 24]
 
