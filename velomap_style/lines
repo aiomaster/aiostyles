@@ -701,10 +701,10 @@ highway=* & oneway=reverse 	& copy!=* & highway!=primary & highway!=secondary & 
 (cycleway=track_right | cycleway:right=track ) 	& highway=primary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10417 resolution 22 continue with_actions]
 (cycleway=track_left | cycleway:left=track ) 	& highway=primary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10416 resolution 22 continue with_actions]
 
-(cycleway=lane_right | cycleway:right=lane ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f1f resolution 23 continue]
-(cycleway=lane_left | cycleway:left=lane ) 								& cyclewaysidecopy!=yes & highway!=cycleway [0x10f1e resolution 23 continue]
-(cycleway=track_right | cycleway:right=track ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f19 resolution 23 continue]
-(cycleway=track_left | cycleway:left=track ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f18 resolution 23 continue]
+(cycleway=lane_right | cycleway:right=lane ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f1e resolution 23 continue]
+(cycleway=lane_left | cycleway:left=lane ) 								& cyclewaysidecopy!=yes & highway!=cycleway [0x10f1f resolution 23 continue]
+(cycleway=track_right | cycleway:right=track ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f18 resolution 23 continue]
+(cycleway=track_left | cycleway:left=track ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f19 resolution 23 continue]
 
 
 
@@ -964,13 +964,13 @@ class:bicycle=-2 & tracktype=grade2 & highway!=service & highway!=track & highwa
 ##################### Roundabouts #########################
 
 
-junction=roundabout & ( highway=motorway_link | highway=motorway ) 						[0x28 resolution 20 continue]
-junction=roundabout & ( highway=trunk | highway=trunk_link | motorroad=yes ) 			[0x28 resolution 20 continue]
-junction=roundabout & highway=primary 													[0x02 resolution 20 continue]
-junction=roundabout & highway=secondary 												[0x04 resolution 20 continue]
-junction=roundabout & highway=tertiary 													[0x05 resolution 21 continue]
-junction=roundabout & highway=unclassified 												[0x0b resolution 21 continue]
-junction=roundabout & roundaboutdone!=yes 												[0x07 resolution 22 continue]
+junction=roundabout & ( highway=motorway_link | highway=motorway ) 				{set roundaboutdone=yes}	[0x28 resolution 20 continue with_actions]
+junction=roundabout & ( highway=trunk | highway=trunk_link | motorroad=yes ) 	{set roundaboutdone=yes} 	[0x28 resolution 20 continue with_actions]
+junction=roundabout & highway=primary 	& roundaboutdone!=yes					{set roundaboutdone=yes}	[0x02 resolution 20 continue with_actions]
+junction=roundabout & highway=secondary 										{set roundaboutdone=yes}	[0x04 resolution 20 continue with_actions]
+junction=roundabout & highway=tertiary 											{set roundaboutdone=yes}	[0x05 resolution 21 continue with_actions]
+junction=roundabout & highway=unclassified 										{set roundaboutdone=yes}	[0x0b resolution 21 continue with_actions]
+junction=roundabout & roundaboutdone!=yes 																	[0x07 resolution 22 continue]
 
 junction=roundabout & ( extremecarver=mr | route=mtb  | extremecarver5=bike | route=bicycle | class:bicycle=3 | class:bicycle=2 | class:bicycle=1 ) & ( highway=primary | highway=secondary ) 	[0x0c road_class=2 road_speed=1 resolution 24 continue]
 junction=roundabout & ( extremecarver=mr | route=mtb  | extremecarver5=bike | route=bicycle | class:bicycle=3 | class:bicycle=2 | class:bicycle=1 )			[0x0c road_class=2 road_speed=0 resolution 24 continue]
@@ -1286,7 +1286,7 @@ highway=tertiary 																						[0x05 road_class=3 road_speed=2 resolutio
 highway=tertiary_link 																					[0x05 road_class=3 road_speed=1 resolution 24]
 
 
-highway=residential & ( extremecarver5=bike | route=bicycle | bridge=yes )  			[0x10308 resolution 21-21]
+highway=residential & ( extremecarver5=bike | route=bicycle | bridge=yes )  			[0x10308 resolution 21-21 continue]
 highway=residential 	& class:bicycle=3 	[0x07 road_class=4 road_speed=3 resolution 24 continue]
 highway=residential  	& class:bicycle=3 	[0x07 road_class=4 road_speed=2 resolution 22]
 highway=residential  	& class:bicycle=2 	[0x07 road_class=4 road_speed=2 resolution 22]
@@ -1324,7 +1324,7 @@ highway=residential &  bicycle=nope	{add mkgmap:unpaved=1}								[0x07 road_cla
 
 
 
-highway=living_street 	& ( extremecarver5=bike | route=bicycle | bridge=yes )  							[0x10e07 resolution 21-21]
+highway=living_street 	& ( extremecarver5=bike | route=bicycle | bridge=yes )  							[0x10e07 resolution 21-21 continue]
 highway=living_street 																						[0x10e07 resolution 22]
 highway=living_street 	& class:bicycle=3 	[0x01 road_class=3 road_speed=2 resolution 24 continue]
 highway=living_street  	& class:bicycle=3 	[0x01 road_class=3 road_speed=1 resolution 24]
@@ -1353,7 +1353,7 @@ highway=living_street 																				{set oneway=no; add taxi=no} 	[0xb1a r
 
 
 
-highway=steps 	& ( extremecarver5=bike | route=bicycle | bridge=yes )  	[0x08 resolution 21-21]
+highway=steps 	& ( extremecarver5=bike | route=bicycle | bridge=yes )  	[0x08 resolution 21-21 continue]
 highway=steps 	& class:bicycle!=-3 										[0x08 resolution 22]
 highway=steps 	& class:bicycle=3 	[0x01 road_class=2 road_speed=1 resolution 24 continue]
 highway=steps  	& class:bicycle=3 	[0x01 road_class=2 road_speed=0 resolution 24]
