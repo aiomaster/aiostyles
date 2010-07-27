@@ -70,16 +70,16 @@ cuisine = curry [0x2a18 resolution 24]
 cuisine = kebap | cuisine = döner | cuisine = turkish [0x2a19 resolution 24]
 cuisine = fish_and_chips | cuisine=friture [0x2a1a resolution 24]
 cuisine = noodle | cuisine=pasta [0x2a1b resolution 24]
-cuisine = pie [0x2a1c resolution 24]
+cuisine = ice_cream [0x2a1c resolution 24]
 cuisine = sandwich [0x2a1d resolution 24]
-cuisine = savory_pancakes [0x2a1e resolution 24]
-cuisine = sushi [0x2a1f resolution 24]
+amenity = biergarten [0x2a1e resolution 24]
+cuisine = sushi | cuisine = savory_pancakes | cuisine = japanese [0x2a1f resolution 24]
 
 amenity=fast_food [0x2a07 resolution 24]
 amenity=restaurant [0x2a00 resolution 24]
 
 amenity=pub [0x4600 resolution 24]
-amenity=biergarten [0x4601 resolution 24]
+#amenity=biergarten [0x4601 resolution 24]
 amenity=drinking_water [0x6414 resolution 24]
 
 # Geld
