@@ -5,7 +5,8 @@
 
 
 
-route=road & network=e-road { apply { add int_ref='${ref'; add int_ref='${int_ref'} } 
+route=road & network=e-road { apply { add int_ref='${ref'; add int_ref='${int_ref'} }
+
 
 route=mtb	& network=icn				{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; add ref = '${ref}' } }
 route=mountainbike 	& network=icn		{ apply { set extremecarver=mr; add extremecarver6=mr; set extremecarver2=icn; add extremecarver4=route; set route_name_mtb1 = '${name}'; set mtblayer=icn; add ref = '${ref}' } }
@@ -39,7 +40,7 @@ type=associatedStreet { apply { add addr:street='${name}' } }
 (type=boundary | type=multipolygon) & boundary=administrative & admin_level=8 { apply { set mkgmap:boundary8_name='$(mkgmap:boundary8_name)/${name:en}' | '$(mkgmap:boundary8_name)/${name}' | '${name:en}' | '${name}' | ; set boundary=administrative; set admin_level_8=yes ; set admin_level_copy=yes }}
 (type=boundary | type=multipolygon) & boundary=national_park { apply { set mkgmap:boundary99_name='$(mkgmap:boundary99_name)/${name:en}' | '$(mkgmap:boundary99_name)/${name}' | '${name:en}' | '${name}'; set boundary99=yes }}
 
-( route=ferry | line=ferry ) & name=*	{ apply { set name1 = '${name} ferry' | 'ferry'; add fromrelation=yes; add route1=ferry } }
+( route=ferry | line=ferry ) & name=*	{ apply { set name1 = '${name} ${route} ${network} ferry' | '${name} ${route} ferry' | '${route} ${network} ferry' | '${name} ${network} ferry' | '${name} ferry' | '${network} ferry' | '${route} ferry' | 'ferry'; add fromrelation=yes; add route1=ferry } }
 ( route=ferry | line=ferry ) & name!=* 	{ apply { add fromrelation=yes; add route=ferry } }
 
 route=shuttle_train & name=*	{ apply { set name1 = '${name} s_train' | 'shuttle_train'; add fromrelation=yes; add route1=shuttle_train } }
@@ -68,6 +69,14 @@ route=shuttle_train & name=*	{ apply { set name1 = '${name} s_train' | 'shuttle_
   }
   # We could want to copy the route relation name to unnamed route=ferry ways.
   apply { add railwayname='${name}' }
+}
+
+type=route
+& ( route=road & network!=e-road|route=ski)
+{
+  add ref='${name}'; # if ref is missing, use name
+  set ref='${route} ${network} ${ref}' | '${route} ${ref}' | '${route} ${network}' | '${route}';
+  apply { set mkgmap:route='$(mkgmap:route),${ref}' | '${ref}' }
 }
 
 

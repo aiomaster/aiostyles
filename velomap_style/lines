@@ -586,7 +586,7 @@ highway=construction {set name='${name}'|'cstrn'}
 ( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & tracktype!=* & sac_scale=hiking {set name='${name} T1' | 'T1' }
 
 # Set name for ways without highway-shield
-highway=* & ref=* {set name='${name} (${ref})'}
+# highway=* & ref=* {set name='${name} (${ref})'}
 
 # Set route name to way.
 route_name1=* 			{set name='${name} ${route_name1}'| '${route_name1}'}
@@ -1121,7 +1121,7 @@ service=parking_aisle | service=parkingaisle | highway=parking_aisle  [0x202 roa
 highway=primary & importantprimary=yes						[0x1050d resolution 18-18 continue]
 highway=primary & oneway=yes & lanes>1 {set no0x150e=yes}	[0x10518 resolution 21-19 continue]
 
-highway=* & ref=* {set namecopy='${name}' }
+highway=* & ref=* {set namecopy='${name} (${ref})' }
 highway=* & ref=* & (extremecarver=mr | route=mtb)				{name '${ref|highway-symbol:box:7:5} ${name}'  | '${ref|highway-symbol:box:7:5}'  | '${name}'; add display_name='${namecopy}'; set shieldpresent=yes}
 highway=* & ref=* & extremecarver5=bike & shieldpresent!=yes	{name '${ref|highway-symbol:box:7:5} ${name}'  | '${ref|highway-symbol:box:7:5}'  | '${name}'; add display_name='${namecopy}'; set shieldpresent=yes}
 highway=* & ref=* & shieldpresent!=yes							{name '${ref|highway-symbol:oval:7:5} ${name}' | '${ref|highway-symbol:oval:7:5}' | '${name}'; add display_name='${namecopy}'}
