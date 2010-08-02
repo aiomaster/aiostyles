@@ -158,7 +158,7 @@ sport=horse_racing [0x11003 resolution 22]
 sport=equestrian [0x11003 resolution 22]
 waterway=dock [0x11001 resolution 22]
 waterway=boatyard [0x11000 resolution 22]
-natural=beach 	[0x1100d resolution 21]
+natural=beach | natural=sand	[0x1100d resolution 21]
 water=tidal		[0x1101b resolution 21]
 
 natural=shelf | tidal=yes	[0x1101b resolution 22]
