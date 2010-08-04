@@ -707,7 +707,13 @@ highway=* & oneway=reverse 	& copy!=* & highway!=primary & highway!=secondary & 
 (cycleway=track_left | cycleway:left=track ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f19 resolution 23 continue]
 
 
-
+# Need ref inside Name from here onwards 
+highway=* & ref=* {set namecopy='${name} (${ref})' }
+highway=* & ref=* & (extremecarver=mr | route=mtb)				{name '${ref|highway-symbol:hbox:7:5} ${name}' | '${ref|highway-symbol:hbox:7:5}' | '${name}'; set display_name='${namecopy}'; set shieldpresent=yes}
+highway=* & ref=* & extremecarver5=bike & shieldpresent!=yes	{name '${ref|highway-symbol:box:7:5} ${name}'  | '${ref|highway-symbol:box:7:5}'  | '${name}'; set display_name='${namecopy}'; set shieldpresent=yes}
+highway=* & ref=* & shieldpresent!=yes							{name '${ref|highway-symbol:oval:7:5} ${name}' | '${ref|highway-symbol:oval:7:5}' | '${name}'; set display_name='${namecopy}'}
+highway=* & ref=* {set name='${namecopy}' }
+# End refname section
 
 cycleway=lane																			&  highway=primary	[0x10706 resolution 22-22 continue]
 cycleway=lane																			&  highway=primary	[0x10403 resolution 23 continue]
@@ -1120,12 +1126,6 @@ service=parking_aisle | service=parkingaisle | highway=parking_aisle  [0x202 roa
 
 highway=primary & importantprimary=yes						[0x1050d resolution 18-18 continue]
 highway=primary & oneway=yes & lanes>1 {set no0x150e=yes}	[0x10518 resolution 21-19 continue]
-
-highway=* & ref=* {set namecopy='${name} (${ref})' }
-highway=* & ref=* & (extremecarver=mr | route=mtb)				{name '${ref|highway-symbol:box:7:5} ${name}'  | '${ref|highway-symbol:box:7:5}'  | '${name}'; add display_name='${namecopy}'; set shieldpresent=yes}
-highway=* & ref=* & extremecarver5=bike & shieldpresent!=yes	{name '${ref|highway-symbol:box:7:5} ${name}'  | '${ref|highway-symbol:box:7:5}'  | '${name}'; add display_name='${namecopy}'; set shieldpresent=yes}
-highway=* & ref=* & shieldpresent!=yes							{name '${ref|highway-symbol:oval:7:5} ${name}' | '${ref|highway-symbol:oval:7:5}' | '${name}'; add display_name='${namecopy}'}
-
 highway=primary & oneway=yes & lanes>1 						[0x10518 resolution 23-22 continue]
 highway=primary & no0x150e!=yes								[0x1050d resolution 19-19 continue]
 highway=primary_link 										[0x10517 resolution 21-19 continue]
