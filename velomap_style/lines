@@ -44,7 +44,9 @@ highway="footway; cycleway" { set highway=cycleway; set segregated=no }
 highway="footway;cycleway" { set highway=cycleway; set segregated=no }
 highway="cycleway; footway" { set highway=cycleway; set segregated=no }
 highway="cycleway;footway" { set highway=cycleway; set segregated=no }
-
+highway=cycleroad {set highway=cycleway; add class:bicycle=-1}
+highway=cyclestreet { set highway=cycleway }
+cycleroad=yes {add class:bicycle=-1}
 
 cycleway=no | cycleway=none { delete cycleway }
 cycleway="lane;opposite_lane" { set cycleway=opposite_lane }
