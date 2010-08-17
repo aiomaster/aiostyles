@@ -347,7 +347,7 @@ barrier=city_wall 		[0x10f04 resolution 23 continue]
 (barrier=bus_guideway | highway=bus_guideway | highway=bus_stop)	[0x10f07 resolution 24 continue]
 
 
-aeroway=runway 		{set name='runway ${name}' | 'runway'}	[0x10f09 resolution 22 continue]
+aeroway=runway 		{set name='runway ${name}' | 'runway'}	[0x27 resolution 22 continue]
 aeroway=taxiway 	{set name='taxiway ${name}' | 'taxiway'}	[0x10f0a resolution 22 continue]
 aeroway=apron 		{set name='apron ${name}' | 'apron'}		[0x10f0b resolution 22 continue]
 
