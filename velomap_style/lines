@@ -239,10 +239,10 @@ tunnel=yes & highway=* & highway!=primary & highway!=motorway & highway!=trunk &
 # tunnel=* & highway=construction															[0x17 resolution 21]
 
 
-( admin_level=1 & boundary=* ) | admin_level_1=yes	{set name='${left:country}/${right:country}' | '${mkgmap:boundary1_name}' | '${name}' | 'ntnl bndry'} [0x10e1c resolution 14 continue]
-( admin_level=2 & boundary=* ) | admin_level_2=yes | boundary=national	{set name='${mkgmap:boundary2_name}' | '${left:country}/${right:country}' | '${name}' | 'ntnl bndry'} [0x10e1c resolution 14 continue]
-( admin_level=3 & boundary=administrative ) | admin_level_3=yes	{set name='${mkgmap:boundary3_name}' | '${left:state}/${right:state}' | '${left:district}/${right:district}' | '${name}' | 'admin_lv=3'} [0x10e1d resolution 19 continue]
-( admin_level=4 & boundary=* ) | admin_level_4=yes	{set name='${mkgmap:boundary4_name}' | '${left:state}/${right:state}' | '${left:district}/${right:district}' | '${name}' | 'admin_lv=4'} [0x10e1e resolution 21 continue]
+( admin_level=1 & boundary=* ) | admin_level_1=yes	{set name='${left:country}/${right:country}' | '${mkgmap:boundary1_name}' | '${name}' | 'ntnl bndry'} [0x1e resolution 14 continue]
+( admin_level=2 & boundary=* ) | admin_level_2=yes | boundary=national	{set name='${mkgmap:boundary2_name}' | '${left:country}/${right:country}' | '${name}' | 'ntnl bndry'} [0x1e resolution 14 continue]
+( admin_level=3 & boundary=administrative ) | admin_level_3=yes	{set name='${mkgmap:boundary3_name}' | '${left:state}/${right:state}' | '${left:district}/${right:district}' | '${name}' | 'admin_lv=3'} [0x1d resolution 19 continue]
+( admin_level=4 & boundary=* ) | admin_level_4=yes	{set name='${mkgmap:boundary4_name}' | '${left:state}/${right:state}' | '${left:district}/${right:district}' | '${name}' | 'admin_lv=4'} [0x1c resolution 21 continue]
 
 ( admin_level_5=yes | ( admin_level=5 & boundary=administrative )) & admin_level1!=* & admin_level2!=* & admin_level3!=* & admin_level!=1 & admin_level!=2 & admin_level!=3	 & admin_level!=4
 {set name='${mkgmap:boundary5_name}' | '${left:district}/${right:district}'| '${left:county}/${right:county}' | '${name}' | 'admin_lv=5'} [0x10e1f resolution 22 continue]
@@ -265,8 +265,8 @@ waterway=dam							{add name='${name}' | 'dam'}			[0x10e0f resolution 22 continu
 waterway=waterfall						{add name='${name}' | 'waterfall'}		[0x1080b resolution 22 continue]
 
 waterway=stream 						& tunnel!=yes		{add name='${name}' | 'stream'}		[0x18 resolution 22 continue]
-waterway=drain 							& tunnel!=yes		{add name='${name}' | 'drain'} 		[0x10a0a resolution 23 continue]
-waterway=ditch 							& tunnel!=yes		{add name='${name}' | 'ditch'} 		[0x10a0a resolution 23 continue]
+waterway=drain 							& tunnel!=yes		{add name='${name}' | 'drain'} 		[0x26 resolution 23 continue]
+waterway=ditch 							& tunnel!=yes		{add name='${name}' | 'ditch'} 		[0x26 resolution 23 continue]
 waterway=river & width>99 				& tunnel!=yes		{add name='${name}' | 'huge river'}	[0x10a00 resolution 18 continue]
 waterway=river & width>49 & width<100 	& tunnel!=yes 		{add name='${name}' | 'wide river'}	[0x10a00 resolution 19 continue]
 waterway=river & width>24 & width<50 	& tunnel!=yes 		{add name='${name}' | 'medium river'}	[0x10a0b resolution 21 continue]
@@ -277,28 +277,28 @@ waterway=canal 							& tunnel!=yes		{add name='${name}' | 'canal'}			[0x10a01 r
 
 railway=platform 					[0x10802 resolution 23 continue]
 railway=subway 						[0x160 resolution 24 continue]
-railway=light_rail 					[0x15 resolution 22 continue]
+railway=light_rail 					[0x10310 resolution 22 continue]
 
-railway=rail & usage=main			[0x29 resolution 18 continue]
-railway=rail & priority=primary	{set railway=none}	[0x29 resolution 19 continue with_actions]
-railway=rail & usage=branch			[0x29 resolution 21 continue]
-railway=rail & usage=industrial		[0x15 resolution 23 continue]
-railway=rail & usage=tourism		[0x29 resolution 22 continue]
-railway=rail & usage=military		[0x15 resolution 24 continue]
-railway=rail & disused=yes			[0x15 resolution 24 continue]
-railway=rail & name=*  & tracks>1	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x29 resolution 19 continue]
-railway=rail & name!=* & tracks>1	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x29 resolution 21 continue]
-railway=rail & name=*  & tracks<2	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x29 resolution 20 continue]
-railway=rail & name!=* & tracks<2	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x29 resolution 22 continue]
-railway=rail & name=*  & tracks!=*	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x29 resolution 21 continue]
-railway=rail & name!=* & tracks!=*	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x29 resolution 22 continue]
+railway=rail & usage=main			[0x10a08 resolution 18 continue]
+railway=rail & priority=primary	{set railway=none}	[0x10a08 resolution 19 continue with_actions]
+railway=rail & usage=branch			[0x10a08 resolution 21 continue]
+railway=rail & usage=industrial		[0x10310 resolution 23 continue]
+railway=rail & usage=tourism		[0x10a08 resolution 22 continue]
+railway=rail & usage=military		[0x10310 resolution 24 continue]
+railway=rail & disused=yes			[0x10310 resolution 24 continue]
+railway=rail & name=*  & tracks>1	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x10a08 resolution 19 continue]
+railway=rail & name!=* & tracks>1	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x10a08 resolution 21 continue]
+railway=rail & name=*  & tracks<2	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x10a08 resolution 20 continue]
+railway=rail & name!=* & tracks<2	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x10a08 resolution 22 continue]
+railway=rail & name=*  & tracks!=*	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x10a08 resolution 21 continue]
+railway=rail & name!=* & tracks!=*	& usage!=main & usage!=branch & usage!=industrial & usage!=tourism & usage!=military & disused!=yes [0x10a08 resolution 22 continue]
 
-railway=* & disused=yes & railway!=rail		[0x15 resolution 24 continue]
-railway=tram 								[0x15 resolution 22 continue]
-railway=narrow_gauge 						[0x15 resolution 22 continue]
-railway=preserved	 						[0x15 resolution 22 continue]
-railway=disused	 							[0x15 resolution 23 continue]
-railway=monorail	 						[0x15 resolution 22 continue]
+railway=* & disused=yes & railway!=rail		[0x10310 resolution 24 continue]
+railway=tram 								[0x10310 resolution 22 continue]
+railway=narrow_gauge 						[0x10310 resolution 22 continue]
+railway=preserved	 						[0x10310 resolution 22 continue]
+railway=disused	 							[0x10310 resolution 23 continue]
+railway=monorail	 						[0x10310 resolution 22 continue]
 
 
 # highway=pedestrian & bicycle!=yes & bicycle!=permitted {add name='${name} nobike' | 'nobike'}				[0x10e00 resolution 22 continue]
@@ -314,25 +314,25 @@ piste:type=downhill & piste:difficulty=novice {set name='${name} novice piste' |
 piste:type=downhill & piste:difficulty!=*  {set name='${name} piste' | 'piste'}							[0x10a05 resolution 23 continue]
 
 
-(aerialway=tbar | aerialway=t-bar | piste:lift=tbar | piste:lift=t-bar | aerialway=schlepplift | piste:lift=schlepplift | drag_lift=tbar | drag_lift=t-bar)	{set name='${name} tbar' | 'tbar'}	[0x1d resolution 23 continue]
-aerialway=platter 		{set name='${name} platter' | 'platter'}								[0x1d resolution 23 continue]
-aerialway=rope_tow 		{set name='${name} ropetow' | 'ropetow'}								[0x1d resolution 23 continue]
-aerialway=jbar | aerialway=j-bar				{set name='${name} jbar' | 'jbar'}				[0x1d resolution 23 continue]
-(aerialway=drag_lift | piste:lift=drag_lift)	{set name='${name} drag_lift' | 'drag_lift'}	[0x1d resolution 23 continue]
+(aerialway=tbar | aerialway=t-bar | piste:lift=tbar | piste:lift=t-bar | aerialway=schlepplift | piste:lift=schlepplift | drag_lift=tbar | drag_lift=t-bar)	{set name='${name} tbar' | 'tbar'}	[0x10312 resolution 23 continue]
+aerialway=platter 		{set name='${name} platter' | 'platter'}								[0x10312 resolution 23 continue]
+aerialway=rope_tow 		{set name='${name} ropetow' | 'ropetow'}								[0x10312 resolution 23 continue]
+aerialway=jbar | aerialway=j-bar				{set name='${name} jbar' | 'jbar'}				[0x10312 resolution 23 continue]
+(aerialway=drag_lift | piste:lift=drag_lift)	{set name='${name} drag_lift' | 'drag_lift'}	[0x10312 resolution 23 continue]
 
 (aerialway=cable_car | aerialway=cablecar)	{set oneway=no; set name='${name} cablecar' | 'cablecar'}						[0x1b road_class=4 road_speed=1 resolution 21 continue]
-railway=funicular | railway=rack			{set oneway=no; set name='${name} funicular' | 'funicular'}						[0x29 road_class=4 road_speed=1 resolution 21 continue]
+railway=funicular | railway=rack			{set oneway=no; set name='${name} funicular' | 'funicular'}						[0x10a08 road_class=4 road_speed=1 resolution 21 continue]
 (aerialway=gondola | aerialway=mixed_lift) 	{set oneway=no; set name='${name} gondola' | 'gondola'}							[0x1b road_class=4 road_speed=1 resolution 21 continue]
 ( aerialway=chair_lift | aerialway=chairlift ) & bicycle=yes	{set oneway=no; set name='${name} chairlift' | 'chairlift'}	[0x216 road_class=2 road_speed=0 resolution 22 continue]
-( aerialway=chair_lift | aerialway=chairlift ) & bicycle!=yes	{set name='${name} chairlift' | 'chairlift'}				[0x2b resolution 22 continue]
+( aerialway=chair_lift | aerialway=chairlift ) & bicycle!=yes	{set name='${name} chairlift' | 'chairlift'}				[0x10318 resolution 22 continue]
 aerialway=goods | aerialway=goods_lift | aerialway=lift | aerialway=material {set name='${name} goods' | 'goods_lift'}		[0x1b resolution 23 continue]
 
 natural=coastline & name!=see & name!=lake & name:en!=lake & name:de!=see & name!=neusiedler & natural!=water 	{set name='${name} coastline ' | 'coastline'}	[0x10a04 resolution 18 continue]
 natural=coastline & name!=see & name!=lake & name:en!=lake & name:de!=see & name!=neusiedler & natural=water	{set name='${name} coastline ' | 'coastline'}	[0x10a04 resolution 18 continue]
 
-power=line | powerline=yes 		[0x10a08 resolution 23 continue]
+power=line | powerline=yes 		[0x29 resolution 23 continue]
 
-( man_made=pipeline | waterway=pipeline | manmade=pipeline ) & tunnel!=* & location!=underground & location!=underwater	[0x10f00 resolution 23 continue]
+( man_made=pipeline | waterway=pipeline | manmade=pipeline ) & tunnel!=* & location!=underground & location!=underwater	[0x28 resolution 23 continue]
 ( natural=cliff | barrier=cliff )		{set name='${name} cliff' | 'cliff'}		[0x10f01 resolution 23 continue]
 # barrier=wall			[0x10f02 resolution 24 continue]
 # barrier=retaining_wall	[0x10f03 resolution 24 continue]
@@ -598,34 +598,34 @@ route_name1=* 			{set name='${name} ${route_name1}'| '${route_name1}'}
 
 extremecarver3=icn 						 & ( highway=primary | highway=secondary | highway=tertiary )		[0x10419 resolution 20 continue]
 (extremecarver3=ncn | extremecarver3=tcn) & (highway=primary | highway=secondary | highway=tertiary )		[0x10419 resolution 20 continue]
-extremecarver3=rcn   					 & ( highway=primary | highway=secondary | highway=tertiary )		[0x1c resolution 20 continue]
+extremecarver3=rcn   					 & ( highway=primary | highway=secondary | highway=tertiary )		[0x10311 resolution 20 continue]
 extremecarver3=tcn   					 & ( highway=primary | highway=secondary | highway=tertiary )		[0x10608 resolution 20 continue]
 extremecarver3=lcn 						 & ( highway=primary | highway=secondary | highway=tertiary )		[0x10608 resolution 20 continue]
 extremecarver3=xcn 						 & ( highway=primary | highway=secondary | highway=tertiary )		[0x10608 resolution 20 continue]
 
 extremecarver3=icn 						& highway!=primary & highway!=secondary & highway!=tertiary	[0x10419 resolution 21 continue]
 (extremecarver3=ncn | extremecarver3=tcn) & highway!=primary & highway!=secondary 					[0x10419 resolution 21 continue]
-extremecarver3=rcn   					& highway!=primary & highway!=secondary & highway!=tertiary	[0x1c resolution 21 continue]
+extremecarver3=rcn   					& highway!=primary & highway!=secondary & highway!=tertiary	[0x10311 resolution 21 continue]
 extremecarver3=tcn   					& highway!=primary & highway!=secondary & highway!=tertiary	[0x10608 resolution 21 continue]
 extremecarver3=lcn 						& highway!=primary & highway!=secondary & highway!=tertiary	[0x10608 resolution 21 continue]
 extremecarver3=xcn 						& highway!=primary & highway!=secondary & highway!=tertiary	[0x10608 resolution 21 continue]
 
 route=bicycle & mtb!=yes  & network=icn	& ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	[0x10419 resolution 20 continue]
-route=bicycle & mtb!=yes  & network=ncn	& ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	[0x1c resolution 20 continue]
+route=bicycle & mtb!=yes  & network=ncn	& ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	[0x10311 resolution 20 continue]
 route=bicycle & mtb!=yes  & network=tcn	& ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	[0x10419 resolution 20 continue]
-route=bicycle & mtb!=yes  & network=rcn	& ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	[0x1c resolution 20 continue]
+route=bicycle & mtb!=yes  & network=rcn	& ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	[0x10311 resolution 20 continue]
 route=bicycle & mtb!=yes  & network=lcn & ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	[0x10608 resolution 20 continue]
 
 route=bicycle & network!=mtb & mtb!=yes  & network=icn  & highway!=primary & highway!=secondary & highway!=tertiary & extremecarver6!=* [0x10419 resolution 21 continue]
-route=bicycle & network!=mtb & mtb!=yes  & network=ncn  & highway!=primary & highway!=secondary & highway!=tertiary & extremecarver6!=* [0x1c resolution 21 continue]
+route=bicycle & network!=mtb & mtb!=yes  & network=ncn  & highway!=primary & highway!=secondary & highway!=tertiary & extremecarver6!=* [0x10311 resolution 21 continue]
 route=bicycle & network!=mtb & mtb!=yes  & network=tcn  & highway!=primary & highway!=secondary & highway!=tertiary & extremecarver6!=* [0x10419 resolution 21 continue]
-route=bicycle & network!=mtb & mtb!=yes  & network=rcn  & highway!=primary & highway!=secondary & highway!=tertiary & extremecarver6!=* [0x1c resolution 21 continue]
+route=bicycle & network!=mtb & mtb!=yes  & network=rcn  & highway!=primary & highway!=secondary & highway!=tertiary & extremecarver6!=* [0x10311 resolution 21 continue]
 route=bicycle & network!=mtb & mtb!=yes  & network=lcn  & highway!=primary & highway!=secondary & highway!=tertiary & extremecarver6!=* [0x10608 resolution 21 continue]
 
 route=icn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x10419 resolution 20 continue]
-route=ncn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x1c resolution 20 continue]
+route=ncn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x10311 resolution 20 continue]
 route=tcn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x10419 resolution 20 continue]
-route=rcn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x1c resolution 20 continue]
+route=rcn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x10311 resolution 20 continue]
 route=lcn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x10608 resolution 20 continue]
 
 ( cycleroute=yes | route=bicycle ) & extremecarver5!=bike & extremacerver3!=* & network!=icn & network!=ncn & network!=tcn & network!=rcn & network!=lcn & network!=xcn & ( highway=primary | highway=secondary | highway=tertiary ) & extremecarver6!=* 	{set extremecarver5=bike}	[0x10608 resolution 20 continue with_actions]
@@ -634,19 +634,19 @@ route=lcn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* 	[0x10
 ( highway=icn_major | highway=icn_minor | highway=icn_offroad | icn=yes | icn_ref=* | bicycle=icn ) & extremecarver5!=bike  & ( highway=primary | highway=secondary | highway=tertiary ) {set extremecarver5=bike}	[0x10419 resolution 20 continue with_actions]
 ( highway=ncn_major | highway=ncn_minor | highway=ncn_offroad | ncn=yes | ncn_ref=* | bicycle=ncn ) & extremecarver5!=bike  & ( highway=primary | highway=secondary | highway=tertiary ) {set extremecarver5=bike}	[0x10419 resolution 20 continue with_actions] 
 ( highway=tcn_major | highway=tcn_minor | highway=tcn_offroad | tcn=yes | tcn_ref=* | bicycle=tcn ) & extremecarver5!=bike  & ( highway=primary | highway=secondary | highway=tertiary ) {set extremecarver5=bike} 	[0x10419 resolution 20 continue with_actions]
-( highway=rcn_major | highway=rcn_minor | highway=rcn_offroad | rcn=yes | rcn_ref=* | bicycle=rcn ) & extremecarver5!=bike  & ( highway=primary | highway=secondary | highway=tertiary ) {set extremecarver5=bike}	[0x1c resolution 20 continue with_actions]
+( highway=rcn_major | highway=rcn_minor | highway=rcn_offroad | rcn=yes | rcn_ref=* | bicycle=rcn ) & extremecarver5!=bike  & ( highway=primary | highway=secondary | highway=tertiary ) {set extremecarver5=bike}	[0x10311 resolution 20 continue with_actions]
 ( highway=lcn_major | highway=lcn_minor | highway=lcn_offroad | lcn=yes | lcn_ref=* | bicycle=lcn ) & extremecarver5!=bike  & ( highway=primary | highway=secondary | highway=tertiary ) {set extremecarver5=bike}	[0x10608 resolution 20 continue with_actions]
 
 ( highway=icn_major | highway=icn_minor | highway=icn_offroad | icn=yes | icn_ref=* | bicycle=icn ) & extremecarver5!=bike  & ( highway=unclassified | highway=minor ) {set extremecarver5=bike}	[0x10419 resolution 21 continue with_actions]
 ( highway=ncn_major | highway=ncn_minor | highway=ncn_offroad | ncn=yes | ncn_ref=* | bicycle=ncn ) & extremecarver5!=bike  & ( highway=unclassified | highway=minor ) {set extremecarver5=bike}	[0x10419 resolution 21 continue with_actions] 
 ( highway=tcn_major | highway=tcn_minor | highway=tcn_offroad | tcn=yes | tcn_ref=* | bicycle=tcn ) & extremecarver5!=bike  & ( highway=unclassified | highway=minor ) {set extremecarver5=bike} 	[0x10419 resolution 21 continue with_actions]
-( highway=rcn_major | highway=rcn_minor | highway=rcn_offroad | rcn=yes | rcn_ref=* | bicycle=rcn ) & extremecarver5!=bike  & ( highway=unclassified | highway=minor ) {set extremecarver5=bike}	[0x1c resolution 21 continue with_actions]
+( highway=rcn_major | highway=rcn_minor | highway=rcn_offroad | rcn=yes | rcn_ref=* | bicycle=rcn ) & extremecarver5!=bike  & ( highway=unclassified | highway=minor ) {set extremecarver5=bike}	[0x10311 resolution 21 continue with_actions]
 ( highway=lcn_major | highway=lcn_minor | highway=lcn_offroad | lcn=yes | lcn_ref=* | bicycle=lcn ) & extremecarver5!=bike  & ( highway=unclassified | highway=minor ) {set extremecarver5=bike}	[0x10608 resolution 21 continue with_actions]
 
 ( highway=icn_major | highway=icn_minor | highway=icn_offroad | icn=yes | icn_ref=* | bicycle=icn ) & extremecarver5!=bike & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=minor {set extremecarver5=bike} [0x10419 resolution 22 continue with_actions]
 ( highway=ncn_major | highway=ncn_minor | highway=ncn_offroad | ncn=yes | ncn_ref=* | bicycle=ncn ) & extremecarver5!=bike & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=minor {set extremecarver5=bike} [0x10419 resolution 22 continue with_actions] 
 ( highway=tcn_major | highway=tcn_minor | highway=tcn_offroad | tcn=yes | tcn_ref=* | bicycle=tcn ) & extremecarver5!=bike & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=minor {set extremecarver5=bike} [0x10419 resolution 22 continue with_actions]
-( highway=rcn_major | highway=rcn_minor | highway=rcn_offroad | rcn=yes | rcn_ref=* | bicycle=rcn ) & extremecarver5!=bike & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=minor {set extremecarver5=bike} [0x1c resolution 22 continue with_actions]
+( highway=rcn_major | highway=rcn_minor | highway=rcn_offroad | rcn=yes | rcn_ref=* | bicycle=rcn ) & extremecarver5!=bike & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=minor {set extremecarver5=bike} [0x10311 resolution 22 continue with_actions]
 ( highway=lcn_major | highway=lcn_minor | highway=lcn_offroad | lcn=yes | lcn_ref=* | bicycle=lcn ) & extremecarver5!=bike & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=minor {set extremecarver5=bike} [0x10608 resolution 22 continue with_actions]
 
 
@@ -972,8 +972,8 @@ class:bicycle=-2 & tracktype=grade2 & highway!=service & highway!=track & highwa
 ##################### Roundabouts #########################
 
 
-junction=roundabout & ( highway=motorway_link | highway=motorway ) 				{set roundaboutdone=yes}	[0x28 resolution 20 continue with_actions]
-junction=roundabout & ( highway=trunk | highway=trunk_link | motorroad=yes ) 	{set roundaboutdone=yes} 	[0x28 resolution 20 continue with_actions]
+junction=roundabout & ( highway=motorway_link | highway=motorway ) 				{set roundaboutdone=yes}	[0x10f00 resolution 20 continue with_actions]
+junction=roundabout & ( highway=trunk | highway=trunk_link | motorroad=yes ) 	{set roundaboutdone=yes} 	[0x10f00 resolution 20 continue with_actions]
 junction=roundabout & highway=primary 	& roundaboutdone!=yes					{set roundaboutdone=yes}	[0x02 resolution 20 continue with_actions]
 junction=roundabout & highway=secondary 										{set roundaboutdone=yes}	[0x04 resolution 20 continue with_actions]
 junction=roundabout & highway=tertiary 											{set roundaboutdone=yes}	[0x05 resolution 21 continue with_actions]
@@ -1053,8 +1053,8 @@ highway=pedestrian 	{add taxi=no; add mkgmap:unpaved=1}							[0xb1c road_class=
 
 
 
-# highway=motorway & int_ref=*	[0x1e resolution 14-14 continue]
-highway=motorway 				[0x1e resolution 21-15 continue]
+# highway=motorway & int_ref=*	[0x10313 resolution 14-14 continue]
+highway=motorway 				[0x10313 resolution 21-15 continue]
 highway=motorway				[0x10509 resolution 23-22 continue]
 highway=motorway				[0x1050a resolution 24]
 highway=motorway_link | highway=motorway_junction [0x10510 resolution 21-20 continue]
@@ -1066,7 +1066,7 @@ highway=trunk		& bicycle=yes & motorroad!=yes {set delivery=no}	[0x01 road_class
 highway=trunk_link 	& bicycle=yes & motorroad!=yes {set delivery=no}	[0x01 road_class=0 road_speed=0 resolution 24 continue]
 highway=trunk 					[0x1050c resolution 21-18 continue]
 highway=trunk					[0x10418 resolution 23-22 continue]
-highway=trunk					[0x28 resolution 24]
+highway=trunk					[0x10f00 resolution 24]
 highway=trunk_link 				[0x10513 resolution 21-20 continue]
 highway=trunk_link 				[0x10514 resolution 23-22 continue]
 highway=trunk_link 				[0x10515 resolution 24]
@@ -1548,7 +1548,7 @@ highway=bridleway	& class:bicycle=2 	[0x03 road_class=4 road_speed=2 resolution 
 highway=bridleway	& class:bicycle=1 	[0x16 road_class=4 road_speed=2 resolution 22]
 highway=bridleway	& class:bicycle=-1 	[0x0d road_class=1 road_speed=1 resolution 22]
 highway=bridleway	& class:bicycle=-2 	[0x0e road_class=0 road_speed=0 resolution 22]
-highway=bridleway	& class:bicycle=-3 	[0x2a resolution 23]
+highway=bridleway	& class:bicycle=-3 	[0x10317 resolution 23]
 
 highway=bridleway & tracktype=grade4											[0x0f resolution 22]
 highway=bridleway & tracktype=grade5											[0x12 resolution 23]
@@ -1560,13 +1560,13 @@ highway=bridleway & ( tracktype=grade2 & bicycle=nope )	{add mkgmap:unpaved=1}	[
 highway=bridleway & ( tracktype=grade3 & bicycle=nope )							[0x0e road_class=0 road_speed=0 resolution 23]
 highway=bridleway & tracktype=grade2 											[0x0d road_class=0 road_speed=0 resolution 22]
 highway=bridleway & sac_scale=mountain_hiking									[0x12 resolution 23]
-highway=bridleway & tracktype=grade3											[0x2a resolution 22]
+highway=bridleway & tracktype=grade3											[0x10317 resolution 22]
 highway=bridleway & sac_scale=demanding_mountain_hiking							[0x12 resolution 23]
 highway=bridleway & sac_scale=alpine_hiking										[0x12 resolution 23]
 highway=bridleway & sac_scale=demanding_alpine_hiking	{delete highway}
 highway=bridleway & sac_scale=difficult_alpine_hiking	{delete highway}
 highway=bridleway & tracktype=extremecarver 				 					[0x12 resolution 23]
-highway=bridleway & bicycle=yes													[0x26 resolution 22 continue]
+highway=bridleway & bicycle=yes													[0x10314 resolution 22 continue]
 highway=bridleway & bicycle=yes													[0x16 road_class=2 road_speed=0 resolution 22]
 
 
@@ -1587,9 +1587,9 @@ highway=bridleway & segregated=yes												[0x03 road_class=1 road_speed=2 re
 highway=bridleway & segregated=no												[0x16 road_class=1 road_speed=1 resolution 22]
 highway=bridleway & bicycle=official											[0x03 road_class=1 road_speed=1 resolution 22]
 highway=bridleway & mtb:scale=*   												[0x0f resolution 23]
-highway=bridleway & sac_scale=hiking											[0x2a resolution 22]
+highway=bridleway & sac_scale=hiking											[0x10317 resolution 22]
 highway=bridleway 																[0x01 road_class=0 road_speed=1 resolution 24 continue]
-highway=bridleway 																[0x2a resolution 23]
+highway=bridleway 																[0x10317 resolution 23]
 
 
 
