@@ -225,7 +225,7 @@ place=town   & population >    999 & cityxx!=yes {set cityxx=yes} [0x0b00 resolu
 place=town   & population >		 0 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
 place=town 						   & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
 
-place=village & population >  20000	 & cityxx!=yes {set cityxx=yes} [0x0h00 resolution 19 continue with_actions ]
+place=village & population >  20000	 & cityxx!=yes {set cityxx=yes} [0x0b00 resolution 19 continue with_actions ]
 place=village & population >   4000	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
 place=village & population >   1500	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
 place=village & population >      0	 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
@@ -598,8 +598,8 @@ amenity=community_centre 			[0x3005 resolution 24 continue]
 amenity=communitycentre 			[0x3005 resolution 24 continue]
 amenity=grave_yard 					[0x6403 resolution 24 continue]
 amenity=graveyard 					[0x6403 resolution 24 continue]
-amenity=fire_station 				[0x3008 resolution 24 continue]
-amenity=firestation 				[0x3008 resolution 24 continue]
+amenity=fire_station 				[0x3008 resolution 23 continue]
+amenity=firestation 				[0x3008 resolution 23 continue]
 amenity=mountain_rescue {name 'mtn_rescue ${name}' | 'mtn_rescue' }		[0x4b01 resolution 24 continue]
 amenity=mountain_rescue {name 'mtn_rescue ${name}' | 'mtn_rescue' }		[0x340a resolution 23-22 continue]
 amenity=mountain_rescue {name 'mtn_rescue ${name}' | 'mtn_rescue' }		[0x1860a resolution 22-21 continue]
@@ -761,7 +761,8 @@ man_made=works 	| man_made=mineshaft	[0x3401 resolution 24]
 amenity=prison 							[0x3207 resolution 24]
 man_made=survey_point 					[0x4315 resolution 24]
 # survey war 2c18
-amenity=grit_bin 						[0x3201 resolution 24]
+# amenity=grit_bin 						[0x3201 resolution 24]
+# I think grit_bin is not really needed
 
 leisure=hunting_blind | amenity=hunting_stand | amenity=hochstand | amenity=hunting_blind | amenity=blind | building=hunting_blind 	[0x3407 resolution 22]
 
