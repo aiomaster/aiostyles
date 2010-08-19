@@ -214,45 +214,45 @@ place=city & population > 199999 & cityxx!=yes {set cityxx=yes} [0x0500 resoluti
 place=city & population >  99999 & cityxx!=yes {set cityxx=yes} [0x0600 resolution 18 continue with_actions ]
 place=city & population >  49999 & cityxx!=yes {set cityxx=yes} [0x0700 resolution 18 continue with_actions ]
 place=city & population >   9999 & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
-place=city & population >	   0 & cityxx!=yes {set cityxx=yes} [0x0a00 resolution 19 continue with_actions ]
+place=city & population >	   0 & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
 place=city 						 & cityxx!=yes {set cityxx=yes} [0x0700 resolution 18 continue with_actions ]
 
-place=town   & population >  49999 & cityxx!=yes {set cityxx=yes} [0x0700 resolution 18 continue with_actions ]
-place=town   & population >  19999 & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
-place=town   & population >   9999 & cityxx!=yes {set cityxx=yes} [0x0a00 resolution 19 continue with_actions ]
-place=town   & population >   4999 & cityxx!=yes {set cityxx=yes} [0x0b00 resolution 20 continue with_actions ]
-place=town   & population >    999 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
-place=town   & population >		 0 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 20 continue with_actions ]
-place=town 						   & cityxx!=yes {set cityxx=yes} [0x0a00 resolution 19 continue with_actions ]
+place=town   & population >  49999 & cityxx!=yes {set cityxx=yes} [0x0600 resolution 18 continue with_actions ]
+place=town   & population >  19999 & cityxx!=yes {set cityxx=yes} [0x0700 resolution 19 continue with_actions ]
+place=town   & population >   9999 & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
+place=town   & population >   4999 & cityxx!=yes {set cityxx=yes} [0x0a00 resolution 20 continue with_actions ]
+place=town   & population >    999 & cityxx!=yes {set cityxx=yes} [0x0b00 resolution 20 continue with_actions ]
+place=town   & population >		 0 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
+place=town 						   & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
 
-place=village & population >  20000	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 19 continue with_actions ]
+place=village & population >  20000	 & cityxx!=yes {set cityxx=yes} [0x0h00 resolution 19 continue with_actions ]
 place=village & population >   4000	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
-place=village & population >   1500	 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 20 continue with_actions ]
+place=village & population >   1500	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
 place=village & population >      0	 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
-place=village 						 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 20 continue with_actions ]
+place=village 						 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
 
 place=island & population > 50000	 & cityxx!=yes {set cityxx=yes} [0x650c resolution 18 continue with_actions ]
 place=island 						 & cityxx!=yes {set cityxx=yes} [0x650c resolution 19 continue with_actions ]
 place=islet	& population >    1999	 & cityxx!=yes {set cityxx=yes} [0x650c resolution 20 continue with_actions ]
 place=islet							 & cityxx!=yes {set cityxx=yes} [0x650c resolution 21 continue with_actions ]
 
-place=hamlet  & population >   1999	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
-place=hamlet  & population >    699	 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
-place=hamlet  & population >    100	 & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 21 continue with_actions ]
-place=hamlet  & population >      0	 & cityxx!=yes {set cityxx=yes} [0x0f00 resolution 22 continue with_actions ]
-place=hamlet  						 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
+place=hamlet  & population >   1999	 & cityxx!=yes {set cityxx=yes} [0x0b00 resolution 20 continue with_actions ]
+place=hamlet  & population >    699	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 21 continue with_actions ]
+place=hamlet  & population >    100	 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
+place=hamlet  & population >      0	 & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 22 continue with_actions ]
+place=hamlet  						 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 21 continue with_actions ]
 
-( place=municipality | place=district ) & population >  49999  & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 20 continue with_actions ]
-( place=municipality | place=district ) & population >  19999  & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 21 continue with_actions ]
-( place=municipality | place=district ) & population >  4999   & cityxx!=yes {set cityxx=yes} [0x0f00 resolution 21 continue with_actions ]
-( place=municipality | place=district ) & population >  1	   & cityxx!=yes {set cityxx=yes} [0x0f00 resolution 22 continue with_actions ]
-place=municipality | place=district							   & cityxx!=yes {set cityxx=yes} [0x0f00 resolution 21 continue with_actions ]
+( place=municipality | place=district ) & population >  49999  & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
+( place=municipality | place=district ) & population >  19999  & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
+( place=municipality | place=district ) & population >  4999   & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 21 continue with_actions ]
+( place=municipality | place=district ) & population >  1	   & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 22 continue with_actions ]
+place=municipality | place=district							   & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 21 continue with_actions ]
 
-place=suburb & population >  49999   & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 20 continue with_actions ]
-place=suburb & population >  19999   & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 21 continue with_actions ]
-place=suburb & population >   4999   & cityxx!=yes {set cityxx=yes} [0x0f00 resolution 21 continue with_actions ]
-place=suburb & population >   	 0   & cityxx!=yes {set cityxx=yes} [0x0f00 resolution 22 continue with_actions ]
-place=suburb                         & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 21 continue with_actions ]
+place=suburb & population >  49999   & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
+place=suburb & population >  19999   & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
+place=suburb & population >   4999   & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 21 continue with_actions ]
+place=suburb & population >   	 0   & cityxx!=yes {set cityxx=yes} [0x0e00 resolution 22 continue with_actions ]
+place=suburb                         & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
 
 place=locality 						 & cityxx!=yes {set cityxx=yes} [0x1100 resolution 22 continue with_actions ]
 
@@ -385,6 +385,22 @@ mkgmap:rcn_ref=19 | mkgmap:rcn_ref=29 | mkgmap:rcn_ref=39 | mkgmap:rcn_ref=49 | 
 # mkgmap:rcn_ref=107 | mkgmap:rcn_ref=117 | mkgmap:rcn_ref=127 | mkgmap:rcn_ref=137 | mkgmap:rcn_ref=147 | mkgmap:rcn_ref=157 | mkgmap:rcn_ref=167 | mkgmap:rcn_ref=177 | mkgmap:rcn_ref=187 | mkgmap:rcn_ref=197  [0x12907 resolution 21]
 # mkgmap:rcn_ref=108 | mkgmap:rcn_ref=118 | mkgmap:rcn_ref=128 | mkgmap:rcn_ref=138 | mkgmap:rcn_ref=148 | mkgmap:rcn_ref=158 | mkgmap:rcn_ref=168 | mkgmap:rcn_ref=178 | mkgmap:rcn_ref=188 | mkgmap:rcn_ref=198  [0x12908 resolution 21]
 # mkgmap:rcn_ref=109 | mkgmap:rcn_ref=119 | mkgmap:rcn_ref=129 | mkgmap:rcn_ref=139 | mkgmap:rcn_ref=149 | mkgmap:rcn_ref=159 | mkgmap:rcn_ref=169 | mkgmap:rcn_ref=179 | mkgmap:rcn_ref=189 | mkgmap:rcn_ref=199  [0x12909 resolution 21]
+
+
+
+#Garmin types. 11602 alpine_hut, 11603 hut, 11604 alpine_hut belonging to a mountaineering club - 11601 used for lean_to, though not used by Garmin. According to the http://wiki.openstreetmap.org/wiki/Proposed_features/wilderness_mountain_buildings
+tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} ${operator} alpine_hut' | '${name} alpine_hut' | 'alpine_hut' } 			[0x2b04 resolution 24 continue]
+tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} ${operator} alpine_hut' | '${name} alpine_hut' | 'alpine_hut' } 			[0x11604 resolution 20 continue]
+tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} ${operator} wilderness_hut' | '${name} wilderness_hut' | 'wilderness_hut' } [0x2b04 resolution 24 continue]
+tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} ${operator} wilderness_hut' | '${name} wilderness_hut' | 'wilderness_hut' } [0x11602 resolution 21 continue]
+tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} ${operator} basic_hut' | '${name} basic_hut' | 'basic_hut' } 				[0x2b04 resolution 24 continue]
+tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} ${operator} basic_hut' | '${name} basic_hut' | 'basic_hut' } 				[0x11603 resolution 21]
+tourism=lean_to | amenity=lean_to											{ name '${name} lean_to' | 'lean_to' } 														[0x11601 resolution 22]
+
+# For old compatibility, please don't tag this way anymore
+building=shelter | tourism=shelter	| amenity=shelter 	{ name '${name} ${operator} shelter' | '${name} shelter' | 'shelter' } 	[0x11601 resolution 22 continue]
+amenity=refuge | tourism=refuge | building=refuge		{ name '${name} refuge' | 'refuge' } 									[0x11603 resolution 23 continue]
+amenity=refuge | tourism=refuge | building=refuge		{ name '${name} refuge' | 'refuge' } 									[0x2b04 resolution 24 continue]
 
 
 
@@ -522,7 +538,7 @@ cuisine = vegetarian 	{ set cuisinematch=no} [0x2a13 resolution 24 continue with
 cuisine = regional 		{ set cuisinematch=no} [0x2a14 resolution 24 continue with_actions]
 cuisine = burger 		{ set cuisinematch=no} [0x2a07 resolution 24 continue with_actions]
 cuisine = chicken 		{ set cuisinematch=no} [0x2a07 resolution 24 continue with_actions]
-cuisine = ice_cream | cuisine = icecream	{ set cuisinematch=no} [0x2a1c resolution 24 continue with_actions]
+cuisine = ice_cream | cuisine = icecream | amenity=icecream | amenity=ice_cream  	{ set cuisinematch=no} [0x2a1c resolution 24 continue with_actions]
 cuisine = curry | cusine=indian | cuisine=pakistani | cusine=lebanese		{ set cuisinematch=no} [0x2a06 resolution 24 continue with_actions]
 cuisine = kebap | cuisine = doener 	{ set cuisinematch=no} [0x2a07 default_name='kebab' resolution 24 continue with_actions]
 cuisine = pie 						{ set cuisinematch=no} [0x2a07 resolution 24 continue with_actions]
@@ -866,16 +882,6 @@ leisure=swimming_pool	{name '${name} swimming_pool' | 'swimming_pool' }	[0x2d09 
 leisure=fishing		 	[0x4100 resolution 23]
 # 0x4a0* wird unter Park/Garden gefunden. Fish existiert.
 
-#Garmin types. 11602 alpine_hut, 11603 hut, 11604 alpine_hut belonging to a mountaineering club - 11601 used for lean_to, though not used by Garmin. According to the http://wiki.openstreetmap.org/wiki/Proposed_features/wilderness_mountain_buildings
-tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} ${operator} alpine_hut' | '${name} alpine_hut' | 'alpine_hut' } 			[0x2b04 resolution 24 continue]
-tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} ${operator} alpine_hut' | '${name} alpine_hut' | 'alpine_hut' } 			[0x11604 resolution 20 continue]
-tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} ${operator} wilderness_hut' | '${name} wilderness_hut' | 'wilderness_hut' } [0x11602 resolution 21]
-tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} ${operator} basic_hut' | '${name} basic_hut' | 'basic_hut' } 				[0x11603 resolution 21]
-tourism=lean_to | amenity=lean_to											{ name '${name} lean_to' | 'lean_to' } 														[0x11601 resolution 22]
-
-# For old compatibility, 
-building=shelter | tourism=shelter	| amenity=shelter 	{ name '${name} ${operator} shelter' | '${name} shelter' | 'shelter' } 	[0x11601 resolution 22 continue]
-amenity=refuge | tourism=refuge | building=refuge		{ name '${name} refuge' | 'refuge' } 									[0x11603 resolution 23 continue]
 
 
 information=office	{name 'infooffice ${name}' | 'infooffice' }		[0x2f0c resolution 24 continue]
