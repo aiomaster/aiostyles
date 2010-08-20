@@ -131,7 +131,7 @@ ifneq ($(IS_PART_OF),false)
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
 REGION_TILE_INDEX=$(shell psql -d aio -c "SELECT DISTINCT tiles$(1)$(IS_PART_OF).id FROM tiles$(1)$(IS_PART_OF),bundeslaender WHERE ST_Intersects(tiles$(1)$(IS_PART_OF).the_geom,bundeslaender.the_geom) AND LOWER(bundeslaender.name)=LOWER('$(REGION)');" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
 else
-REGION_TILE_INDEX=$(shell psql -d aio -c "SELECT DISTINCT tiles$(1)$(IS_PART_OF).id FROM tiles$(1)$(IS_PART_OF),countries WHERE ST_Intersects(tiles$(1)$(IS_PART_OF).the_geom,countries.the_geom) AND LOWER(countries.country)=LOWER(REPLACE(REPLACE('$(REGION)','_',' '),'-',' and '));" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
+REGION_TILE_INDEX=$(shell psql -d aio -c "SELECT DISTINCT tiles$(1)$(IS_PART_OF).id FROM tiles$(1)$(IS_PART_OF),countries WHERE ST_Intersects(tiles$(1)$(IS_PART_OF).the_geom,countries.the_geom) AND LOWER(countries.sov)=LOWER(REPLACE(REPLACE('$(REGION)','_',' '),'-',' and '));" | sed -n 's/[^0-9]*$(TILE_PREFIX)0\([0-9]*\).*/\1/gp' | tr '\n' ',' | sed 's/,$$//')
 endif
 REGION_TILE_INDEX_PIPES=$(shell echo "$(call REGION_TILE_INDEX,$(1))" | tr ',' '|')
 endif
