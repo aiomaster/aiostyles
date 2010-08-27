@@ -689,7 +689,8 @@ entrance=yes | barrier=entrance		[0x4314 resolution 24 continue]
 highway=traffic_signal | crossing=traffic_signal | highway=traffic_signals | crossing=traffic_signals | highway=traffic_lights | crossing=traffic_lights |	highway=traffic_light | crossing=traffic_light	| 	highway=traffic_light | crossing=traffic_light { add mkgmap:road-speed = '-1'; add mkgmap:road-class = '-1' }		[0x330c resolution 24]
 
 # highway=crossing 																		[0x290d resolution 24]
-highway=stop {add mkgmap:road-speed	= '-1'}												[0x320a resolution 24]
+highway=stop {add mkgmap:road-speed	= '-1'}
+# highway=stop {add mkgmap:road-speed	= '-1'}												[0x320a resolution 24]
 traffic_sign = city_limit 																[0x330e resolution 24]
 # highway=speed_camera 		{name 'maxspeed ${maxspeed} km/h'} 							[0x5601 resolution 24]
 highway=motorway_junction & proposed!=* {name '${ref} ${name}' | '${ref}' | '${name}'}	[0x320c resolution 24]
@@ -815,7 +816,7 @@ sport=tennis 			[0x3210 resolution 24]
 sport=handball 			[0x3211 resolution 24]
 sport=team_handball 	[0x3211 resolution 24]
 sport=boules 			[0x3212 resolution 24]
-sport=dart 				[0x3213 resolution 24]
+# sport=dart 			[0x3213 resolution 24]
 sport=archery 			[0x3214 resolution 24]
 sport=diving 			[0x3215 resolution 24]
 sport=skating 			[0x3216 resolution 24]
@@ -831,7 +832,7 @@ sport=skateboard 		[0x321e resolution 24]
 sport=baseball 			[0x321f resolution 24]
 
 # Shown again.
-sport=*					[0x2d0a resolution 24]
+sport=*	& sport!=dart	[0x2d0a resolution 24]
 
 
 
