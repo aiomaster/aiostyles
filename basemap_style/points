@@ -80,7 +80,7 @@ amenity=restaurant [0x2a00 resolution 24]
 
 amenity=pub [0x4600 resolution 24]
 #amenity=biergarten [0x4601 resolution 24]
-amenity=drinking_water [0x6414 resolution 24]
+amenity=drinking_water [0x6414 resolution 22]
 
 # Geld
 amenity=atm [0x2f06 resolution 24]
@@ -165,7 +165,7 @@ tourism=chalet [0x2b09 resolution 24]
 # Tourismus
 tourism=viewpoint [0x2c13 resolution 24]
 amenity=guidepost | amenity=signpost | (tourism=information & information=guidepost) [0x4c01 resolution 24]
-tourism=attraction [0x2c04 resolution 24]
+tourism=attraction [0x2c04 resolution 22]
 
 tourism=information [0x4c00 resolution 24]
 
@@ -187,7 +187,7 @@ amenity=place_of_worship [0x2c0b resolution 23]
 natural=beach [0x6604 resolution 23]
 natural=cliff [0x6607 resolution 23]
 natural=glacier [0x650a resolution 21]
-natural=peak | natural=hill [0x6616 resolution 23]
+natural=peak | natural=hill [0x6616 resolution 22]
 natural=cave_entrance [0x6619 resolution 23]
 natural=spring [0x6511 resolution 23]
 #natural=stream [0x6512 resolution 23]
