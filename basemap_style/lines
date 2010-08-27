@@ -42,6 +42,9 @@ highway=footway|highway=cycleway|highway=track|highway=path|highway=bridleway|hi
 #constructions
 highway = construction | (highway=* & construction=* & construction!=minor & construction!=no ) [0x08 resolution 22]
 
+# Treat disused ways as highway=service, but at lower road_speed.
+highway=* & disused=yes [0x07 road_class=0 road_speed=1 resolution 22]
+
 #(highway=path & sac_scale=*) | (highway=* & mtb:scale>1) {add bicycle = no}
 #(highway=footway | highway=pedestrian ) & bicycle!=yes & bicycle!=designated {add bicycle = no}
 
@@ -65,7 +68,7 @@ highway=steps {add motorcar = no; add bicycle = no; add mkgmap:unpaved=1} [0x13 
 #highway=path & sac_scale=difficult_alpine_hiking [0x3f road_class=0 road_speed=0 resolution 22]
 
 
-highway=cycleway {add motorcar = no} [0x16 road_class=0 road_speed=1 resolution 22]
+highway=cycleway {add motorcar = no; add bicycle = yes; add foot = yes} [0x16 road_class=0 road_speed=1 resolution 22]
 
 
 highway=bridleway [0x17 road_class=0 road_speed=0 resolution 23]
