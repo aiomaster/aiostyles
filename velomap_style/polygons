@@ -90,8 +90,9 @@ sport=skateboard [0x22 resolution 22]
 sport=table_tennis [0x23 resolution 22]
 sport=athletics [0x24 resolution 22]
 building=sport [0x25 resolution 22]
-landuse=allotements [0x26 resolution 22]
-manmade=allotements | man_made=allotements | leisure=allotements  [0x26 resolution 22]
+ [0x4e resolution 22]
+natural=orchard | landuse=orchard | landuse=orchards | natural=orchards [0x10f14 resolution 22]
+landuse=allotements | landuse=allotments | landuse=allotment | natural=allotment | mandmade=allotments | man_made=allotments | leisure=allotments | manmade=allotements | man_made=allotements | leisure=allotements  [0x4e resolution 22]
 leisure=park [0x27 resolution 21]
 natural=park [0x28 resolution 21]
 building=commercial [0x29 resolution 22]
@@ -110,6 +111,8 @@ natural=lake [0x3a resolution 20]
 waterway=riverbank [0x3e resolution 20]
 riverbank=yes [0x3e resolution 20]
 
+
+healthcare=* [0x0b resolution 23]
 landuse=reservoir [0x3f resolution 22]
 natural=reservoir [0x3f resolution 22]
 natural=basin [0x41 resolution 21]
@@ -124,7 +127,6 @@ landuse=farmland | landuse=farm [0x11019 resolution 21]
 
 
 natural=glacier [0x4d resolution 20]
-landuse=allotments [0x4e resolution 21]
 leisure=garden [0x11018 resolution 22]
 
 natural=scrub | natural=shrub | natural=scrubland | natural=scrubs | natural=shrubs | natural=shrubland[0x11017 resolution 21]
