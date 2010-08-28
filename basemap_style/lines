@@ -45,16 +45,17 @@ highway = construction | (highway=* & construction=* & construction!=minor & con
 # Treat disused ways as highway=service, but at lower road_speed.
 highway=* & disused=yes [0x07 road_class=0 road_speed=1 resolution 22]
 
-#(highway=path & sac_scale=*) | (highway=* & mtb:scale>1) {add bicycle = no}
-#(highway=footway | highway=pedestrian ) & bicycle!=yes & bicycle!=designated {add bicycle = no}
+highway=path & (sac_scale~'.*(mountain|alpine)_hiking') {add bicycle=no}
+highway=path & (mtb:scale>1 | mtb:scale:imba>0)			{set bicycle=no}
 
-highway=footway | highway=path | (highway=pedestrian & area!=yes & area!=true & area!=1) {add motorcar = no} [0x0d road_class=0 road_speed=0 resolution 22]
+highway=path | highway=footway							{add motorcar=no} 					[0x0d road_class=0 road_speed=0 resolution 22]
+highway=pedestrian & (area!=yes & area!=true & area!=1)	{add motorcar=no; add bicycle=no}	[0x0d road_class=0 road_speed=0 resolution 22]
 
-highway=track & tracktype=grade1 [0x0e road_class=0 road_speed=2 resolution 22]
-highway=track & tracktype=grade2 [0x0f road_class=0 road_speed=1 resolution 22]
-highway=track & tracktype=grade3 [0x10 road_class=0 road_speed=1 resolution 22]
-highway=track & tracktype=grade4 {add motorcar = no} [0x11 road_class=0 road_speed=0 resolution 22]
-highway=track & tracktype=grade5 {add motorcar = no} [0x12 road_class=0 road_speed=0 resolution 22]
+highway=track & tracktype=grade1 					 [0x0e road_class=1 road_speed=2 resolution 20]
+highway=track & tracktype=grade2 					 [0x0f road_class=1 road_speed=1 resolution 20]
+highway=track & tracktype=grade3 {add motorcar = no} [0x10 road_class=0 road_speed=1 resolution 20]
+highway=track & tracktype=grade4 {add motorcar = no} [0x11 road_class=0 road_speed=0 resolution 20]
+highway=track & tracktype=grade5 {add motorcar = no} [0x12 road_class=0 road_speed=0 resolution 20]
 
 highway=track | surface=unpaved | highway=unsurfaced {add motorcar = no} [0x0a road_class=0 road_speed=1 resolution 22]
 
@@ -68,7 +69,7 @@ highway=steps {add motorcar = no; add bicycle = no; add mkgmap:unpaved=1} [0x13 
 #highway=path & sac_scale=difficult_alpine_hiking [0x3f road_class=0 road_speed=0 resolution 22]
 
 
-highway=cycleway {add motorcar = no; add bicycle = yes; add foot = yes} [0x16 road_class=0 road_speed=1 resolution 22]
+highway=cycleway {add motorcar = no; add bicycle = yes; add foot = yes} [0x16 road_class=2 road_speed=2 resolution 22]
 
 
 highway=bridleway [0x17 road_class=0 road_speed=0 resolution 23]
@@ -81,17 +82,17 @@ highway=motorway_link {add bicycle = no; add foot = no} [0x01 road_class=4 road_
 
 # trunks
 (highway=trunk | highway=trunk_link) & motorroad=yes {add bicycle = no; add foot = no} 
-(highway=trunk | highway=trunk_link) {name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; add display_name = '${name} (${ref})' } [0x02 road_class=3 road_speed=6 resolution 16]
+(highway=trunk | highway=trunk_link) {name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; add display_name = '${name} (${ref})'} [0x02 road_class=4 road_speed=6 resolution 16]
 
 # primarys
 (highway=primary | highway=primary_link) {name '${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}'; add display_name = '${name} (${ref})' } [0x02 road_class=3 road_speed=5 resolution 19]
 
 
 # secondarys
-highway=secondary | highway=secondary_link {name '${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}'; add display_name = '${name} (${ref})' } [0x03 road_class=2 road_speed=5 resolution 20]
+highway=secondary | highway=secondary_link {name '${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}'; add display_name = '${name} (${ref})'} [0x03 road_class=3 road_speed=4 resolution 20]
 
 # tertiarys
-highway=tertiary | highway=tertiary_link {name '${ref|highway-symbol:round} ${name}' | '${ref|highway-symbol:round}' | '${name}'; add display_name = '${name} (${ref})' } [0x04 road_class=2 road_speed=4 resolution 20]
+highway=tertiary | highway=tertiary_link {name '${ref|highway-symbol:round} ${name}' | '${ref|highway-symbol:round}' | '${name}'; add display_name = '${name} (${ref})'} [0x04 road_class=2 road_speed=3 resolution 20]
 
 highway=* {name '${name} (${ref})' | '${ref}' | '${name}' }
 
@@ -100,7 +101,7 @@ highway=* {name '${name} (${ref})' | '${ref}' | '${name}' }
 highway=unclassified [0x05 road_class=2 road_speed=2 resolution 21]
 
 # residentials
-(highway=residential | highway=living_street |highway=minor) [0x06 road_class=0 road_speed=3 resolution 22]
+(highway=residential | highway=living_street | highway=minor) [0x06 road_class=0 road_speed=2 resolution 22]
 
 
 # service
@@ -124,8 +125,8 @@ man_made=pipeline [0x28 resolution 22]
 
 natural=cliff [0x31 resolution 22]
 barrier=wall | barrier=retaining_wall | barrier=city_wall [0x32 resolution 24]
-barrier=fence [0x33 resolution 24]
-barrier=hedge [0x34 resolution 24]
+barrier=fence [0x33 resolution 24 continue]
+barrier=hedge [0x34 resolution 24 continue]
 
 aerialway=chair_lift | aerialway=drag_lift | aerialway=cable_car [0x38 resolution 24]
 
