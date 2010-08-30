@@ -1328,7 +1328,9 @@ highway=residential &  bicycle=nope	{add mkgmap:unpaved=1}								[0x07 road_cla
 
 
 highway=living_street 	& ( extremecarver5=bike | route=bicycle | bridge=yes )  							[0x10e07 resolution 21-21 continue]
-highway=living_street 																						[0x10e07 resolution 22 continue]
+highway=living_street 	& ( extremecarver5=bike | route=bicycle | bridge=yes )  							[0x10e07 resolution 22 continue]
+highway=living_street 	& extremecarver5!=bike & route!=bicycle & bridge!=yes	  							[0x10e06 resolution 22 continue]
+
 highway=living_street 	& class:bicycle=3 	[0x01 road_class=3 road_speed=2 resolution 24 continue]
 highway=living_street  	& class:bicycle=3 	[0x01 road_class=3 road_speed=1 resolution 24]
 highway=living_street  	& class:bicycle=2 	[0x01 road_class=3 road_speed=1 resolution 24]
@@ -1344,15 +1346,15 @@ highway=living_street & ( extremecarver5=bike | route=bicycle ) {set oneway=no} 
 highway=living_street & cycleway=* 								& bridge=yes {set oneway=no} 										[0x01 road_class=3 road_speed=1 resolution 24]
 highway=living_street & bicycle=designated 						& bridge=yes  {set oneway=no}										[0x01 road_class=3 road_speed=1 resolution 24]
 highway=living_street & ( bicycle=yes | bicycle=permissive ) 	& bridge=yes  {set oneway=no}										[0x01 road_class=3 road_speed=1 resolution 24]
-highway=living_street & bicycle=nope							& bridge=yes  {set oneway=no; add taxi=no; add mkgmap:unpaved=1}	[0xb1a road_class=1 road_speed=1 resolution 24]
-highway=living_street 											& bridge=yes  {set oneway=no}										[0xb1a road_class=3 road_speed=1 resolution 24]
+highway=living_street & bicycle=nope							& bridge=yes  {set oneway=no; add taxi=no; add mkgmap:unpaved=1}	[0x01 road_class=1 road_speed=1 resolution 24]
+highway=living_street 											& bridge=yes  {set oneway=no}										[0x01 road_class=3 road_speed=1 resolution 24]
 
 highway=living_street & ( cycleway=* &	( bicycle=yes | bicycle=permissive | bicycle=designated ))  {set oneway=no; add taxi=no} 	[0x01 road_class=2 road_speed=2 resolution 24]
 highway=living_street & cycleway=* 																	{set oneway=no; add taxi=no} 	[0x01 road_class=2 road_speed=1 resolution 24]
 highway=living_street & bicycle=designated 															{set oneway=no}					[0x01 road_class=2 road_speed=1 resolution 24]
 highway=living_street & ( bicycle=yes | bicycle=permissive ) 										{set oneway=no; add taxi=no} 	[0x01 road_class=1 road_speed=1 resolution 24]
-highway=living_street & bicycle=nope													{set oneway=no; add taxi=no} 	[0xb1a road_class=0 road_speed=0 resolution 24]
-highway=living_street 																				{set oneway=no; add taxi=no} 	[0xb1a road_class=0 road_speed=1 resolution 24]
+highway=living_street & bicycle=nope													{set oneway=no; add taxi=no} 	[0x01 road_class=0 road_speed=0 resolution 24]
+highway=living_street 																				{set oneway=no; add taxi=no} 	[0x01 road_class=0 road_speed=1 resolution 24]
 
 
 
