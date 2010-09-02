@@ -1,4 +1,4 @@
-building=* {name '${name} (${addr:street} ${addr:housenumber})' | '${addr:street} ${addr:housenumber}' | '${name}' } [0x13 resolution 23]
+building=* {name '${name} (${addr:street} ${addr:housenumber})' | '${addr:street} ${addr:housenumber}' | '${name}' } [0x13 resolution 24]
 
 amenity=college [0x0a resolution 20]
 amenity=grave_yard | landuse=cemetery [0x1a resolution 20]
@@ -9,10 +9,10 @@ amenity=supermarket [0x08 resolution 21]
 amenity=university [0x0a resolution 20]
 
 landuse=allotments [0x4e resolution 20]
-landuse=forest & wood=coniferous [0x21 resolution 18]
-landuse=forest & wood=deciduous [0x22 resolution 18]
-landuse=forest & wood=mixed [0x23 resolution 18]
-landuse=forest [0x50 resolution 18]
+landuse=forest & wood=coniferous    [0x21 resolution 18]
+landuse=forest & wood=deciduous     [0x22 resolution 18]
+landuse=forest & wood=mixed         [0x23 resolution 18]
+landuse=forest                      [0x50 resolution 18]
 landuse=industrial [0x0c resolution 20]
 landuse=reservoir | landuse=basin [0x3f resolution 20]
 landuse=retail [0x08 resolution 20]
@@ -45,7 +45,7 @@ military=range [0x04 resolution 18]
 natural=glacier [0x4d resolution 16]
 natural=marsh | natural=wetland | natural=mud [0x51 resolution 20]
 natural=scrub [0x4f resolution 20]
-natural=water [0x3c resolution 20]
+natural=water [0x3c resolution 18]
 natural=heath [0x14 resolution 20]
 natural=wood [0x15 resolution 18]
 natural=sea [0x32 resolution 10]
@@ -54,7 +54,7 @@ natural=land [0x27 resolution 10]
 
 place=village | landuse=residential [0x03 resolution 18]
 
-waterway=riverbank [0x46 resolution 20]
+waterway=riverbank [0x46 resolution 18]
 
 highway=pedestrian & (area=yes | area=true | area=1) [0x12 resolution 22]
 

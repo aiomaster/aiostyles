@@ -47,20 +47,20 @@ highway=* & disused=yes [0x07 road_class=0 road_speed=1 resolution 22]
 
 # motorway
 highway=motorway        { add oneway=yes; add bicycle=no; add foot=no; name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; }   [0x01 road_class=4 road_speed=7 resolution 12]
-highway=motorway_link   { add bicycle=no; add foot=no; } [0x01 road_class=4 road_speed=4 resolution 16]
+highway=motorway_link   { add bicycle=no; add foot=no; } [0x01 road_class=4 road_speed=4 resolution 17]
 
 # trunk
 highway=trunk & junction=roundabout                     [0x0c road_class=1 road_speed=5 resolution 16]
 (highway=trunk | highway=trunk_link) & motorroad=yes    { add bicycle=no; add foot=no; }      
-highway=trunk | highway=trunk_link                      { name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; add display_name='${name} (${ref})'; }   [0x02 road_class=4 road_speed=6 resolution 16]
+highway=trunk | highway=trunk_link                      { name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; add display_name='${name} (${ref})'; }   [0x02 road_class=4 road_speed=6 resolution 17]
 
 # primary
-highway=primary & junction=roundabout       [0x0c road_class=1 road_speed=4 resolution 19]
-highway=primary | highway=primary_link      { name '${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}'; add display_name='${name} (${ref})'; } [0x02 road_class=3 road_speed=5 resolution 19]
+highway=primary & junction=roundabout       [0x0c road_class=1 road_speed=4 resolution 17]
+highway=primary | highway=primary_link      { name '${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}'; add display_name='${name} (${ref})'; } [0x02 road_class=3 road_speed=5 resolution 17]
 
 # secondary
-highway=secondary & junction=roundabout     [0x0c road_class=1 road_speed=3 resolution 20]
-highway=secondary | highway=secondary_link  { name '${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}'; add display_name='${name} (${ref})'; }   [0x03 road_class=3 road_speed=4 resolution 20]
+highway=secondary & junction=roundabout     [0x0c road_class=1 road_speed=3 resolution 18]
+highway=secondary | highway=secondary_link  { name '${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}'; add display_name='${name} (${ref})'; }   [0x03 road_class=3 road_speed=4 resolution 18]
 
 # tertiary
 highway=tertiary & junction=roundabout      [0x0c road_class=1 road_speed=2 resolution 20]
@@ -88,22 +88,22 @@ highway=service     [0x07 road_class=0 road_speed=2 resolution 22]
 # designated
 
 highway=cycleway    { add motorcar=no; add bicycle=yes; add foot=yes; } [0x16 road_class=2 road_speed=2 resolution 22]
-highway=footway     { add motorcar=no; }                                [0x0d road_class=0 road_speed=0 resolution 22]
+highway=footway     { add motorcar=no; }                                [0x0d road_class=0 road_speed=0 resolution 23]
 
 highway=bridleway   [0x17 road_class=0 road_speed=0 resolution 23]
 highway=byway       [0x08 road_class=0 road_speed=0 resolution 23]
 
-highway=pedestrian & (area!=yes & area!=true & area!=1) { add motorcar=no; add bicycle=no; }    [0x0d road_class=0 road_speed=0 resolution 22]
+highway=pedestrian & (area!=yes & area!=true & area!=1) { add motorcar=no; add bicycle=no; }    [0x0d road_class=0 road_speed=0 resolution 23]
 
 # track
 
 highway=track & tracktype~'grade[3-6]'  { add motorcar=no; }
 
-highway=track & tracktype=grade1    [0x0e road_class=1 road_speed=2 resolution 20]
-highway=track & tracktype=grade2    [0x0f road_class=1 road_speed=1 resolution 20]
-highway=track & tracktype=grade3    [0x10 road_class=0 road_speed=1 resolution 20]
-highway=track & tracktype=grade4    [0x11 road_class=0 road_speed=0 resolution 20]
-highway=track & tracktype=grade5    [0x12 road_class=0 road_speed=0 resolution 20]
+highway=track & tracktype=grade1    [0x0e road_class=1 road_speed=2 resolution 21]
+highway=track & tracktype=grade2    [0x0f road_class=1 road_speed=1 resolution 21]
+highway=track & tracktype=grade3    [0x10 road_class=0 road_speed=1 resolution 22]
+highway=track & tracktype=grade4    [0x11 road_class=0 road_speed=0 resolution 23]
+highway=track & tracktype=grade5    [0x12 road_class=0 road_speed=0 resolution 23]
 
 highway=track | highway=unsurfaced    { add motorcar=no; }    [0x0a road_class=0 road_speed=1 resolution 22]
 
@@ -113,17 +113,17 @@ highway=path & (sac_scale~'.*(mountain|alpine)_hiking') { add bicycle=no; }
 highway=path & (mtb:scale>1 | mtb:scale:imba>0)         { set bicycle=no; }
 
 #highway=path & sac_scale=hiking                    [0x3a road_class=0 road_speed=0 resolution 22]
-#highway=path & sac_scale=mountain_hiking           [0x3b road_class=0 road_speed=0 resolution 22]
-#highway=path & sac_scale=demanding_mountain_hiking [0x3c road_class=0 road_speed=0 resolution 22]
-#highway=path & sac_scale=alpine_hiking             [0x3d road_class=0 road_speed=0 resolution 22]
-#highway=path & sac_scale=demanding_alpine_hiking   [0x3e road_class=0 road_speed=0 resolution 22]
-#highway=path & sac_scale=difficult_alpine_hiking   [0x3f road_class=0 road_speed=0 resolution 22]
+#highway=path & sac_scale=mountain_hiking           [0x3b road_class=0 road_speed=0 resolution 23]
+#highway=path & sac_scale=demanding_mountain_hiking [0x3c road_class=0 road_speed=0 resolution 23]
+#highway=path & sac_scale=alpine_hiking             [0x3d road_class=0 road_speed=0 resolution 23]
+#highway=path & sac_scale=demanding_alpine_hiking   [0x3e road_class=0 road_speed=0 resolution 23]
+#highway=path & sac_scale=difficult_alpine_hiking   [0x3f road_class=0 road_speed=0 resolution 23]
 
 highway=path    { add motorcar=no; }    [0x0d road_class=0 road_speed=0 resolution 22]
 
 # steps
 
-highway=steps   { add motorcar=no; add bicycle=no; add mkgmap:unpaved=1; }  [0x13 road_class=0 road_speed=0 resolution 22]
+highway=steps   { add motorcar=no; add bicycle=no; add mkgmap:unpaved=1; }  [0x13 road_class=0 road_speed=0 resolution 23]
 
 #------------------------------------------------------------------------------
 # Mop up any unrecognised highway types but keep areas like pedestrian for polygons!
@@ -138,10 +138,10 @@ aeroway=runway      [0x27 resolution 20]
 aeroway=taxiway     [0x27 resolution 20]
 
 # railway
-railway=rail                        [0x39 resolution 15]
-railway=light_rail                  [0x14 resolution 23]
-railway=subway                      [0x14 resolution 23]
-railway=tram | railway=narrow_gauge [0x14 resolution 23]
+railway=rail                        [0x39 resolution 17]
+railway=light_rail                  [0x14 resolution 21]
+railway=tram | railway=narrow_gauge [0x14 resolution 21]
+railway=subway                      [0x14 resolution 22]
 
 # route
 route=ferry {add mkgmap:ferry=1}    [0x1a road_class=0 road_speed=0 resolution 18]
