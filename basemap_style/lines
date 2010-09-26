@@ -40,42 +40,43 @@ highway=* & disused=yes [0x07 road_class=0 road_speed=1 resolution 22]
 #------------------------------------------------------------------------------
 # highways
 
+highway=* & motorroad=yes   { add bicycle=no; add foot=no; }
+
 # motorway
 highway=motorway        { add oneway=yes; add bicycle=no; add foot=no; name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; }   [0x01 road_class=4 road_speed=7 resolution 12]
-highway=motorway_link   { add bicycle=no; add foot=no; } [0x01 road_class=4 road_speed=4 resolution 17]
+highway=motorway_link   { add bicycle=no; add foot=no; } [0x01 road_class=3 road_speed=3 resolution 17]
 
 # trunk
-highway=trunk & junction=roundabout                     [0x0c road_class=1 road_speed=5 resolution 16]
-(highway=trunk | highway=trunk_link) & motorroad=yes    { add bicycle=no; add foot=no; }      
-highway=trunk | highway=trunk_link                      { name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; add display_name='${name} (${ref})'; }   [0x02 road_class=4 road_speed=6 resolution 17]
+highway=trunk & junction=roundabout         [0x0c road_class=4 road_speed=5 resolution 16]
+highway=trunk | highway=trunk_link          { name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; add display_name='${name} (${ref})'; }   [0x02 road_class=4 road_speed=6 resolution 17]
 
 # primary
-highway=primary & junction=roundabout       [0x0c road_class=1 road_speed=4 resolution 17]
+highway=primary & junction=roundabout       [0x0c road_class=3 road_speed=4 resolution 17]
 highway=primary | highway=primary_link      { name '${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}'; add display_name='${name} (${ref})'; } [0x02 road_class=3 road_speed=5 resolution 17]
 
 # secondary
-highway=secondary & junction=roundabout     [0x0c road_class=1 road_speed=3 resolution 18]
+highway=secondary & junction=roundabout     [0x0c road_class=3 road_speed=3 resolution 18]
 highway=secondary | highway=secondary_link  { name '${ref|highway-symbol:oval} ${name}' | '${ref|highway-symbol:oval}' | '${name}'; add display_name='${name} (${ref})'; }   [0x03 road_class=3 road_speed=4 resolution 18]
 
 # tertiary
-highway=tertiary & junction=roundabout      [0x0c road_class=1 road_speed=2 resolution 20]
+highway=tertiary & junction=roundabout      [0x0c road_class=2 road_speed=2 resolution 20]
 highway=tertiary | highway=tertiary_link    { name '${ref|highway-symbol:round} ${name}' | '${ref|highway-symbol:round}' | '${name}'; add display_name='${name} (${ref})'; }    [0x04 road_class=2 road_speed=3 resolution 20]
 
 #------------------------------------------------------------------------------
 # minor roads
 
-highway=*   { name '${name} (${ref})' | '${ref}' | '${name}'; }
+highway=*   { name '${name} (${ref}) ' | '${ref}' | '${name}'; }
 
 # unclassified
-highway=unclassified & junction=roundabout  [0x0c road_class=1 road_speed=2 resolution 21]
+highway=unclassified & junction=roundabout  [0x0c road_class=2 road_speed=2 resolution 21]
 highway=unclassified                        [0x05 road_class=2 road_speed=2 resolution 21]
 
 # residential
-highway=residential & junction=roundabout                       [0x0c road_class=1 road_speed=2 resolution 22]
-highway=residential | highway=living_street | highway=minor     [0x06 road_class=0 road_speed=2 resolution 22]
+highway=residential & junction=roundabout                       [0x0c road_class=2 road_speed=2 resolution 22]
+highway=residential | highway=living_street | highway=minor     [0x06 road_class=2 road_speed=2 resolution 22]
 
 # service
-highway=service     [0x07 road_class=0 road_speed=2 resolution 22]
+highway=service     [0x07 road_class=2 road_speed=2 resolution 22]
 
 #------------------------------------------------------------------------------
 # ways
@@ -94,18 +95,21 @@ highway=pedestrian & (area!=yes & area!=true & area!=1) { add motorcar=no; add b
 
 highway=track & (tracktype~'grade[3-6]')                { add motorcar=no; }
 
-highway=track & tracktype=grade1                        [0x0e road_class=1 road_speed=2 resolution 21]
-highway=track & tracktype=grade2 & (route=* | ref=*)    [0x0f road_class=1 road_speed=1 resolution 21]
-highway=track & tracktype=grade2                        [0x0f road_class=1 road_speed=1 resolution 22]
+highway=track & tracktype=grade1                        [0x0e road_class=2 road_speed=2 resolution 21]
+highway=track & tracktype=grade2 & (route=* | ref=*)    [0x0f road_class=1 road_speed=2 resolution 21]
+highway=track & tracktype=grade2                        [0x0f road_class=1 road_speed=2 resolution 22]
 highway=track & tracktype=grade3 & (route=* | ref=*)    [0x10 road_class=0 road_speed=1 resolution 21]
 highway=track & tracktype=grade3                        [0x10 road_class=0 road_speed=1 resolution 22]
 highway=track & tracktype=grade4                        [0x11 road_class=0 road_speed=0 resolution 23]
 highway=track & tracktype=grade5                        [0x12 road_class=0 road_speed=0 resolution 23]
 
-highway=track | highway=unsurfaced { add motorcar=no; } [0x0a road_class=0 road_speed=1 resolution 22]
+highway=track | highway=unsurfaced { add motorcar=no; } [0x0a road_class=0 road_speed=0 resolution 22]
 
 # path
 
+highway=path    { add motorcar=no; }
+
+highway=path & (mtb:scale=* | mtb:scale:imba=*)         { add bicycle=yes; }
 highway=path & (mtb:scale>0 | mtb:scale:imba>0)         { set toll=yes; }
 highway=path & (mtb:scale>2 | mtb:scale:imba>1)         { set bicycle=no; }
 highway=path & (sac_scale~'.*(mountain|alpine)_hiking') { add bicycle=no; }             
@@ -117,8 +121,10 @@ highway=path & (sac_scale~'.*(mountain|alpine)_hiking') { add bicycle=no; }
 #highway=path & sac_scale=demanding_alpine_hiking        [0x3e road_class=0 road_speed=0 resolution 22]
 #highway=path & sac_scale=difficult_alpine_hiking        [0x3f road_class=0 road_speed=0 resolution 22]
 
-highway=path & (route=* | ref=*)   { add motorcar=no; } [0x0d road_class=0 road_speed=0 resolution 21]
-highway=path                       { add motorcar=no; } [0x0d road_class=0 road_speed=0 resolution 22]
+highway=path & (mtb:scale<2) & (route=* | ref=*)    [0x0d road_class=0 road_speed=1 resolution 21]
+highway=path & (mtb:scale<2)                        [0x0d road_class=0 road_speed=1 resolution 22]
+highway=path & (route=* | ref=*)                    [0x0d road_class=0 road_speed=0 resolution 21]
+highway=path                                        [0x0d road_class=0 road_speed=0 resolution 22]
 
 # steps
 
