@@ -283,7 +283,7 @@ place=suburb    [0x0b00 resolution 21]
 place=hamlet    [0x0d00 resolution 21]
 place=island    [0x650c resolution 20]
 
-place=locality  [0x1100 resolution 22]
+place=locality  [0x2800 resolution 22]
 
 #------------------------------------------------------------------------------
 # Sport
