@@ -89,9 +89,9 @@ amenity=drinking_water [0x6414 resolution 23]
 #------------------------------------------------------------------------------
 # Geld
 
-amenity=atm [0x2f06 resolution 24]
-amenity=bank [0x2f06 resolution 24]
-amenity=bureau_de_change [0x2f06 resolution 24]
+amenity=atm { name '${operator} ${name}' | '${operator}' | '${name}' } [0x2f06 resolution 24]
+amenity=bank { name '${operator} ${name}' | '${operator}' | '${name}' } [0x2f06 resolution 24]
+amenity=bureau_de_change { name '${operator} ${name}' | '${operator}' | '${name}' } [0x2f06 resolution 24]
 
 #------------------------------------------------------------------------------
 # Haltestellen
@@ -120,8 +120,8 @@ amenity=dentist [0x301b resolution 24]
 
 amenity=veterinary [0x301c resolution 24]
 
-amenity=rescue_box [0x7015 resolution 22]
-highway=emergency_access_point { add ref=''; add name=''; add operator=''; add emergency_telephone_code=''; name '${ref} ${name} ${operator} ${emergency_telephone_code}'; } [0x7016 resolution 22]
+amenity=rescue_box [0x301d resolution 22]
+highway=emergency_access_point { add ref=''; add name=''; add operator=''; add emergency_telephone_code=''; name '${ref} ${name} ${operator} ${emergency_telephone_code}'; } [0x301e resolution 22]
 
 #------------------------------------------------------------------------------
 # Öffentliche Einrichtungen

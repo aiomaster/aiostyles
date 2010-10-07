@@ -14,6 +14,11 @@ amenity=school [0x0a resolution 20]
 amenity=supermarket [0x08 resolution 21]
 amenity=university [0x0a resolution 20]
 
+
+# Flughafen
+
+aeroway=aerodrome [0x07 resolution 18]
+
 #------------------------------------------------------------------------------
 # Flächennutzung
 
