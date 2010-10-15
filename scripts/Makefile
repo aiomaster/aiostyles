@@ -140,7 +140,9 @@ endif
 #BBOX := $(shell bzcat $(DATAPATH) |sed -n '4q;s/<bound box="/bottom=/;s/,/ left=/;s/,/ top=/;s/,/ right=/;s/" origin=.*//p')
 # bottom left top right
 # These choords are used for example to get all openstreetbugs in the bounding box of our region. We try to extract the bounds out of the geofabrik osm extract.
-CHOORDS := $(shell bzcat $(DATAPATH) |sed -n '/<bound/{s/.*box="\([^"]*\)".*/\1/;s/,/ /gp;q}')
+#CHOORDS := $(shell bzcat $(DATAPATH) |sed -n '/<bound/{s/.*box="\([^"]*\)".*/\1/;s/,/ /gp;q}')
+#### ----- update while pbf change, use static bboxes
+CHOORDS := $(shell cat $(AIOPATH)/bboxes/$(REGION).bb )
 BOTTOM := $(word 1, $(CHOORDS) )
 LEFT := $(word 2, $(CHOORDS) )
 TOP := $(word 3, $(CHOORDS) )
@@ -539,7 +541,7 @@ $(TILEPATH)/template.args : $(DATAPATH)
 # -------- new version ------------ #
 # use binary pbf format. Should be faster to read.
 	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter \
-	$(OSMOSIS) --read-bin $(DATAPATH) --t 3 \
+	$(OSMOSIS) --rb $(DATAPATH) --t 3 \
 	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
 	--wk keyList="boundary" --un --wx $(REGIONPATH)/raw_data/bounds.osm.gz \
 	--wk keyList="maxspeed" --un --wx $(REGIONPATH)/raw_data/maxspeed.osm.gz \
