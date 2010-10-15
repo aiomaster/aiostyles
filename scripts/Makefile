@@ -85,35 +85,35 @@ PRINTFILE := $(shell tempfile)
 endif
 
 ifeq ($(REGION),$(filter $(REGION),$(BUNDESLAENDER)))
-DATAPATH := /osm/geofabrik-extrakte/europe/germany/$(REGION).osm.bz2
+DATAPATH := /osm/geofabrik-extrakte/europe/germany/$(REGION).osm.pbf
 endif
 
 ifeq ($(REGION),$(filter $(REGION),$(COUNTRIES)))
-DATAPATH := /osm/geofabrik-extrakte/europe/$(REGION).osm.bz2
+DATAPATH := /osm/geofabrik-extrakte/europe/$(REGION).osm.pbf
 endif
 
 ifeq ($(REGION),germany)
-DATAPATH := /osm/geofabrik-extrakte/europe/germany.osm.bz2
+DATAPATH := /osm/geofabrik-extrakte/europe/germany.osm.pbf
 KURZ := DE
 endif
 
 ifeq ($(REGION),united_kingdom)
-DATAPATH := /osm/geofabrik-extrakte/europe/great_britain.osm.bz2
+DATAPATH := /osm/geofabrik-extrakte/europe/great_britain.osm.pbf
 KURZ := UK
 endif
 
 ifeq ($(REGION),haiti)
-DATAPATH := /osm/garmin/aio/regions/haiti/raw_data/haiti.osm.bz2
+DATAPATH := /osm/garmin/aio/regions/haiti/raw_data/haiti.osm.pbf
 KURZ := HT
 endif
 
 ifeq ($(REGION),canary_islands)
-DATAPATH := /osm/geofabrik-extrakte/africa/canary_islands.osm.bz2
+DATAPATH := /osm/geofabrik-extrakte/africa/canary_islands.osm.pbf
 KURZ := CI
 endif
 
 ifeq ($(REGION),europe)
-DATAPATH := /osm/geofabrik-extrakte/europe.osm.bz2
+DATAPATH := /osm/geofabrik-extrakte/europe.osm.pbf
 KURZ := EU
 endif
 
@@ -147,7 +147,7 @@ TOP := $(word 3, $(CHOORDS) )
 RIGHT := $(word 4, $(CHOORDS) )
 BBOX := bottom=$(BOTTOM) left=$(LEFT) top=$(TOP) right=$(RIGHT)
 
-OSMOSIS := $(AIOPATH)/osmosis-0.35.1/bin/osmosis
+OSMOSIS := $(AIOPATH)/osmosis-0.37-SNAPSHOT/bin/osmosis
 REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
@@ -536,18 +536,31 @@ $(REGIONPATH)/raw_data/addrsplit/template.args : $(TILEPATH)/template.args
 $(TILEPATH)/template.args : $(DATAPATH)
 	echo "$(REGION) Auspacken Start:" >> $(PRINTFILE);date >> $(PRINTFILE)
 	mkdir -p $(LOGPATH)
-# now let the magic begin, clean the TILEPATH and bzcat the .osm.bz2 file to a pipe with 2 Readers (produced by tee)
-# The first reader is osmosis that filters boundary,maxspeed and addresses to separat files.
-# The second one is the splitter that splits the full .osm file directly for use with basemap and velomap.
-	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
-	>($(OSMOSIS) --rx - --t \
+# -------- new version ------------ #
+# use binary pbf format. Should be faster to read.
+	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter \
+	$(OSMOSIS) --read-bin $(DATAPATH) --t 3 \
 	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
 	--wk keyList="boundary" --un --wx $(REGIONPATH)/raw_data/bounds.osm.gz \
 	--wk keyList="maxspeed" --un --wx $(REGIONPATH)/raw_data/maxspeed.osm.gz \
 	--wk keyList="addr:housenumber,addr:interpolation" --un --s --wx $(REGIONPATH)/raw_data/addr_lines.osm.gz \
 	--nk keyList="addr:housenumber" --s --wx $(REGIONPATH)/raw_data/addr_points.osm.gz \
-	) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+	--wx - \
+	| $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
 	$(OSMOSIS) --rx $(REGIONPATH)/raw_data/addr_lines.osm.gz --rx $(REGIONPATH)/raw_data/addr_points.osm.gz --m --wx $(REGIONPATH)/raw_data/addr.osm.gz
+# --------  old version: --------------- #
+# now let the magic begin, clean the TILEPATH and bzcat the .osm.bz2 file to a pipe with 2 Readers (produced by tee)
+# The first reader is osmosis that filters boundary,maxspeed and addresses to separat files.
+# The second one is the splitter that splits the full .osm file directly for use with basemap and velomap.
+# 	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
+# 	>($(OSMOSIS) --rx - --t \
+# 	--wk keyList="boundary,maxspeed,addr:housenumber,addr:interpolation" --un --t 3 \
+# 	--wk keyList="boundary" --un --wx $(REGIONPATH)/raw_data/bounds.osm.gz \
+# 	--wk keyList="maxspeed" --un --wx $(REGIONPATH)/raw_data/maxspeed.osm.gz \
+# 	--wk keyList="addr:housenumber,addr:interpolation" --un --s --wx $(REGIONPATH)/raw_data/addr_lines.osm.gz \
+# 	--nk keyList="addr:housenumber" --s --wx $(REGIONPATH)/raw_data/addr_points.osm.gz \
+# 	) | $(SPLITTER) $(SPLITTER_OPTIONS) /dev/stdin 2> $(LOGPATH)/splitter.log
+# 	$(OSMOSIS) --rx $(REGIONPATH)/raw_data/addr_lines.osm.gz --rx $(REGIONPATH)/raw_data/addr_points.osm.gz --m --wx $(REGIONPATH)/raw_data/addr.osm.gz
 # The following method omit writing temporary files like addr_lines.osm.gz and addr_points.osm.gz to disk by using big caches. The size of the cache is the maximum number of objects and fits exacly into an integer value. The problem is, that it leads to heap space errors... :(
 #	cd $(TILEPATH)/ && rm *.osm.gz ; /usr/bin/time -o $(LOGPATH)/time_splitter bzcat $(DATAPATH) | tee \
 #	>($(OSMOSIS) --rx - --t outPipe.1=points \
