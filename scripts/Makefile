@@ -103,7 +103,7 @@ KURZ := UK
 endif
 
 ifeq ($(REGION),haiti)
-DATAPATH := /osm/garmin/aio/regions/haiti/raw_data/haiti.osm.pbf
+DATAPATH := /osm/geofabrik-extrakte/central-america/haiti-and-domrep.osm.pbf
 KURZ := HT
 endif
 
