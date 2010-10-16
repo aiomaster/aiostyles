@@ -24,7 +24,7 @@ COUNTRIES :=germany austria switzerland france italy united_kingdom albania ando
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
 ALL_REGIONS :=europe $(REGIONLIST) canary_islands haiti
 CS_ALL_REGIONS := $(shell echo $(ALL_REGIONS)|tr ' ' ',')
-
+OSMOSISSPLITLINE = --t $(shell echo $(ALL_REGIONS)|wc -w) $(shell for region in $(ALL_REGIONS); do echo -n "--bb `awk '{print \"bottom=\"$$1\" left=\"$$2\" top=\"$$3\" right=\"$$4}' $(AIOPATH)/bboxes/$$region.bb` --wx $(PATH_TO_REGIONS)/$$region/raw_data/$1 ";done )
 
 LAYER:=gbasemap,gaddr,gfixme,gmaxspeed,gosb,gboundary,gkeepright,gdamage,gcontourlines,gvelomap
 
@@ -170,7 +170,8 @@ MKGMAP_damage := $(MKGMAP)
 MKGMAP_contourlines := $(MKGMAP)
 MKGMAP_velomap := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties -jar $(AIOPATH)/styles/mkgmap_velo.jar
 SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar
-LOGPATH := ${AIOPATH}/logfiles/${REGION}/$(DATE)
+LOGPATH := $(AIOPATH)/logfiles/$(REGION)/$(DATE)
+KEEPRIGHTFILES := $(AIOPATH)/keepright/regions
 
 # Define dependencies of the layers.
 ifeq ($(IS_PART_OF),false)
@@ -516,10 +517,10 @@ $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	md5sum -b $(WEBREGIONDIR)/gcontourlines.tar.bz2 > $(WEBREGIONDIR)/gcontourlines.tar.bz2.md5
 
 $(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.txt.bz2
-	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - --bb $(BBOX) --wx $(REGIONPATH)/raw_data/keepright.osm.gz
+	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - $(call OSMOSISSPLITLINE,keepright.osm.gz)
 
 $(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright.osm.gz
-	cd $(REGIONPATH)/raw_data/keeprightsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_KEEPRIGHT) $(REGIONPATH)/raw_data/keepright.osm.gz 2> $(LOGPATH)/splitter_keepright.log
+	cd $(REGIONPATH)/raw_data/keeprightsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_KEEPRIGHT) $(KEEPRIGHTFILES)/$(REGION)_keepright.osm.gz 2> $(LOGPATH)/splitter_keepright.log
 	$(call process_splitter_files,$(REGIONPATH)/raw_data/keeprightsplit,_keepright_)
 
 $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
