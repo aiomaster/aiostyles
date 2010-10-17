@@ -142,12 +142,12 @@ endif
 # These choords are used for example to get all openstreetbugs in the bounding box of our region. We try to extract the bounds out of the geofabrik osm extract.
 #CHOORDS := $(shell bzcat $(DATAPATH) |sed -n '/<bound/{s/.*box="\([^"]*\)".*/\1/;s/,/ /gp;q}')
 #### ----- update while pbf change, use static bboxes
-CHOORDS := $(shell cat $(AIOPATH)/bboxes/$(REGION).bb )
-BOTTOM := $(word 1, $(CHOORDS) )
-LEFT := $(word 2, $(CHOORDS) )
-TOP := $(word 3, $(CHOORDS) )
-RIGHT := $(word 4, $(CHOORDS) )
-BBOX := bottom=$(BOTTOM) left=$(LEFT) top=$(TOP) right=$(RIGHT)
+# CHOORDS := $(shell cat $(AIOPATH)/bboxes/$(REGION).bb )
+# BOTTOM := $(word 1, $(CHOORDS) )
+# LEFT := $(word 2, $(CHOORDS) )
+# TOP := $(word 3, $(CHOORDS) )
+# RIGHT := $(word 4, $(CHOORDS) )
+# BBOX := bottom=$(BOTTOM) left=$(LEFT) top=$(TOP) right=$(RIGHT)
 
 OSMOSIS := $(AIOPATH)/osmosis-0.37-SNAPSHOT/bin/osmosis
 REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
@@ -171,7 +171,7 @@ MKGMAP_contourlines := $(MKGMAP)
 MKGMAP_velomap := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties -jar $(AIOPATH)/styles/mkgmap_velo.jar
 SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar
 LOGPATH := $(AIOPATH)/logfiles/$(REGION)/$(DATE)
-KEEPRIGHTFILES := $(AIOPATH)/keepright/regions
+
 
 # Define dependencies of the layers.
 ifeq ($(IS_PART_OF),false)
@@ -182,6 +182,7 @@ DEPENDENCY_FIXME := $(TILEPATH)/template.args
 DEPENDENCY_MAXSPEED := $(REGIONPATH)/raw_data/maxspeedsplit/template.args
 DEPENDENCY_BOUNDARY := $(REGIONPATH)/raw_data/boundssplit/template.args
 DEPENDENCY_KEEPRIGHT := $(REGIONPATH)/raw_data/keeprightsplit/template.args
+DEPENDENCY_OSB := $(REGIONPATH)/raw_data/osb/template.args
 DEPENDENCY_DAMAGE := $(TILEPATH)/template.args
 else
 PART_META_PATH := $(PATH_TO_REGIONS)/$(IS_PART_OF)
@@ -192,6 +193,7 @@ DEPENDENCY_FIXME := $(PART_META_PATH)/gmapsupps/gfixme/gmapsupp.img
 DEPENDENCY_MAXSPEED := $(PART_META_PATH)/gmapsupps/gmaxspeed/gmapsupp.img
 DEPENDENCY_BOUNDARY := $(PART_META_PATH)/gmapsupps/gboundary/gmapsupp.img
 DEPENDENCY_KEEPRIGHT := $(PART_META_PATH)/gmapsupps/gkeepright/gmapsupp.img
+DEPENDENCY_OSB := $(PART_META_PATH)/gmapsupps/gosb/gmapsupp.img
 DEPENDENCY_DAMAGE := $(PART_META_PATH)/gmapsupps/gdamage/gmapsupp.img
 endif
 
@@ -223,12 +225,14 @@ ifeq ($(USE_OLD_AREAS_LIST),true)
 SPLITTER_OPTIONS := $(SPLITTER_COMMON_OPTIONS) --split-file=$(AREAS_LIST_FILE) --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
 SPLITTER_OPTIONS_BOUNDARY := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/boundssplit/areas.list --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
 SPLITTER_OPTIONS_KEEPRIGHT := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/keeprightsplit/areas.list --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
+SPLITTER_OPTIONS_OSB := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/osb/areas.list --cache=$(SPLITTER_CACHE)/osb $(GEONAMES)
 SPLITTER_OPTIONS_MAXSPEED := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/maxspeedsplit/areas.list --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
 SPLITTER_OPTIONS_ADDR := $(SPLITTER_COMMON_OPTIONS) --split-file=$(REGIONPATH)/raw_data/addrsplit/areas.list --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
 else
 SPLITTER_OPTIONS := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/basemap $(GEONAMES)
 SPLITTER_OPTIONS_BOUNDARY := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=1000000 --cache=$(SPLITTER_CACHE)/bounds $(GEONAMES)
 SPLITTER_OPTIONS_KEEPRIGHT := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=200000 --cache=$(SPLITTER_CACHE)/keepright $(GEONAMES)
+SPLITTER_OPTIONS_OSB := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/osb $(GEONAMES)
 SPLITTER_OPTIONS_MAXSPEED := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/maxspeed $(GEONAMES)
 SPLITTER_OPTIONS_ADDR := $(SPLITTER_COMMON_OPTIONS) --mapid=$(TILE_PREFIX)0$(TILE_START) --max-nodes=500000 --cache=$(SPLITTER_CACHE)/addr $(GEONAMES)
 endif
@@ -491,10 +495,8 @@ $(REGIONPATH)/gmapsupps/gmaxspeed/gmapsupp.img : $(DEPENDENCY_MAXSPEED)
 $(REGIONPATH)/gmapsupps/gboundary/gmapsupp.img : $(DEPENDENCY_BOUNDARY)
 	$(call make_layer,boundary,$(NOBASEMAPOPTIONS),OSM_AiO_boundary_$(REGION),$(BOUNDARY_FID),$(BOUNDARY_PID),21,$(REGIONPATH)/raw_data/boundssplit/template.args,_boundary_)
 
-$(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
-	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --bb $(BBOX) --nkv keyValueList="type.0" --wx $(REGIONPATH)/raw_data/osb_$(REGION).osm
-	rm -f $(REGIONPATH)/gosb/*
-	$(call do_stuff,osb,$(NOBASEMAPOPTIONS) --mapname=$(OSB_FID)$(OSB_PID)$(TILE_START) --description='Openstreetbugs' --draw-priority=23,../raw_data/osb_$(REGION).osm,$(OSB_FID),$(OSB_PID),OSM_AiO_osb_$(REGION))
+$(REGIONPATH)/gmapsupps/gosb/gmapsupp.img : $(DEPENDENCY_OSB)
+	$(call make_layer,osb,$(NOBASEMAPOPTIONS),OSM_AiO_osb_$(REGION),$(OSB_FID),$(OSB_PID),23,$(REGIONPATH)/raw_data/osb/template.args,_osb_)
 
 $(REGIONPATH)/gmapsupps/gkeepright/gmapsupp.img : $(DEPENDENCY_KEEPRIGHT)
 	$(call make_layer,keepright,$(NOBASEMAPOPTIONS),OSM_AiO_keepright_$(REGION),$(KEEPRIGHT_FID),$(KEEPRIGHT_PID),24,$(REGIONPATH)/raw_data/keeprightsplit/template.args,_keepright_)
@@ -520,8 +522,15 @@ $(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.
 	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - $(call OSMOSISSPLITLINE,keepright.osm.gz)
 
 $(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright.osm.gz
-	cd $(REGIONPATH)/raw_data/keeprightsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_KEEPRIGHT) $(KEEPRIGHTFILES)/$(REGION)_keepright.osm.gz 2> $(LOGPATH)/splitter_keepright.log
+	cd $(REGIONPATH)/raw_data/keeprightsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_KEEPRIGHT) $(REGIONPATH)/raw_data/keepright.osm.gz 2> $(LOGPATH)/splitter_keepright.log
 	$(call process_splitter_files,$(REGIONPATH)/raw_data/keeprightsplit,_keepright_)
+
+$(REGIONPATH)/raw_data/osb.osm.gz : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
+	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --nkv keyValueList="type.0" $(call OSMOSISSPLITLINE,osb.osm.gz)
+
+$(REGIONPATH)/raw_data/osb/template.args : $(REGIONPATH)/raw_data/osb.osm.gz
+	cd $(REGIONPATH)/raw_data/osb/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_OSB) $(REGIONPATH)/raw_data/osb.osm.gz 2> $(LOGPATH)/splitter_osb.log
+	$(call process_splitter_files,$(REGIONPATH)/raw_data/osb,_osb_)
 
 $(REGIONPATH)/raw_data/boundssplit/template.args : $(TILEPATH)/template.args
 	cd $(REGIONPATH)/raw_data/boundssplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_BOUNDARY) $(REGIONPATH)/raw_data/bounds.osm.gz 2> $(LOGPATH)/splitter_boundary.log
