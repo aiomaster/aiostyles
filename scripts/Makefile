@@ -198,10 +198,10 @@ DEPENDENCY_DAMAGE := $(PART_META_PATH)/gmapsupps/gdamage/gmapsupp.img
 endif
 
 # We want other options for the overlays than for the basemaplayer containing the routing etc.
-OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --tdbfile --gmapsupp --nsis --keep-going --transparent
-GBASEMAPOPTIONS := $(OPTIONS) --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=polygons,extend-sea-sectors,close-gaps=2000
-NOBASEMAPOPTIONS := $(OPTIONS) --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds 
-VELOMAPOPTIONS := $(OPTIONS) --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=3.2 --reduce-point-density-polygon=8 --suppress-dead-end-nodes --index --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --route --description="VeloMap_$(KURZ)"
+OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --gmapsupp --nsis --keep-going --transparent
+GBASEMAPOPTIONS := $(OPTIONS) --tdbfile --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=polygons,extend-sea-sectors,close-gaps=2000
+NOBASEMAPOPTIONS := $(OPTIONS) --tdbfile --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds 
+VELOMAPOPTIONS := $(OPTIONS) --x-tdbfile --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=3.2 --x-reduce-point-density-polygon=8 --x-suppress-dead-end-nodes --index --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --route --description="VeloMap_$(KURZ)"
 
 
 # The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
@@ -316,7 +316,7 @@ do_stuff = \
 	cp $(STYLEPATH)/$(1).TYP $(REGIONPATH)/g$(1) && \
 	$(GMAPTOOL) -wy $(4),$(5) $(1).TYP ; \
 	mv $(1).TYP `echo $(1)|sed 's/^\(.\{3\}\).*/\1/'`$(4)$(5).TYP ; \
-	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)" --overview-mapname=osm$(4)$(5) --overview-mapnumber=$(4)$(5)000 --family-id=$(4) --product-id=$(5) --family-name=$(1) $(2) $(3) *.TYP && \
+	/usr/bin/time -o $(LOGPATH)/time_mkgmap_$(1) $(MKGMAP_$(1)) --style-file=$(STYLEPATH)/$(1)_style --series-name="$(6)_$(DATE)" --overview-mapname=osm$(4)$(5) --overview-mapnumber=$(4)$(5)000 --family-id=$(4) --product-id=$(5) --family-name="$(1)_$(DATE)" $(2) $(3) *.TYP && \
 	mv $(REGIONPATH)/g$(1)/mkgmap.log $(LOGPATH)/mkgmap_$(1).log ; \
 	if [ "$(1)" = "velomap" -o "$(1)" = "basemap" ];then $(GMAPTOOL) -wn $(REGIONPATH)/g$(1)/*.img;fi ; \
 	echo -e "Parameters used with mkgmap to build the $(1)-Layer:\n--style-file=$(1)_style $(2) $(3)\nmkgmap --version:" > $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; $(MKGMAP_$(1)) --version 2>> $(WEBREGIONDIR)/$(1)/mkgmap_params_$(1) ; \
