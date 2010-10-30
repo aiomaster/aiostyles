@@ -149,7 +149,7 @@ endif
 # RIGHT := $(word 4, $(CHOORDS) )
 # BBOX := bottom=$(BOTTOM) left=$(LEFT) top=$(TOP) right=$(RIGHT)
 
-OSMOSIS := $(AIOPATH)/osmosis-0.37-SNAPSHOT/bin/osmosis
+OSMOSIS := $(AIOPATH)/osmosis-0.37/bin/osmosis
 REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
