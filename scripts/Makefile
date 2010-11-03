@@ -286,7 +286,7 @@ compress_gmapsupp = \
 
 #ifeq ($(REGION),europe)
 build_exe = \
-	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g;/!define INSTALLER_NAME/s/"\([^"]*\)"/"\1_setup"/' $(REGIONPATH)/g$(1)/*.nsi && \
+	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g;/!define INSTALLER_NAME/s/"\([^"]*\)"/"\1_setup"/;s/_$(DATE)//g' $(REGIONPATH)/g$(1)/*.nsi && \
 	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/*.nsi
 #else
 #build_exe = \
