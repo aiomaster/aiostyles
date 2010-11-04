@@ -377,7 +377,7 @@ make_layer = \
 	echo -e "Enjoy!\n" >> $(REGIONPATH)/g$(1)/HOWTO.txt ; \
 	$(call handle_layer,$(1),$(2),$(3),$(4),$(5),$(6),$(7),$(8),$(9))
 
-all: $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img $(REGIONPATH)/gmapsupps/gmapsupp/gmapsupp.img $(WEBREGIONDIR)/styles.tar.bz2
+all: $(REGIONPATH)/gmapsupps/gmapsupp/gmapsupp.img $(WEBREGIONDIR)/styles.tar.bz2 $(REGIONPATH)/gmapsupps/gvelomap/gmapsupp.img
 
 
 define make_dirs
@@ -413,7 +413,7 @@ clean:
 
 # Clean all stuff not directly needed in region dirs
 # Warning you need the imgs of europe to create the other subcountries! 
-extreme_clean: clean
+clobber: clean
 	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/{$(LAYER)}/*.img ; \
 	rm -f $(PATH_TO_REGIONS)/{$(CS_ALL_REGIONS)}/tiles/*.osm.gz
 
