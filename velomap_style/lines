@@ -676,39 +676,6 @@ bicycle:backward=yes | bicycle:forward=yes {set bicycle:oneway=no}
 oneway=1 | oneway=true {set oneway=yes}
 oneway=-1 {set oneway=reverse}
 
-oneway=yes 		& bicycle:oneway=no & copy!=* {set oneway=no} [0x30a road_class=0 road_speed=0 resolution 24 continue]
-oneway=reverse 	& bicycle:oneway=no & copy!=* {set oneway=no} [0x30a road_class=0 road_speed=0 resolution 24 continue]
-
-highway=primary &  oneway=yes				& copy!=* {set copy=copied} [0x1051c resolution 24 continue with_actions]
-highway=primary &  oneway=reverse 			& copy!=* {set copy=copied} [0x1051d resolution 24 continue with_actions]
-highway=residential &  oneway=yes			& copy!=* {set copy=copied} [0x10401 resolution 24 continue with_actions]
-highway=residential &  oneway=reverse 		& copy!=* {set copy=copied} [0x10402 resolution 24 continue with_actions]
-
-oneway=yes 		& ( cycleway=opposite | cycleway=opposite_lane | cycleway=opposite_track | cycleway=both ) & copy!=* {set copy=copied} [0x10a02 resolution 24 continue with_actions]
-oneway=reverse	& ( cycleway=opposite | cycleway=opposite_lane | cycleway=opposite_track | cycleway=both ) & copy!=* {set copy=copied} [0x10a03 resolution 24 continue with_actions]
-
-oneway=yes 		& ( highway=secondary | highway=tertiary | highway=minor | highway=unclassified ) & copy!=* {set copy=copied} [0x10a02 resolution 24 continue with_actions]
-oneway=reverse	& ( highway=secondary | highway=tertiary | highway=minor | highway=unclassified ) & copy!=* {set copy=copied} [0x10a03 resolution 24 continue with_actions]
-
-highway=* & oneway=yes 		& copy!=* & highway!=primary & highway!=secondary & highway!=tertiary & highway!=minor & highway!=unclassified & bicycle:oneway!=no & motorroad!=yes & highway!=trunk & highway!=motorway & highway!=motorway_link & highway!=trunk_link & highway!=construction & construction!=* & highway!=proposed & proposed!=* & cycleway!=* & highway!=cycleway {set oneway=no} [0x11 road_class=0 road_speed=0 resolution 24 continue]
-highway=* & oneway=reverse 	& copy!=* & highway!=primary & highway!=secondary & highway!=tertiary & highway!=minor & highway!=unclassified & bicycle:oneway!=no & motorroad!=yes & highway!=trunk & highway!=motorway & highway!=motorway_link & highway!=trunk_link & highway!=construction & construction!=* & highway!=proposed & proposed!=* & cycleway!=* & highway!=cycleway {set oneway=no} [0x215 road_class=0 road_speed=0 resolution 24 continue]
-
-
-(cycleway=lane_right | cycleway:right=lane ) 	& highway=secondary		& highway!=cycleway {set cyclewaysidecopy=yes}  [0x10411 resolution 22 continue with_actions]
-(cycleway=lane_left | cycleway:left=lane ) 		& highway=secondary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10410 resolution 22 continue with_actions]
-(cycleway=track_right | cycleway:right=track ) 	& highway=secondary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10413 resolution 22 continue with_actions]
-(cycleway=track_left | cycleway:left=track ) 	& highway=secondary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10412 resolution 22 continue with_actions]
-
-(cycleway=lane_right | cycleway:right=lane ) 	& highway=primary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10415 resolution 22 continue with_actions]
-(cycleway=lane_left | cycleway:left=lane ) 		& highway=primary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10414 resolution 22 continue with_actions]
-(cycleway=track_right | cycleway:right=track ) 	& highway=primary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10417 resolution 22 continue with_actions]
-(cycleway=track_left | cycleway:left=track ) 	& highway=primary		& highway!=cycleway {set cyclewaysidecopy=yes}	[0x10416 resolution 22 continue with_actions]
-
-(cycleway=lane_right | cycleway:right=lane ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f1e resolution 23 continue]
-(cycleway=lane_left | cycleway:left=lane ) 								& cyclewaysidecopy!=yes & highway!=cycleway [0x10f1f resolution 23 continue]
-(cycleway=track_right | cycleway:right=track ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f18 resolution 23 continue]
-(cycleway=track_left | cycleway:left=track ) 							& cyclewaysidecopy!=yes & highway!=cycleway [0x10f19 resolution 23 continue]
-
 
 # Need ref inside Name from here onwards 
 highway=* & ref=* {set namecopy='${name} (${ref})' }
@@ -718,126 +685,179 @@ highway=* & ref=* & shieldpresent!=yes							{name '${ref|highway-symbol:oval:7:
 highway=* & ref=* {set name='${namecopy}' }
 # End refname section
 
-cycleway=lane																			&  highway=primary	[0x10706 resolution 22-22 continue]
-cycleway=lane																			&  highway=primary	[0x10403 resolution 23 continue]
 
-cycleway=track											 									&  highway=primary	[0x10705 resolution 22 continue]
-cycleway=track											 									&  highway=primary	[0x10404 resolution 22 continue]
+# Create oneway arrows (routable)
+cycleway:oneway=no {set bicycle:oneway=no}
+bicycle:oneway=no & (cycleway=opposite | cycleway=opposite_lane | cycleway=both | cycleway=opposite_track) {delete bicycle:oneway}
+highway=primary &  oneway=yes 				& copy!=* {set copy=copied} [0x1051c resolution 24 continue with_actions]
+highway=primary &  oneway=-1 				& copy!=* {set copy=copied} [0x1051d resolution 24 continue with_actions]
 
-cycleway=opposite & ( extremecarver5=bike | route=bicycle ) 	&  highway=primary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
-cycleway=opposite																			&  highway=primary 					[0x10405 resolution 23-22 continue]
-cycleway=opposite																			&  highway=primary {set oneway=no}	[0x300 road_class=0 road_speed=0 resolution 24 continue]
+oneway=yes 		& bicycle:oneway=no & copy!=* {set oneway=no; set copy=copied} [0x30a road_class=0 road_speed=0 resolution 24 continue]
+oneway=-1 		& bicycle:oneway=no & copy!=* {set oneway=no; set copy=copied} [0x30b road_class=0 road_speed=0 resolution 24 continue]
 
-cycleway=opposite_lane & ( extremecarver5=bike | route=bicycle ) &  highway=primary {set oneway=no}	[0x01 road_class=2 road_speed=0 resolution 24 continue]
-cycleway=opposite_lane										 									&  highway=primary 					[0x10406 resolution 23-22 continue]
-cycleway=opposite_lane										 									&  highway=primary {set oneway=no}	[0x301 road_class=0 road_speed=0 resolution 24 continue]
+highway=residential &  ( oneway=yes | oneway=-1)  & cycleway!=opposite_lane & cycleway!=opposite & copy!=* {set oneway=no; set taxi=no; set mkgmap:unpaved=1} [0x01 road_class=0 road_speed=0 resolution 24 continue]
+highway=residential &  oneway=yes & cycleway!=opposite_lane & cycleway!=opposite	& copy!=* {set copy=copied} [0x10401 resolution 24 continue with_actions]
+highway=residential &  oneway=-1 		 & cycleway!=opposite_lane & cycleway!=opposite	& copy!=* {set copy=copied} [0x10402 resolution 24 continue with_actions]
 
-cycleway=opposite_track & ( extremecarver5=bike | route=bicycle )	&  highway=primary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
-cycleway=opposite_track										 										&  highway=primary 					[0x10407 road_class=0 road_speed=0 resolution 23-22 continue]
-cycleway=opposite_track										 										&  highway=primary {set oneway=no}	[0x302 road_class=0 road_speed=0 resolution 24 continue]
+oneway=yes 	& highway!=path & highway!=footway & highway!=track & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=living_street & highway!=residential & highway!=service & highway!=cycleway	& ( cycleway=opposite | cycleway=opposite_lane | cycleway=opposite_track | cycleway=both ) & copy!=* {set copy=copied} [0x10a02 resolution 24 continue with_actions]
+oneway=-1	& highway!=path & highway!=footway & highway!=track & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassified & highway!=living_street & highway!=residential & highway!=service & highway!=cycleway & ( cycleway=opposite | cycleway=opposite_lane | cycleway=opposite_track | cycleway=both ) & copy!=* {set copy=copied} [0x10a03 resolution 24 continue with_actions]
 
-cycleway=yes																			&  highway=primary	[0x10705 resolution 23-22 continue]
-cycleway=yes																			&  highway=primary	[0x10408 resolution 24 continue]
+oneway=yes 	&  highway=secondary  & copy!=* {set copy=copied} [0x10719 resolution 24 continue with_actions]
+oneway=-1	&  highway=secondary  & copy!=* {set copy=copied} [0x1071c resolution 24 continue with_actions]
 
-cycleway=both																			&  highway=primary {set oneway=no}	[0x10705 resolution 23-22 continue with_actions]
-cycleway=both																			&  highway=primary 					[0x10404 resolution 24 continue]
+oneway=yes 	& highway=tertiary  & copy!=* {set copy=copied} [0x10a02 resolution 24 continue with_actions]
+oneway=-1	& highway=tertiary  & copy!=* {set copy=copied} [0x10a03 resolution 24 continue with_actions]
 
+oneway=yes 	& ( highway=unclassified | highway=minor ) & cycleway!=opposite & cycleway!=opposite_lane & copy!=* {set copy=copied} [0x11 resolution 24 continue with_actions]
+oneway=-1	& ( highway=unclassified | highway=minor ) & copy!=* & cycleway!=opposite & cycleway!=opposite_lane {set copy=copied} [0x10718 resolution 24 continue with_actions]
 
-cycleway=lane																			&  highway=secondary	[0x10409 resolution 23-22 continue]
-cycleway=lane																			&  highway=secondary	[0x10606 resolution 24 continue]
-
-cycleway=track											 									&  highway=secondary	[0x1040a resolution 23-22 continue]
-cycleway=track											 									&  highway=secondary	[0x10605 resolution 24 continue]
-
-cycleway=opposite & ( extremecarver5=bike | route=bicycle ) 	&  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
-cycleway=opposite																			&  highway=secondary {set oneway=no}	[0x303 road_class=0 road_speed=0 resolution 24 continue]
-cycleway=opposite																			&  highway=secondary 					[0x1040b resolution 23-22 continue]
-
-cycleway=opposite_lane & ( extremecarver5=bike | route=bicycle ) &  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
-cycleway=opposite_lane										 									&  highway=secondary {set oneway=no}	[0x303 road_class=0 road_speed=1 resolution 24 continue]
-cycleway=opposite_lane										 									&  highway=secondary {set oneway=no}	[0x1040b resolution 23-22 continue]
-
-cycleway=opposite_track & ( extremecarver5=bike | route=bicycle )	&  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
-cycleway=opposite_track										 										&  highway=secondary {set oneway=no}	[0x305 road_class=1 road_speed=0 resolution 24 continue]
-cycleway=opposite_track										 										&  highway=secondary {set oneway=no}	[0x1040d resolution 23-22 continue]
-
-cycleway=yes																			&  highway=secondary	[0x10605 resolution 24 continue]
-cycleway=yes																			&  highway=secondary	[0x1040a resolution 23-22 continue]
-
-cycleway=both & ( extremecarver5=bike | route=bicycle ) 	&  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
-cycleway=both																			&  highway=secondary {set oneway=no}	[0x30e road_class=0 road_speed=0 resolution 24 continue]
-cycleway=both																			&  highway=secondary					[0x1040a resolution 23-22 continue]
+oneway=yes  & copy!=* & highway!=primary & highway!=secondary & highway!=tertiary & highway!=minor & highway!=unclassified & bicycle:oneway!=no & motorroad!=yes & highway!=trunk & highway!=motorway & highway!=motorway_link & highway!=trunk_link & highway!=construction & construction!=* & highway!=proposed & ( proposed!=* | proposed=no ) & cycleway!=opposite_lane & cycleway!=opposite & cycleway!=opposite_track & cycleway!=both {set oneway=no; set taxi=no; set mkgmap:unpaved=1} [0x11 road_class=0 road_speed=0 resolution 24 continue]
+oneway=-1 	& copy!=* & highway!=primary & highway!=secondary & highway!=tertiary & highway!=minor & highway!=unclassified & bicycle:oneway!=no & motorroad!=yes & highway!=trunk & highway!=motorway & highway!=motorway_link & highway!=trunk_link & highway!=construction & construction!=* & highway!=proposed & ( proposed!=* | proposed=no ) & cycleway!=opposite_lane & cycleway!=opposite & cycleway!=opposite_track & cycleway!=both {set oneway=no; set taxi=no; set mkgmap:unpaved=1} [0x215 road_class=0 road_speed=0 resolution 24 continue]
 
 
-cycleway=lane																			&  highway=tertiary	[0x10606 resolution 23 continue]
-cycleway=track											 									&  highway=tertiary	[0x10605 resolution 23 continue]
+(cycleway=lane_right | cycleway:right=lane ) 	& highway=secondary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes} [0x10411 resolution 24 continue with_actions]
+(cycleway=lane_left | cycleway:left=lane ) 		& highway=secondary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes}	[0x10410 resolution 24 continue with_actions]
+(cycleway=track_right | cycleway:right=track ) 	& highway=secondary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes}	[0x10413 resolution 24 continue with_actions]
+(cycleway=track_left | cycleway:left=track ) 	& highway=secondary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes}	[0x10412 resolution 24 continue with_actions]
 
-cycleway=opposite & ( extremecarver5=bike | route=bicycle ) 	&  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 23 continue]
-cycleway=opposite												&  highway=tertiary {set oneway=no}	[0x303 road_class=0 road_speed=0 resolution 23 continue]
+(cycleway=lane_right | cycleway:right=lane ) 	& highway=primary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes}	[0x10415 resolution 24 continue with_actions]
+(cycleway=lane_left | cycleway:left=lane ) 		& highway=primary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes}	[0x10414 resolution 24 continue with_actions]
+(cycleway=track_right | cycleway:right=track ) 	& highway=primary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes}	[0x10417 resolution 24 continue with_actions]
+(cycleway=track_left | cycleway:left=track ) 	& highway=primary		& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes}	[0x10416 resolution 24 continue with_actions]
 
-cycleway=opposite_lane & ( extremecarver5=bike | route=bicycle ) &  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 23 continue]
-cycleway=opposite_lane										 									&  highway=tertiary {set oneway=no}	[0x303 road_class=0 road_speed=1 resolution 23 continue]
+(cycleway=lane_right | cycleway:right=lane ) 	& ( highway=tertiary | higwhay=living_street | highway=footway )	& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes} [0x10f1e resolution 24 continue with_actions]
+(cycleway=lane_left | cycleway:left=lane ) 		& ( highway=tertiary | higwhay=living_street | highway=footway )	& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes} [0x10f1f resolution 24 continue with_actions]
+(cycleway=track_right | cycleway:right=track ) 	& ( highway=tertiary | higwhay=living_street | highway=footway )	& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes} [0x10f18 resolution 24 continue with_actions]
+(cycleway=track_left | cycleway:left=track ) 	& ( highway=tertiary | higwhay=living_street | highway=footway )	& highway!=cycleway & highway!=path & highway!=track {set cyclewaysidecopy=yes} [0x10f19 resolution 24 continue with_actions]
 
-cycleway=opposite_track & ( extremecarver5=bike | route=bicycle )	&  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 23 continue]
-cycleway=opposite_track										 										&  highway=tertiary {set oneway=no}	[0x305 road_class=1 road_speed=0 resolution 23 continue]
+(cycleway=lane_right | cycleway:right=lane ) 	& oneway=*				& cyclewaysidecopy!=yes & highway!=cycleway & highway!=path & highway!=track [0x10f1e resolution 24 continue]
+(cycleway=lane_left | cycleway:left=lane ) 		& oneway=*				& cyclewaysidecopy!=yes & highway!=cycleway & highway!=path & highway!=track [0x10f1f resolution 24 continue]
+(cycleway=track_right | cycleway:right=track ) 	& oneway=*				& cyclewaysidecopy!=yes & highway!=cycleway & highway!=path & highway!=track [0x10f18 resolution 24 continue]
+(cycleway=track_left | cycleway:left=track ) 	& oneway=*				& cyclewaysidecopy!=yes & highway!=cycleway & highway!=path & highway!=track [0x10f19 resolution 24 continue]
 
+( cycleway=lane | cycleway=yes ) & oneway=yes & bicycle:oneway!=no & highway=primary 	[0x10415 resolution 24 continue]
+( cycleway=lane | cycleway=yes ) & oneway=-1  & bicycle:oneway!=no & highway=primary 	[0x10414 resolution 24 continue]
+cycleway=track & oneway=yes & bicycle:oneway!=no & highway=primary 						[0x10417 resolution 24 continue]
+cycleway=track & oneway=-1 & bicycle:oneway!=no  & highway=primary 						[0x10416 resolution 24 continue]
 
-cycleway=yes																			&  highway=tertiary	[0x10605 resolution 23 continue]
-cycleway=both & ( extremecarver5=bike | route=bicycle ) 	&  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 23 continue]
-cycleway=both																			&  highway=tertiary {set oneway=no}	[0x30e road_class=0 road_speed=0 resolution 23 continue]
+( cycleway=lane | cycleway=yes ) & oneway=yes & bicycle:oneway!=no & highway=secondary 	[0x10411 resolution 24 continue]
+( cycleway=lane | cycleway=yes ) & oneway=-1  & bicycle:oneway!=no & highway=secondary 	[0x10410 resolution 24 continue]
+cycleway=track & oneway=yes & bicycle:oneway!=no & highway=secondary 					[0x10413 resolution 24 continue]
+cycleway=track & oneway=-1 & bicycle:oneway!=no  & highway=secondary 					[0x10412 resolution 24 continue]
+
+( cycleway=lane | cycleway=yes ) & oneway=yes & bicycle:oneway!=no & highway=* & highway!=primary & highway!=secondary & highway!=cycleway & highway!=path & highway!=track [0x10f1e resolution 24 continue]
+( cycleway=lane | cycleway=yes ) & oneway=-1  & bicycle:oneway!=no & highway=* & highway!=primary & highway!=secondary & highway!=cycleway & highway!=path & highway!=track [0x10f1f resolution 24 continue]
+cycleway=track & oneway=yes & bicycle:oneway!=no & highway=* & highway!=primary & highway!=secondary & highway!=cycleway & highway!=path & highway!=track 					[0x10f18 resolution 24 continue]
+cycleway=track & oneway=-1 & bicycle:oneway!=no  & highway=* & highway!=primary & highway!=secondary & highway!=cycleway & highway!=path & highway!=track 					[0x10f19 resolution 24 continue]
 
 
 
+cycleway=lane	& oneway!=*											&  highway=primary	[0x10403 resolution 24 continue]
+cycleway=track	& oneway!=*											&  highway=primary	[0x10404 resolution 24 continue]
 
-cycleway=lane																			&  ( highway=residential | highway=service )	[0x1071b resolution 24 continue]
-cycleway=track											 								&  ( highway=residential | highway=service )	[0x1071a resolution 24 continue]
+cycleway=opposite & ( extremecarver=mr | route=mtb ) & oneway=*	&  highway=primary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
+cycleway=opposite			& oneway=*							&  highway=primary {set oneway=no}	[0x300 road_class=0 road_speed=0 resolution 24 continue]
+cycleway=opposite			& oneway!=*							&  highway=primary {set oneway=no}	[0x10702 resolution 24 continue]
 
-cycleway=opposite & ( extremecarver5=bike | route=bicycle ) 	&  ( highway=residential | highway=service ) {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
-cycleway=opposite												&  ( highway=residential | highway=service ) {set oneway=no}	[0x307 road_class=0 road_speed=1 resolution 23 continue]
+cycleway=opposite_lane & ( extremecarver=mr | route=mtb ) & oneway=*	&  highway=primary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
+cycleway=opposite_lane		& oneway=*							&  highway=primary {set oneway=no}	[0x301 road_class=0 road_speed=0 resolution 24 continue]
+cycleway=opposite_lane		& oneway!=*							&  highway=primary {set oneway=no}	[0x10703 resolution 24 continue]
 
-cycleway=opposite_lane & ( extremecarver5=bike | route=bicycle ) &  ( highway=residential | highway=service ) {set oneway=no}	[0x01 road_class=2 road_speed=1 resolution 24 continue]
-cycleway=opposite_lane										 	 &  ( highway=residential | highway=service ) {set oneway=no}	[0x308 road_class=0 road_speed=1 resolution 23 continue]
+cycleway=opposite_track & ( extremecarver=mr | route=mtb ) & oneway=*	&  highway=primary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
+cycleway=opposite_track		& oneway=*						&  highway=primary {set oneway=no}	[0x302 road_class=0 road_speed=0 resolution 24 continue]
+cycleway=opposite_track		& oneway!=*						&  highway=primary {set oneway=no}	[0x10704 resolution 24 continue]
 
-cycleway=opposite_track & ( extremecarver5=bike | route=bicycle )	&  ( highway=residential | highway=service ) {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
-cycleway=opposite_track										 		&  ( highway=residential | highway=service ) {set oneway=no}	[0x309 road_class=0 road_speed=0 resolution 23 continue]
-
-cycleway=yes																		&  ( highway=residential | highway=service )	[0x1071a resolution 24 continue]
-
-cycleway=both & ( extremecarver5=bike | route=bicycle ) 	&  ( highway=residential | highway=service ) {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
-cycleway=both												&  ( highway=residential | highway=service ) {set oneway=no}	[0x30d road_class=1 road_speed=1 resolution 23 continue]
-
-cycleway=lane & highway=footway	& bicycle=designated 				& highway!=cycleway & highway!=track 	[0x10f1d resolution 23 continue]
-cycleway=lane & highway=footway						 				& highway!=cycleway & highway!=track	[0x10f1d resolution 23 continue]
-cycleway=lane & highway!=cycleway & highway!=path & highway!=footway & highway!=primary & highway!=secondary & highway!=residential & highway!=service & highway!=cycleway & highway!=track [0x10f1d resolution 23 continue]
-
-cycleway=track & highway=footway	& bicycle=designated 										[0x10f1c resolution 23 continue]
-cycleway=track & highway=footway						 										[0x10f1c resolution 23 continue]
-cycleway=track & highway=*	& highway!=cycleway & highway!=path & highway!=footway & highway!=primary & highway!=secondary & highway!=residential & highway!=service & highway!=cycleway & highway!=track [0x10f1c resolution 23 continue]
-
-cycleway=opposite & ( extremecarver5=bike | route=bicycle ) & highway!=residential & highway!=service & highway!=primary & highway!=secondary & highway!=tertiary {set oneway=no} [0x01 road_class=2 road_speed=1 resolution 24 continue]
-cycleway=opposite & highway=footway	& bicycle=designated 																						{set oneway=no}	[0x30a road_class=1 road_speed=1 resolution 23 continue]
-cycleway=opposite & highway=footway																												{set oneway=no}	[0x30a road_class=0 road_speed=1 resolution 23 continue]
-cycleway=opposite & highway!=cycleway & highway!=path & highway!=footway & highway!=primary & highway!=track & highway!=secondary & highway!=tertiary & highway!=residential & highway!=service & highway!=cycleway {set oneway=no}	[0x30a road_class=0 road_speed=1 resolution 23 continue]
-
-cycleway=opposite_lane & highway=* & ( extremecarver5=bike | route=bicycle ) & highway!=residential & highway!=service & highway!=primary & highway!=secondary & highway!=tertiary	{set oneway=no}	[0x01 road_class=3 road_speed=1 resolution 24 continue]
-cycleway=opposite_lane & highway=footway & bicycle=designated 																						{set oneway=no}	[0x30b road_class=2 road_speed=1 resolution 23 continue]
-cycleway=opposite_lane & highway=footway																											{set oneway=no}	[0x30b road_class=1 road_speed=1 resolution 23 continue]
-cycleway=opposite_lane & highway!=cycleway & highway!=path & highway!=track & highway!=footway & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=service & highway!=cycleway 	{set oneway=no}	[0x30b road_class=1 road_speed=1 resolution 23 continue]
-
-cycleway=opposite_track & ( extremecarver5=bike | route=bicycle ) 	& highway!=residential & highway!=service & highway!=primary & highway!=secondary & highway!=tertiary	{set oneway=no} [0x01 road_class=2 road_speed=1 resolution 24 continue]
-cycleway=opposite_track & highway=footway	& bicycle=designated	{set oneway=no} [0x30c road_class=1 road_speed=1 resolution 23 continue]
-cycleway=opposite_track & highway=footway		{set oneway=no} [0x30c road_class=0 road_speed=1 resolution 23 continue]
-cycleway=opposite_track & highway!=cycleway & highway!=path & highway!=footway & highway!=track & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=service & highway!=cycleway 	{set oneway=no} [0x30c road_class=0 road_speed=1 resolution 23 continue]
-
-cycleway=yes & highway=footway	& bicycle=designated 	& highway!=track & highway!=cycleway & highway!=path & highway!=track																	[0x10f1c resolution 23 continue]
-cycleway=yes & highway=footway						 	& highway!=track & highway!=cycleway & highway!=path & highway!=track																	[0x10f1c resolution 23 continue]
-cycleway=yes & highway!=cycleway & highway!=path & highway!=footway & highway!=primary & highway!=secondary & highway!=tertiary & highway!=track & highway!=residential & highway!=service & highway!=cycleway  	[0x10f1c resolution 23 continue]
+cycleway=yes							& oneway!=*						&  highway=primary					[0x10404 resolution 24 continue]
+cycleway=both							& oneway=*						&  highway=primary {set oneway=no}	[0x01 road_class=0 road_speed=0 resolution 24 continue]
+cycleway=both															&  highway=primary 					[0x10404 resolution 24 continue]
 
 
-cycleway=both & ( extremecarver5=bike | route=bicycle ) & highway!=cycleway & highway!=path & highway!=residential & highway!=service & highway!=primary & highway!=secondary & highway!=tertiary {set oneway=no} [0x01 road_class=2 road_speed=1 resolution 24 continue]
-cycleway=both & highway=footway	& bicycle=designated	{set oneway=no}	[0x30f road_class=1 road_speed=1 resolution 23 continue]
-cycleway=both & highway=footway		{set oneway=no}	[0x30f road_class=0 road_speed=1 resolution 23 continue]
-cycleway=both & highway!=cycleway & highway!=path & highway!=track & highway!=footway & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=service & highway!=cycleway 	{set oneway=no}	[0x30f road_class=0 road_speed=1  resolution 23 continue]
+
+
+cycleway=lane						& oneway!=*						&  highway=secondary	[0x1040c resolution 24 continue]
+cycleway=track						& oneway!=*						&  highway=secondary	[0x10605 resolution 24 continue]
+
+cycleway=opposite & ( extremecarver=mr | route=mtb) & oneway=*		&  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite									& oneway=*		&  highway=secondary {set oneway=no}	[0x303 road_class=0 road_speed=0 resolution 24 continue]
+cycleway=opposite									& oneway!=*		&  highway=secondary {set oneway=no}	[0x10609 resolution 24 continue]
+
+cycleway=opposite_lane & ( extremecarver=mr | route=mtb ) & oneway=* &  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane									& oneway=*	&  highway=secondary {set oneway=no}	[0x303 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane									& oneway!=*	&  highway=secondary {set oneway=no}	[0x10609 resolution 24 continue]
+
+cycleway=opposite_track & (extremecarver=mr | route=mtb) & oneway=* &  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_track									 & oneway=*	&  highway=secondary {set oneway=no}	[0x304 road_class=1 road_speed=0 resolution 24 continue]
+cycleway=opposite_track									& oneway!=*	&  highway=secondary {set oneway=no}	[0x1040b resolution 24 continue]
+
+cycleway=yes	& oneway!=*											&  highway=secondary	[0x10605 road_class=1 road_speed=0 resolution 24 continue]
+
+cycleway=both & ( extremecarver=mr | route=mtb ) 		& oneway=*	&  highway=secondary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
+cycleway=both											& oneway=*	&  highway=secondary {set oneway=no}	[0x30e road_class=0 road_speed=0 resolution 24 continue]
+cycleway=both											& oneway!=*	&  highway=secondary {set oneway=no}	[0x10605 resolution 24 continue]
+
+
+cycleway=lane				& oneway!=*									&  highway=tertiary	[0x10606 resolution 24 continue]
+cycleway=track				& oneway!=*								 	&  highway=tertiary	[0x10408 resolution 24 continue]
+
+cycleway=opposite & ( extremecarver=mr | route=mtb ) & oneway=*			&  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite	& oneway=*											&  highway=tertiary {set oneway=no}	[0x304 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite	& oneway!=*											&  highway=tertiary {set oneway=no}	[0x304 resolution 24 continue]
+
+cycleway=opposite_lane & ( extremecarver=mr | route=mtb ) 	& oneway=*	&  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane & oneway=*							 			&  highway=tertiary {set oneway=no}	[0x304 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane & oneway!=*							 			&  highway=tertiary {set oneway=no}	[0x304 resolution 24 continue]
+
+cycleway=opposite_track & ( extremecarver=mr | route=mtb )	& oneway=*	&  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_track										& oneway=*	&  highway=tertiary {set oneway=no}	[0x306 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite_track										& oneway!=*	&  highway=tertiary {set oneway=no}	[0x1040d resolution 24 continue]
+
+cycleway=yes		& oneway!=*											&  highway=tertiary	[0x10408 resolution 24 continue]
+cycleway=both & ( extremecarver=mr | route=mtb ) & oneway=*				&  highway=tertiary {set oneway=no}	[0x01 road_class=1 road_speed=0 resolution 24 continue]
+cycleway=both		& oneway=*											&  highway=tertiary {set oneway=no}	[0x310 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=both		& oneway!=*											&  highway=tertiary {set oneway=no}	[0x10408 resolution 24 continue]
+
+cycleway=both		& oneway=*											&  highway=unclassified {set oneway=no}	[0x01 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=both		& oneway=*											&  highway=unclassified {set oneway=no}	[0x1040f road_class=0 road_speed=1 resolution 24 continue]
+
+# cycleway=lane		& oneway=*											&  ( highway=residential | highway=service )	[0x1071b resolution 24 continue]
+# cycleway=track	& oneway=*								 			&  ( highway=residential | highway=service )	[0x1071a resolution 24 continue]
+
+cycleway=opposite & ( extremecarver=mr | route=mtb ) & oneway=*	&  (highway=residential | highway=service) {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite & oneway=yes 		&  (highway=residential | highway=service) {set oneway=no}	[0x307 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite & oneway=-1		&  (highway=residential | highway=service) {set oneway=no}	[0x308 road_class=0 road_speed=1 resolution 24 continue]
+
+cycleway=opposite_lane & ( extremecarver=mr | route=mtb ) & oneway=*	&  ( highway=residential | highway=service ) {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane & oneway=yes 					&  ( highway=residential | highway=service ) {set oneway=no}	[0x307 road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane & oneway=-1						&  ( highway=residential | highway=service ) {set oneway=no}	[0x308 road_class=0 road_speed=1 resolution 24 continue]
+
+cycleway=opposite_track & (extremecarver=mr | route=mtb)	& oneway=*	&  (highway=residential | highway=service) {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_track	& oneway=*			&  ( highway=residential | highway=service ) {set oneway=no}	[0x309 road_class=0 road_speed=1 resolution 24 continue]
+
+cycleway=both & ( extremecarver=mr | route=mtb ) & oneway=*	&  (highway=residential | highway=service) {set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=both									 & oneway=*	&  (highway=residential | highway=service) {set oneway=no}	[0x30d road_class=0 road_speed=1 resolution 24 continue]
+
+cycleway=track & highway=unclassified	& oneway!=*						 										[0x10705 resolution 24 continue]
+# cycleway=lane & highway=unclassified	& oneway!=*						 										[0x10706 resolution 24 continue]
+
+
+
+
+cycleway=opposite & ( extremecarver=mr | route=mtb ) & oneway=*	& highway!=residential & highway!=service & highway!=primary & highway!=secondary & highway!=tertiary	{set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite & oneway=yes & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassifed & highway!=residential & highway!=service & copy!=* {set oneway=no}	[0x30a road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite & oneway=-1  & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassifed & highway!=residential & highway!=service & copy!=* {set oneway=no}	[0x30b road_class=0 road_speed=1 resolution 24 continue]
+
+cycleway=opposite_lane & oneway=* & ( extremecarver=mr | route=mtb ) 		& highway!=residential & highway!=service & highway!=primary & highway!=secondary & highway!=tertiary & copy!=*	{set oneway=no}	[0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane & oneway=yes & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassifed & highway!=residential & highway!=service & copy!=* {set oneway=no}	[0x30a road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite_lane & oneway=-1  & highway!=primary & highway!=secondary & highway!=tertiary & highway!=unclassifed & highway!=residential & highway!=service & copy!=* {set oneway=no}	[0x30b road_class=0 road_speed=1 resolution 24 continue]
+
+cycleway=opposite_track & oneway=* & ( extremecarver=mr | route=mtb ) & highway!=residential & highway!=service & highway!=primary & highway!=secondary & highway!=tertiary & copy!=*	{set oneway=no} [0x01 road_class=1 road_speed=1 resolution 24 continue]
+cycleway=opposite_track & oneway=yes & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=unclassifed & copy!=* {set oneway=no}	[0x30a road_class=0 road_speed=1 resolution 24 continue]
+cycleway=opposite_track & oneway=-1  & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=unclassifed & copy!=* {set oneway=no}	[0x30b road_class=0 road_speed=1 resolution 24 continue]
+
+# cycleway=yes & oneway=* & highway!=cycleway & highway!=path & highway!=footway & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=service & highway!=cycleway & copy!=*  	[0x10f1c resolution 24 continue]
+
+cycleway=both & oneway=yes & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=service & highway!=unclassifed & copy!=* {set oneway=no}	[0x30a road_class=0 road_speed=1 resolution 24 continue]
+cycleway=both & oneway=-1  & highway!=primary & highway!=secondary & highway!=tertiary & highway!=residential & highway!=service & highway!=unclassifed & copy!=* {set oneway=no}	[0x30b road_class=0 road_speed=1 resolution 24 continue]
 
 
 
