@@ -199,7 +199,7 @@ endif
 
 # We want other options for the overlays than for the basemaplayer containing the routing etc.
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --gmapsupp --nsis --keep-going --transparent
-GBASEMAPOPTIONS := $(OPTIONS) --x-tdbfile --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=polygons,extend-sea-sectors,close-gaps=2000
+GBASEMAPOPTIONS := $(OPTIONS) --x-tdbfile --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=extend-sea-sectors
 NOBASEMAPOPTIONS := $(OPTIONS) --x-tdbfile --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds 
 VELOMAPOPTIONS := $(OPTIONS) --x-tdbfile --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=3.2 --x-reduce-point-density-polygon=8 --x-suppress-dead-end-nodes --index --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --route --description="VeloMap_$(KURZ)"
 
