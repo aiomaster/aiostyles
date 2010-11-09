@@ -678,11 +678,12 @@ oneway=-1 {set oneway=reverse}
 
 
 # Need ref inside Name from here onwards 
-highway=* & ref=* {set namecopy='${name} (${ref})' }
-highway=* & ref=* & (extremecarver=mr | route=mtb)				{name '${ref|highway-symbol:hbox:7:5} ${name}' | '${ref|highway-symbol:hbox:7:5}' | '${name}'; set display_name='${namecopy}'; set shieldpresent=yes}
-highway=* & ref=* & extremecarver5=bike & shieldpresent!=yes	{name '${ref|highway-symbol:box:7:5} ${name}'  | '${ref|highway-symbol:box:7:5}'  | '${name}'; set display_name='${namecopy}'; set shieldpresent=yes}
-highway=* & ref=* & shieldpresent!=yes							{name '${ref|highway-symbol:oval:7:5} ${name}' | '${ref|highway-symbol:oval:7:5}' | '${name}'; set display_name='${namecopy}'}
-highway=* & ref=* {set name='${namecopy}' }
+highway=* & ref=* {set name='${name} (${ref})' }
+# highway=* & ref=* {set namecopy='${name} (${ref})' }
+# highway=* & ref=* & (extremecarver=mr | route=mtb)				{name '${ref|highway-symbol:hbox:7:5} ${name}' | '${ref|highway-symbol:hbox:7:5}' | '${name}'; set display_name='${namecopy}'; set shieldpresent=yes}
+# highway=* & ref=* & extremecarver5=bike & shieldpresent!=yes	    {name '${ref|highway-symbol:box:7:5} ${name}'  | '${ref|highway-symbol:box:7:5}'  | '${name}'; set display_name='${namecopy}'; set shieldpresent=yes}
+# highway=* & ref=* & shieldpresent!=yes							{name '${ref|highway-symbol:oval:7:5} ${name}' | '${ref|highway-symbol:oval:7:5}' | '${name}'; set display_name='${namecopy}'}
+# highway=* & ref=* {set name='${namecopy}' }
 # End refname section
 
 
