@@ -1437,9 +1437,9 @@ junction=roundabout 															[0x07 road_class=0 road_speed=0 resolution 24
 
 highway=cycleway	& class:bicycle=3 	[0x01 road_class=4 road_speed=3 resolution 24 continue]
 highway=cycleway	& class:bicycle=3 	[0x03 road_class=4 road_speed=2 resolution 22]
-highway=cycleway	& class:bicycle=2 	[0x03 road_class=4 road_speed=3 resolution 24 continue]
+highway=cycleway	& class:bicycle=2 	[0x01 road_class=4 road_speed=3 resolution 24 continue]
 highway=cycleway	& class:bicycle=2 	[0x03 road_class=4 road_speed=2 resolution 22]
-highway=cycleway	& class:bicycle=1 	[0x03 road_class=4 road_speed=3 resolution 24 continue]
+highway=cycleway	& class:bicycle=1 	[0x01 road_class=4 road_speed=3 resolution 24 continue]
 highway=cycleway	& class:bicycle=1 	[0x03 road_class=4 road_speed=2 resolution 22]
 highway=cycleway	& class:bicycle=-1 	[0x16 road_class=2 road_speed=1 resolution 22]
 highway=cycleway	& class:bicycle=-2 	[0x0e road_class=1 road_speed=1 resolution 22]
@@ -1465,7 +1465,8 @@ highway=cycleway & sac_scale=difficult_alpine_hiking		 						[0x12 resolution 24
 highway=cycleway & mtb:scale=*   				{add mkgmap:unpaved=1}				[0x12 road_class=0 road_speed=0 resolution 22]
 highway=cycleway & tracktype=extremecarver 				 							[0x12 road_class=0 road_speed=0 resolution 22]
 
-highway=cycleway & oneway=yes														[0x03 road_class=1 road_speed=0 resolution 22]
+highway=cycleway & oneway=yes														[0x01 road_class=0 road_speed=1 resolution 24 continue]
+highway=cycleway & oneway=yes														[0x10409 resolution 22]
 highway=cycleway & extremecarver5!=bike & route!=bicycle				{set toll=yes}			[0x03 road_class=4 road_speed=3 resolution 24 continue]
 highway=cycleway 				& ( extremecarver5=bike | route=bicycle ) 	{set toll=yes}		[0x03 road_class=2 road_speed=1 resolution 24 continue]
 highway=cycleway 				& ( extremecarver5=bike | route=bicycle ) 			[0x03 road_class=4 road_speed=2 resolution 21]
@@ -1527,7 +1528,8 @@ highway=path & bicycle=designated	 											[0x03 road_class=4 road_speed=2 re
 
 highway=path & segregated=yes													[0x03 road_class=3 road_speed=2 resolution 22]
 highway=path & segregated=no													[0x16 road_class=2 road_speed=2 resolution 22]
-highway=path & bicycle=official													[0x03 road_class=2 road_speed=2 resolution 22]
+highway=path & bicycle=official													[0x01 road_class=2 road_speed=2 resolution 24 continue]
+highway=path & bicycle=official													[0x10409 resolution 22]
 highway=path & mtb:scale:uphill=0												[0x0e road_class=0 road_speed=0 resolution 22]
 highway=path & mtb:scale:uphill>2												[0x12 road_class=0 road_speed=0 resolution 22]
 highway=path & mtb:scale:uphill>0												[0x0f road_class=0 road_speed=0 resolution 22]
@@ -1578,7 +1580,8 @@ highway=footway & bicycle=designated & ( extremecarver5=bike | route=bicycle ) 	
 highway=footway 					& ( extremecarver5=bike | route=bicycle ) 	[0x16 road_class=2 road_speed=1 resolution 21]
 highway=footway & bicycle=designated	 										[0x03 road_class=2 road_speed=2 resolution 22]
 highway=footway & segregated=yes												[0x03 road_class=1 road_speed=2 resolution 22]
-highway=footway & bicycle=official												[0x03 road_class=1 road_speed=1 resolution 22]
+highway=footway & bicycle=official												[0x01 road_class=1 road_speed=1 resolution 24 continue]
+highway=footway & bicycle=official												[0x10409 resolution 22]
 highway=footway & tracktype=grade2 												[0x06 road_class=0 road_speed=0 resolution 22]
 highway=footway & segregated=no													[0x16 road_class=1 road_speed=1 resolution 22]
 
@@ -1638,7 +1641,8 @@ highway=bridleway & bicycle=designated	 										[0x03 road_class=2 road_speed=
 
 highway=bridleway & segregated=yes												[0x03 road_class=1 road_speed=2 resolution 22]
 highway=bridleway & segregated=no												[0x16 road_class=1 road_speed=1 resolution 22]
-highway=bridleway & bicycle=official											[0x03 road_class=1 road_speed=1 resolution 22]
+highway=bridleway & bicycle=official											[0x01 road_class=1 road_speed=1 resolution 24 continue]
+highway=bridleway & bicycle=official											[0x10409 resolution 22]
 highway=bridleway & mtb:scale=*   												[0x0f resolution 23]
 highway=bridleway & sac_scale=hiking											[0x10317 resolution 22]
 highway=bridleway 																[0x01 road_class=0 road_speed=1 resolution 24 continue]
