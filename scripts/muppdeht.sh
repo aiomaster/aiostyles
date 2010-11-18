@@ -54,7 +54,7 @@ DATE=`date +%Y%m%d`
   if [ $DOW -ne 1 ]; then
   	EUROPEPARAMS="$EUROPEPARAMS  USE_OLD_AREAS_LIST=true"
   fi
-  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile_europe_$DATE make PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfiles/logfile.log
+  ionice -c 3 nice -n 19 /usr/bin/time -o ${AIOPATH}/logfiles/europe/time_makefile_europe_$DATE make PRINTFILE=${PRINT} ${EUROPEPARAMS} REGION=europe >> ${AIOPATH}/logfiles/logfile.log 2>> ${AIOPATH}/logfiles/error_logfile.log
   EU_RET=$?
 
 # Make the logfile of the european basemap run of mkgmap public
