@@ -394,11 +394,11 @@ operator=* & name!=*  { set name='${operator}'; delete operator}
 
 #Garmin types. 11602 alpine_hut, 11603 hut, 11604 alpine_hut belonging to a mountaineering club - 11601 used for lean_to, though not used by Garmin. According to the http://wiki.openstreetmap.org/wiki/Proposed_features/wilderness_mountain_buildings
 tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} alpine_hut' | 'alpine_hut' } 			[0x2b04 resolution 24 continue]
-tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} alpine_hut' | 'alpine_hut' } 			[0x11604 resolution 20 continue]
+tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} alpine_hut' | 'alpine_hut' } 			[0x11604 resolution 21 continue]
 tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} wilderness_hut' | 'wilderness_hut' } 	[0x2b04 resolution 24 continue]
 tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} wilderness_hut' | 'wilderness_hut' } 	[0x11602 resolution 21 continue]
 tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} basic_hut' | 'basic_hut' } 				[0x2b04 resolution 24 continue]
-tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} basic_hut' | 'basic_hut' } 				[0x11603 resolution 21]
+tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} basic_hut' | 'basic_hut' } 				[0x11603 resolution 22]
 tourism=lean_to | amenity=lean_to											{ name '${name} lean_to' | 'lean_to'}					[0x11601 resolution 22]
 
 # For old compatibility, please don't tag this way anymore
@@ -487,10 +487,11 @@ shop=* 	& shopmatch!=* & shop!=beauty & shop!=audiologist & shop!=bed & shop!=bo
 # taxi needs to be added somewhere
 
 
-( natural=peak | natural=summit ) & ele>4000 & wiki=*									{set peakcopy=yes} 	[0x11517 resolution 23-18 continue with_actions]
-( natural=peak | natural=summit ) & wiki=*	& ele<4001					& peakcopy!=yes	{set peakcopy=yes} 	[0x11517 resolution 23-19 continue with_actions]
-( natural=peak | natural=summit ) & ele>2000 				& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-20 continue with_actions]
-( natural=peak | natural=summit ) & ele=*					& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-21 continue with_actions]
+( natural=peak | natural=summit ) & ele>4000 & wiki=*									{set peakcopy=yes} 	[0x11517 resolution 23-19 continue with_actions]
+( natural=peak | natural=summit ) & wiki=*	& ele<4001					& peakcopy!=yes	{set peakcopy=yes} 	[0x11517 resolution 23-20 continue with_actions]
+( natural=peak | natural=summit ) & ele>2000 				& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-21 continue with_actions]
+( natural=peak | natural=summit ) & ele=*					& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-22 continue with_actions]
+( natural=peak | natural=summit ) & ele!=*					& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-22 continue with_actions]
 ( natural=peak | natural=summit )  	 																	   	[0x6616 resolution 24 continue]
 # natural=mountain & peakcopy!=yes																		   	[0x2c15 resolution 24 continue]
 natural=mountain & peakcopy!=yes																		   	[0x6615 resolution 24 continue]
@@ -718,9 +719,13 @@ amenity=fuel 																			[0x2f01 resolution 23]
 amenity=bicycle_parking 	{name 'bikepark ${name}' | 'bikepark' }						[0x2f0b resolution 23 continue]
 
 amenity=parking 			{name 'carpark ${name}'  | 'carpark'  }						[0x2f0b resolution 24]
-railway=crossing 								{ add mkgmap:road-speed = '-1' }		[0x3406 resolution 24]
-railway=level_crossing 							{ add mkgmap:road-speed = '-1' }		[0x3406 resolution 24]
-railway=mini_roundabout							{ add mkgmap:road-speed = '-1' }		[0x3406 resolution 24]
+# railway=crossing 								{ add mkgmap:road-speed = '-1' }		[0x3406 resolution 24]
+# railway=level_crossing 						{ add mkgmap:road-speed = '-1' }		[0x3406 resolution 24]
+# railway=mini_roundabout						{ add mkgmap:road-speed = '-1' }		[0x3406 resolution 24]
+railway=crossing 								{ add mkgmap:road-speed = '-1' }		
+railway=level_crossing 							{ add mkgmap:road-speed = '-1' }
+railway=mini_roundabout							{ add mkgmap:road-speed = '-1' }				
+
 
 
 
@@ -940,7 +945,8 @@ historic=memorial 												[0x2c10 resolution 24]
 historic=archaeological_site 									[0x640a resolution 24]
 # 0x640a is shown at resolution 22
 amenity=place_of_worship | building=church	| historic=monastery	[0x2c0b resolution 24 continue]
-amenity=place_of_worship | building=church	| historic=monastery	[0x3314 resolution 22]
+amenity=cathedral | building=cathedral	| historic=cathedral		[0x3314 resolution 21]
+amenity=place_of_worship | building=church	| historic=monastery	[0x3314 resolution 23]
 
 church=* & (building!=church | historic!=monastery | amenity!=place_of_worship)	[0x2c0b resolution 24]
 historic=monument 												[0x2c0f resolution 22]
