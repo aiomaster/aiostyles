@@ -9,7 +9,7 @@
 SHELL := /bin/bash
 
 AIOPATH := /osm/garmin/aio
-PATH_TO_REGIONS := $(AIOPATH)/regions
+PATH_TO_REGIONS := $(AIOPATH)/tmp/regions
 
 # default region is europe
 ifndef REGION
@@ -24,7 +24,7 @@ COUNTRIES :=germany austria switzerland france italy united_kingdom albania ando
 REGIONLIST := $(COUNTRIES) $(BUNDESLAENDER)
 ALL_REGIONS :=europe $(REGIONLIST) canary_islands haiti
 CS_ALL_REGIONS := $(shell echo $(ALL_REGIONS)|tr ' ' ',')
-OSMOSISSPLITLINE = --t $(shell echo $(ALL_REGIONS)|wc -w) $(shell for region in $(ALL_REGIONS); do echo -n "--bb `awk '{print \"bottom=\"$$1\" left=\"$$2\" top=\"$$3\" right=\"$$4}' $(AIOPATH)/bboxes/$$region.bb` --wx $(PATH_TO_REGIONS)/$$region/raw_data/$1 ";done )
+OSMOSISSPLITLINE = --t $(shell echo $(ALL_REGIONS)|wc -w) $(shell for region in $(ALL_REGIONS); do echo -n "--bb `awk '{print \"bottom=\"$$1\" left=\"$$2\" top=\"$$3\" right=\"$$4}' $(AIOPATH)/data/bboxes/$$region.bb` --wx $(PATH_TO_REGIONS)/$$region/raw_data/$1 ";done )
 
 LAYER:=gbasemap,gaddr,gfixme,gmaxspeed,gosb,gboundary,gkeepright,gdamage,gcontourlines,gvelomap
 
@@ -149,16 +149,16 @@ endif
 # RIGHT := $(word 4, $(CHOORDS) )
 # BBOX := bottom=$(BOTTOM) left=$(LEFT) top=$(TOP) right=$(RIGHT)
 
-OSMOSIS := $(AIOPATH)/osmosis-0.37/bin/osmosis
+OSMOSIS := $(AIOPATH)/bin/osmosis-0.37/bin/osmosis
 REGIONPATH := $(PATH_TO_REGIONS)/$(REGION)
 DATE := $(shell date +%Y%m%d)
 WEBDIR := /osm/wwwroot/aio
 WEBREGIONDIR := $(WEBDIR)/regions/$(REGION)
 GMAPTOOL := /usr/local/bin/gmt
 JAVA_OPT := -Xmx8000M -ea -XX:MaxPermSize=256M
-STYLEPATH := $(AIOPATH)/styles
+STYLEPATH := $(AIOPATH)/data/styles
 TILEPATH := $(REGIONPATH)/tiles
-MKGMAP := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties -jar $(AIOPATH)/mkgmap.jar
+MKGMAP := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/bin/logging.properties -jar $(AIOPATH)/bin/mkgmap.jar
 MKGMAP_basemap := $(MKGMAP)
 MKGMAP_addr := $(MKGMAP)
 MKGMAP_fixme := $(MKGMAP)
@@ -168,9 +168,9 @@ MKGMAP_boundary := $(MKGMAP)
 MKGMAP_keepright := $(MKGMAP)
 MKGMAP_damage := $(MKGMAP)
 MKGMAP_contourlines := $(MKGMAP)
-MKGMAP_velomap := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/logging.properties -jar $(AIOPATH)/styles/mkgmap_velo.jar
-SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/splitter.jar
-LOGPATH := $(AIOPATH)/logfiles/$(REGION)/$(DATE)
+MKGMAP_velomap := java $(JAVA_OPT) -Dlog.config=$(AIOPATH)/bin/logging.properties -jar $(AIOPATH)/data/styles/mkgmap_velo.jar
+SPLITTER := java $(JAVA_OPT) -jar $(AIOPATH)/bin/splitter.jar
+LOGPATH := $(AIOPATH)/log/$(REGION)/$(DATE)
 
 
 # Define dependencies of the layers.
@@ -218,7 +218,7 @@ endif
 endif
 
 # The Tilesplitter options:
-GEONAMES:=--geonames-file=$(AIOPATH)/geonames/cities15000.zip
+GEONAMES:=--geonames-file=$(AIOPATH)/data/geonames/cities15000.zip
 SPLITTER_CACHE:=$(REGIONPATH)/raw_data/splittercache
 SPLITTER_COMMON_OPTIONS:=--max-threads=$(USE_CORES)
 ifeq ($(USE_OLD_AREAS_LIST),true)
@@ -343,7 +343,7 @@ ifeq ($(REGION),europe)
 ifeq ($(USE_OLD_AREAS_LIST),false)
 define prepare_areas
 	$(call areas_to_db,$(1)/areas.list,tiles$(2)europe)
-	$(AIOPATH)/makekml.sh tiles$(2)europe
+	$(AIOPATH)/bin/makekml.sh tiles$(2)europe
 endef
 endif
 endif
@@ -509,7 +509,7 @@ $(REGIONPATH)/gmapsupps/gdamage/gmapsupp.img : $(DEPENDENCY_DAMAGE)
 # contourline target not in use and really deprecated:
 $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	cd $(REGIONPATH)/raw_data/contourlines; phyghtmap -a $(LEFT):$(BOTTOM):$(RIGHT):$(TOP) -j $(USE_CORES)
-	cd $(REGIONPATH)/gcontourlines; java $(JAVA_OPT) -jar $(AIOPATH)/mkgmap.jar $(NOBASEMAPOPTIONS) --style-file=$(STYLEPATH)/basemap_style --description="contour lines" --family-id=5 --product-id=25  --series-name="OSM-AllInOne-$(KURZ)-contourlines" --family-name=contourlines --mapname=63248345 --draw-priority=100  $(REGIONPATH)/raw_data/contourlines/*.osm ;\
+	cd $(REGIONPATH)/gcontourlines; java $(JAVA_OPT) -jar $(AIOPATH)/bin/mkgmap.jar $(NOBASEMAPOPTIONS) --style-file=$(STYLEPATH)/basemap_style --description="contour lines" --family-id=5 --product-id=25  --series-name="OSM-AllInOne-$(KURZ)-contourlines" --family-name=contourlines --mapname=63248345 --draw-priority=100  $(REGIONPATH)/raw_data/contourlines/*.osm ;\
 	makensis osmmap.nsi
 	cp $(REGIONPATH)/gcontourlines/OSM-AllInOne-$(KURZ)-contourlines.exe $(WEBREGIONDIR)/
 	mv $(REGIONPATH)/gcontourlines/gmapsupp.img $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img
@@ -518,15 +518,15 @@ $(REGIONPATH)/gmapsupps/gcontourlines/gmapsupp.img:
 	cp -f $(REGIONPATH)/release/gcontourlines.tar.bz2 $(WEBREGIONDIR)/
 	md5sum -b $(WEBREGIONDIR)/gcontourlines.tar.bz2 > $(WEBREGIONDIR)/gcontourlines.tar.bz2.md5
 
-$(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/keepright/keepright_errors.txt.bz2
-	bzcat $(AIOPATH)/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/keepright2osm.awk | $(OSMOSIS) --rx - $(call OSMOSISSPLITLINE,keepright.osm.gz)
+$(REGIONPATH)/raw_data/keepright.osm.gz : $(AIOPATH)/tmp/keepright/keepright_errors.txt.bz2
+	bzcat $(AIOPATH)/tmp/keepright/keepright_errors.txt.bz2 | awk -f $(AIOPATH)/bin/keepright2osm.awk | $(OSMOSIS) --rx - $(call OSMOSISSPLITLINE,keepright.osm.gz)
 
 $(REGIONPATH)/raw_data/keeprightsplit/template.args : $(REGIONPATH)/raw_data/keepright.osm.gz
 	cd $(REGIONPATH)/raw_data/keeprightsplit/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_KEEPRIGHT) $(REGIONPATH)/raw_data/keepright.osm.gz 2> $(LOGPATH)/splitter_keepright.log
 	$(call process_splitter_files,$(REGIONPATH)/raw_data/keeprightsplit,_keepright_)
 
-$(REGIONPATH)/raw_data/osb.osm.gz : $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2
-	bzcat $(AIOPATH)/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/osbsql2osm | $(OSMOSIS) --rx - --nkv keyValueList="type.0" $(call OSMOSISSPLITLINE,osb.osm.gz)
+$(REGIONPATH)/raw_data/osb.osm.gz : $(AIOPATH)/tmp/openstreetbugs/osbdump_latest.sql.bz2
+	bzcat $(AIOPATH)/tmp/openstreetbugs/osbdump_latest.sql.bz2 | $(AIOPATH)/bin/osbsql2osm | $(OSMOSIS) --rx - --nkv keyValueList="type.0" $(call OSMOSISSPLITLINE,osb.osm.gz)
 
 $(REGIONPATH)/raw_data/osb/template.args : $(REGIONPATH)/raw_data/osb.osm.gz
 	cd $(REGIONPATH)/raw_data/osb/ && rm *.osm.gz ; $(SPLITTER) $(SPLITTER_OPTIONS_OSB) $(REGIONPATH)/raw_data/osb.osm.gz 2> $(LOGPATH)/splitter_osb.log
