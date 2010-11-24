@@ -274,12 +274,12 @@ tar_img_dir = \
 zip_img_dir = \
 	ln -sfT $(REGIONPATH)/g$(1) $(REGIONPATH)/release/$(1)_$(REGION) && \
 	cd $(REGIONPATH)/release/ && \
-	$(COMPR) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).zip $(1)_$(REGION) && \
+	/usr/bin/time -o $(LOGPATH)/time_zip_$(1) $(COMPR) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).zip $(1)_$(REGION) && \
 	$(call move_and_symlink,$(1),$(1)_$(REGION),$(COMPRESS_SUFFIX))
 
 compress_gmapsupp = \
 	cd $(REGIONPATH)/gmapsupps/g$(1) && \
-	($(COMPR) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img && \
+	(/usr/bin/time -o $(LOGPATH)/time_zip_gmapsupp $(COMPR) $(REGIONPATH)/release/$(1)_$(REGION).$(DATE).img.$(COMPRESS_SUFFIX) gmapsupp.img && \
 	$(call move_and_symlink,$(1),$(1)_$(REGION),img.$(COMPRESS_SUFFIX)) ) $(SHELL_EXECUTOR)
 
 
@@ -287,7 +287,7 @@ compress_gmapsupp = \
 #ifeq ($(REGION),europe)
 build_exe = \
 	sed -i 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g;/!define INSTALLER_NAME/s/"\([^"]*\)"/"\1_setup"/;s/_$(DATE)//g' $(REGIONPATH)/g$(1)/*.nsi && \
-	makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/*.nsi
+	/usr/bin/time -o $(LOGPATH)/time_exe_$(1) makensis -O${LOGPATH}/makensis_$(1).log $(REGIONPATH)/g$(1)/*.nsi
 #else
 #build_exe = \
 #	sed 's/^  File "\(.*\)/  CopyFiles "$$EXEDIR\\\1 $$INSTDIR/g' $(REGIONPATH)/g$(1)/osmmap.nsi > $(REGIONPATH)/g$(1)/osmmap_copy.nsi && \
