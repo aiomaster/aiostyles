@@ -42,7 +42,7 @@ else
   wget -N -q http://keepright.ipax.at/keepright_errors.txt.bz2
 
 
-  cd ${AIOPATH}
+  cd ${AIOPATH}/bin
 
 # you can specify extra params for generating europe if you want
 
