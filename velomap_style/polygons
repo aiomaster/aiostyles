@@ -31,7 +31,7 @@ landuse=forest & wood!=mixed & wood!=deciduos & wood!=coniferous & 20resolution!
 
 ( place=suburb | place=village | place=town ) & 20resolution!=yes {set 20resolution=yes} [0x03 resolution 21-21 continue]
 landuse=quarry & 20resolution!=yes {set 20resolution=yes} [0x11 resolution 21-21 continue]
-natural=basin & 20resolution!=yes {set 20resolution=yes} [0x41 resolution 21-21 continue]
+(natural=basin | landuse=basin) & 20resolution!=yes {set 20resolution=yes} [0x46 resolution 21-21 continue]
 landuse=farmland | landuse=farm | landuse=farmyard & 20resolution!=yes {set 20resolution=yes} [0x11019 resolution 21-21 continue]
 natural=bay & 20resolution!=yes {set 20resolution=yes} [0x53 resolution 21-21 continue]
 water=tidal		& 20resolution!=yes {set 20resolution=yes} [0x1101b resolution 21-21 continue]
@@ -39,10 +39,10 @@ natural=park & 20resolution!=yes {set 20resolution=yes} [0x28 resolution 21-21 c
 leisure=nature_reserve & 20resolution!=yes {set 20resolution=yes} [0x16 resolution 21-21 continue]
 
 
-loc_name=* 								{ set name='${loc_name}' }
-int_name=* 								{ set name='${int_name}' }
-int_name!=* & name:en=* 				{ set name='${name:en}' }
-int_name!=* & name:en!=* & name:de=* 	{ set name='${name:de}' }
+loc_name=* 								{ set tname='${loc_name}' }
+int_name=* 								{ set tname='${int_name}' }
+int_name!=* & name:en=* 				{ set tname='${name:en}' }
+int_name!=* & name:en!=* & name:de=* 	{ set tname='${name:de}' }
 
 
 
@@ -160,7 +160,8 @@ riverbank=yes [0x3e resolution 22]
 healthcare=* [0x0b resolution 23]
 landuse=reservoir [0x3f resolution 22]
 natural=reservoir [0x3f resolution 22]
-natural=basin [0x41 resolution 21]
+basin=retention [0x46 resolution 22]
+natural=basin [0x41 resolution 22]
 landuse=basin [0x41 resolution 22]
 tourism=zoo | amenity=zoo [0x42 resolution 22]
 building=railroad_station [0x43 resolution 22]
@@ -195,7 +196,7 @@ amenity=cafe | amenity=fast_food | amenity=restaurant | amenity=pub | amenity=fo
 shop=* [0x11007 resolution 24]
 
 natural=bare_rock { name '${name} rock' | 'bare_rock' } [0x1100e resolution 21]
-natural=cliff { name '${name} cliff' | 'cliff' } [0x1100e resolution 22]
+natural=cliff 		{ name '${name} cliff' | 'cliff' } [0x1100e resolution 22]
 
 leisure=marina [0x1100c resolution 22]
 sport=rugby [0x11006 resolution 23]
@@ -217,12 +218,13 @@ wood=coniferous [0x1101d resolution 22]
 man_made=gasometer | man_made=wastewater_plant | man_made=sewerage_plant 	[0x13 resolution 24]
 landuse=forest | natural=wood | landuse=wood | natural=forest [0x50 resolution 22]
 
-landuse=conservation | landuse=nature_reserve [0x28 resolution 22]
+(landuse=conservation | landuse=nature_reserve | leisure=nature_reserve) & natural!=* [0x1090d resolution 22]
+# http://wiki.openstreetmap.org/wiki/Tag:boundary%3Dprotected_area would be more appropriate to implement, but would need a lot of time to implement well. Without semitransparency this will be problematic.
 
 historic=battlefield [0x1101a resolution 22]
 # natural=coastline [0x3c resolution 20]
 natural=land [0x10101 resolution 21-14 continue]
-natural=land [0x10100 resolution 22]
+natural=land | place=island [0x10100 resolution 22]
 natural=sea [0x10f1d resolution 14]
 # natural=water & name=* [0x3c resolution 22]
 natural=water [0x3c resolution 22]

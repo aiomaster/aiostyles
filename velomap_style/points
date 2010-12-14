@@ -173,7 +173,7 @@ manmade=* {add man_made='${manmade}'
 
 # Naming
 elevation=* { add ele='${elevation}' }
-( natural=peak | natural=summit | natural=mountain ) & ele=* { set name='${name}, ${ele}' | '${ele}' }
+( natural=peak | natural=summit | natural=mountain ) & ele=* { set tname='${name}, ${ele}' | '${ele}' }
 
 (highway=bus_stop | railway=tram_stop | railway=halt | railway=station) & lit=yes & (shelter=yes | covered=yes)
 { set ref='${ref|def:}(${route_ref})';  name '${name|def:} ${ref|def:}*${operator|def:}'; }
@@ -185,7 +185,7 @@ elevation=* { add ele='${elevation}' }
 { set ref='${ref|def:}(${route_ref})';  name '${name|def:} ${ref|def:} ${operator|def:}'; }
 
 addr:housename=* & name!=* {name '${addr:housename}'}
-addr:housenumber=* {set name= '${name} (${addr:housenumber})' | '${addr:housenumber}' }
+addr:housenumber=* {set tname= '${name} (${addr:housenumber})' | '${addr:housenumber}' }
 
 opening_hours=* {set addr:city = '${addr:city} open ${opening_hours}' | 'open ${opening_hours}'}
 note=* {set addr:city = '${addr:city}  (${note})' | '${note}'}
@@ -260,19 +260,19 @@ place=suburb                         & cityxx!=yes {set cityxx=yes} [0x0d00 reso
 place=locality 						 & cityxx!=yes {set cityxx=yes} [0x1100 resolution 22 continue with_actions ]
 
 
-name:de=* 								{ set name='${name:de}'; set double0=city }
+name:de=* 								{ set tname='${name:de}'; set double0=city }
 cityxx=yes & double0=city  				[0x0900 resolution 24 continue]
 
 name:loc=*								{ set loc_name='${name:loc}'}
-loc_name=* 								{ set name='${loc_name}'; set double1=city }
+loc_name=* 								{ set tname='${loc_name}'; set double1=city }
 cityxx=yes & double1=city	 			[0x0900 resolution 24 continue]
 
 
-name:en=* 								{ set name='${name:en}'; set double2=city }
+name:en=* 								{ set tname='${name:en}'; set double2=city }
 cityxx=yes & double2=city  				[0x0900 resolution 24 continue]
 
 name:int=*								{ set int_name='${name:int}'}
-int_name=* 								{ set name='${int_name}'; set double3=city }
+int_name=* 								{ set tname='${int_name}'; set double3=city }
 cityxx=yes & double3=city  				[0x0900 resolution 24 continue]
 
 
@@ -389,12 +389,12 @@ mkgmap:rcn_ref=19 | mkgmap:rcn_ref=29 | mkgmap:rcn_ref=39 | mkgmap:rcn_ref=49 | 
 # mkgmap:rcn_ref=108 | mkgmap:rcn_ref=118 | mkgmap:rcn_ref=128 | mkgmap:rcn_ref=138 | mkgmap:rcn_ref=148 | mkgmap:rcn_ref=158 | mkgmap:rcn_ref=168 | mkgmap:rcn_ref=178 | mkgmap:rcn_ref=188 | mkgmap:rcn_ref=198  [0x12908 resolution 21]
 # mkgmap:rcn_ref=109 | mkgmap:rcn_ref=119 | mkgmap:rcn_ref=129 | mkgmap:rcn_ref=139 | mkgmap:rcn_ref=149 | mkgmap:rcn_ref=159 | mkgmap:rcn_ref=169 | mkgmap:rcn_ref=179 | mkgmap:rcn_ref=189 | mkgmap:rcn_ref=199  [0x12909 resolution 21]
 
-(shop=* | amenity=* | building=* | cuisine=* | natural=* | tourism=*) & name=* & operator=*  { set name='${name} ${operator}'; delete operator }
-operator=* & name!=*  { set name='${operator}'; delete operator}
+(shop=* | amenity=* | building=* | cuisine=* | natural=* | tourism=*) & name=* & operator=*  { set tname='${name} ${operator}'; delete operator }
+operator=* & name!=*  { set tname='${operator}'; delete operator}
 
 #Garmin types. 11602 alpine_hut, 11603 hut, 11604 alpine_hut belonging to a mountaineering club - 11601 used for lean_to, though not used by Garmin. According to the http://wiki.openstreetmap.org/wiki/Proposed_features/wilderness_mountain_buildings
-tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} alpine_hut' | 'alpine_hut' } 			[0x2b04 resolution 24 continue]
-tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} alpine_hut' | 'alpine_hut' } 			[0x11604 resolution 21 continue]
+(tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut) & (name=* | heating=* | shower=* | mattres=* | toilets=* | opening_hours=* | capacity=* | operator=* )	{ name '${name} alpine_hut' | 'alpine_hut' } [0x2b04 resolution 24 continue]
+(tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut)	& (name=* | heating=* | shower=* | mattres=* | toilets=* | opening_hours=* | capacity=* | operator=* )	{ name '${name} alpine_hut' | 'alpine_hut' } [0x11604 resolution 21 continue]
 tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} wilderness_hut' | 'wilderness_hut' } 	[0x2b04 resolution 24 continue]
 tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} wilderness_hut' | 'wilderness_hut' } 	[0x11602 resolution 21 continue]
 tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} basic_hut' | 'basic_hut' } 				[0x2b04 resolution 24 continue]
@@ -405,7 +405,7 @@ tourism=lean_to | amenity=lean_to											{ name '${name} lean_to' | 'lean_to'
 building=shelter | tourism=shelter	| amenity=shelter 	{ name '${name} shelter' | 'shelter' } 									[0x11601 resolution 22 continue]
 amenity=refuge | tourism=refuge | building=refuge		{ name '${name} refuge' | 'refuge' } 									[0x11603 resolution 23 continue]
 amenity=refuge | tourism=refuge | building=refuge		{ name '${name} refuge' | 'refuge' } 									[0x2b04 resolution 24 continue]
-
+tourism=alpine_hut & name!=* & heating!=* & shower!=* & mattres!=* & toilets!=* & opening_hours!=* & capacity!=* & operator!=* { name '${name} not_an_alpine_hut' | 'not_an_alpine_hut' } [0x11603 resolution 24 continue]
 
 
 # Shopping
@@ -487,15 +487,28 @@ shop=* 	& shopmatch!=* & shop!=beauty & shop!=audiologist & shop!=bed & shop!=bo
 # taxi needs to be added somewhere
 
 
-( natural=peak | natural=summit ) & ele>4000 & wiki=*									{set peakcopy=yes} 	[0x11517 resolution 23-19 continue with_actions]
-( natural=peak | natural=summit ) & wiki=*	& ele<4001					& peakcopy!=yes	{set peakcopy=yes} 	[0x11517 resolution 23-20 continue with_actions]
-( natural=peak | natural=summit ) & ele>2000 				& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-21 continue with_actions]
-( natural=peak | natural=summit ) & ele=*					& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-22 continue with_actions]
-( natural=peak | natural=summit ) & ele!=*					& peakcopy!=yes {set peakcopy=yes} 				[0x11517 resolution 23-22 continue with_actions]
-( natural=peak | natural=summit )  	 																	   	[0x6616 resolution 24 continue]
-# natural=mountain & peakcopy!=yes																		   	[0x2c15 resolution 24 continue]
-natural=mountain & peakcopy!=yes																		   	[0x6615 resolution 24 continue]
-natural=mountain & peakcopy!=yes				   															[0x11517 resolution 23-22 continue]
+( natural=peak | natural=summit ) & website=* & wiki!=* {set wiki=yes}
+( natural=peak | natural=summit ) & relevance=* { set importance='${relevance}'}
+( natural=peak | natural=summit ) & prominence=* { set importance='${prominence}'}
+( natural=peak | natural=summit ) & (importance>4 | importance=international)	{set peakcopy=yes} 	[0x11517 resolution 23-16 continue with_actions]
+( natural=peak | natural=summit ) & importance=4								{set peakcopy=yes} 	[0x11517 resolution 23-17 continue with_actions]
+( natural=peak | natural=summit ) & (importance=3 | importance=national)		{set peakcopy=yes} 	[0x11517 resolution 23-18 continue with_actions]
+( natural=peak | natural=summit ) & (importance=2 | importance=regional)		{set peakcopy=yes} 	[0x11517 resolution 23-19 continue with_actions]
+( natural=peak | natural=summit ) & importance=1								{set peakcopy=yes} 	[0x11517 resolution 23-20 continue with_actions]
+( natural=peak | natural=summit ) & (importance=0 | importance=urban)			{set peakcopy=yes} 	[0x11517 resolution 23-21 continue with_actions]
+( natural=peak | natural=summit ) & (importance=-1 | importance=suburban)		{set peakcopy=yes} 	[0x11517 resolution 23-22 continue with_actions]
+( natural=peak | natural=summit ) & (importance=-2	| importance=local)			{set peakcopy=yes} 	[0x11517 resolution 23-23 continue with_actions]
+( natural=peak | natural=summit ) & (importance<-2	| importance=*)	& peakcopy!=yes					{set peakcopy=yes}
+
+( natural=peak | natural=summit ) & ele>4000 & wiki=* 		& peakcopy!=yes	{set peakcopy=yes} 	[0x11517 resolution 23-19 continue with_actions]
+( natural=peak | natural=summit ) & wiki=*	& ele<4001		& peakcopy!=yes	{set peakcopy=yes} 	[0x11517 resolution 23-20 continue with_actions]
+( natural=peak | natural=summit ) & ele>2000 				& peakcopy!=yes {set peakcopy=yes} 	[0x11517 resolution 23-21 continue with_actions]
+( natural=peak | natural=summit ) & ele=*					& peakcopy!=yes {set peakcopy=yes} 	[0x11517 resolution 23-22 continue with_actions]
+( natural=peak | natural=summit ) & ele!=*					& peakcopy!=yes {set peakcopy=yes} 	[0x11517 resolution 23-22 continue with_actions]
+( natural=peak | natural=summit )  	 														   	[0x6616 resolution 24 continue]
+# natural=mountain & peakcopy!=yes															   	[0x2c15 resolution 24 continue]
+natural=mountain & peakcopy!=yes															   	[0x6615 resolution 24 continue]
+natural=mountain & peakcopy!=yes				   												[0x11517 resolution 23-22 continue]
 
 man_made=observatory [0x6415 resolution 22 continue]
 
@@ -797,7 +810,8 @@ military=bunker [0x5801 resolution 24]
 natural=beach 				[0x341e resolution 24 continue]
 natural=beach 				[0x11516 resolution 23 continue]
 # natural=cliff 			[0x2c13 resolution 24 continue]
-natural=rock | natural=rocks [0x2c12 resolution 24 continue]
+# maybe take natural=rock / stone out.
+( natural=rock | natural=rocks | natural=stone ) & name=* [0x2c12 resolution 24 continue]
 natural=geyser 				[0x341f resolution 24 continue]
 natural=geysir 				[0x341f resolution 24 continue]
 # natural=glacier 			[0x2c19 resolution 24 continue]
