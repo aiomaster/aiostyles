@@ -1,0 +1,7 @@
+#------------------------------------------------------------------------------
+# route
+
+route=foot | route=hiking   { apply { add foot=yes; } }
+route=bicycle | route=mtb   { apply { add bicycle=yes; } }
+
+route=*     { apply { add route='${route}'; add route:name='${name}'; add route:ref='${ref}'; add route:network='${network}'; add route:importance='${importance}'; } }
