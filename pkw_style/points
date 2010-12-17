@@ -214,9 +214,7 @@ amenity=place_of_worship [0x2c0b resolution 23]
 natural=beach [0x6604 resolution 23]
 natural=cliff [0x6607 resolution 23]
 natural=glacier [0x650a resolution 21]
-natural=peak & ele>3500 [0x6616 resolution 21]
-natural=peak & ele>3000 [0x6616 resolution 22]
-natural=peak | natural=hill [0x6616 resolution 23]
+natural=peak [0x6616 resolution 21]
 natural=cave_entrance [0x6619 resolution 23]
 natural=spring [0x6511 resolution 23]
 #natural=stream [0x6512 resolution 23]
@@ -228,13 +226,13 @@ mountain_pass=yes [0x66 resolution 22]
 #------------------------------------------------------------------------------
 # Energie
 
-power=tower [0x7201 resolution 22]
-power=generator & power_source=wind [0x7202 resolution 24]
-power=generator & (power_source=hydro | power_source=tidal | power_source=wave | power_source=geothermal) [0x7203 resolution 24]
-power=generator & (power_source=nuclear | power_source=fusion) [0x7204 resolution 24]
-power=generator & (power_source=biofuel | power_source=oil | power_source=coal | power_source=gas | power_source=waste) [0x7205 resolution 24]
-power=generator & (power_source=photovoltaic | power_source=solar-thermal) [0x7206 resolution 24]
-power=generator [0x7200 resolution 24]
+#power=tower [0x7201 resolution 22]
+#power=generator & power_source=wind [0x7202 resolution 24]
+#power=generator & (power_source=hydro | power_source=tidal | power_source=wave | power_source=geothermal) [0x7203 resolution 24]
+#power=generator & (power_source=nuclear | power_source=fusion) [0x7204 resolution 24]
+#power=generator & (power_source=biofuel | power_source=oil | power_source=coal | power_source=gas | power_source=waste) [0x7205 resolution 24]
+#power=generator & (power_source=photovoltaic | power_source=solar-thermal) [0x7206 resolution 24]
+#power=generator [0x7200 resolution 24]
 
 #------------------------------------------------------------------------------
 # Verkehr
@@ -249,7 +247,7 @@ highway=motorway_junction { name '${ref} ${name}' | '${ref}' | '${name}'; }
 highway=motorway_junction [0x2000 resolution 22]
 highway=services { name '${ref} ${name}' | '${ref}' | '${name}'; }
 highway=services [0x210f resolution 22]
-highway=speed_camera { name 'Blitzt ${maxspeed} km/h'; } [0x5601 resolution 24]
+highway=speed_camera { name 'Blitzt ${maxspeed} km/h'; } [0x5601 resolution 23]
 noexit=yes [0x5d00 resolution 24]
 
 #------------------------------------------------------------------------------
