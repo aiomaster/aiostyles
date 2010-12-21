@@ -1055,19 +1055,21 @@ class:bicycle=1 & route!=bicycle & extremecarver5!=bike & highway!=steps [0x01 r
 ( route=bicycle | extremecarver5=bike )	& class:bicycle!=* 					{set toll=yes}		[0x01 road_class=3 road_speed=0 resolution 24 continue]
 ( route=bicycle | extremecarver5=bike ) & class:bicycle!=* & highway!=primary 	{set toll=yes}	[0x01 road_class=4 road_speed=1 resolution 24 continue]
 
-( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) {set toll=yes} 	[0x01 road_class=4 road_speed=2resolution 24 continue]
-( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) {set toll=yes} 	[0x01 road_class=4 road_speed=3 resolution 24 continue]
-( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) {set toll=yes} 	[0x01 road_class=4 road_speed=4 resolution 24 continue]
-( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) {set toll=yes} 	[0x01 road_class=4 road_speed=5 resolution 24 continue]
-( rcn=yes ) & ( route=bicycle | extremecarver5=bike ) {set toll=yes} 			[0x01 road_class=4 road_speed=2 resolution 24 continue]
-( rcn=yes ) & ( route=bicycle | extremecarver5=bike ) {set toll=yes} 			[0x01 road_class=4 road_speed=3 resolution 24 continue]
-( rcn=yes ) & ( route=bicycle | extremecarver5=bike ) {set toll=yes} 			[0x01 road_class=4 road_speed=4 resolution 24 continue]
+(class:bicycle=-1 | class:bicycle=-2 | class:bicycle=-3) {set class:bicycle:bad=yes}
+
+( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) 						  {set toll=yes} 	[0x01 road_class=4 road_speed=2 resolution 24 continue]
+( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) & class:bicycle:bad!=yes  {set toll=yes} 	[0x01 road_class=4 road_speed=3 resolution 24 continue]
+( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) & class:bicycle:bad!=yes {set toll=yes} 	[0x01 road_class=4 road_speed=4 resolution 24 continue]
+( icn=yes | ncn=yes ) & ( route=bicycle | extremecarver5=bike ) & class:bicycle:bad!=yes {set toll=yes} 	[0x01 road_class=4 road_speed=5 resolution 24 continue]
+( rcn=yes ) & ( route=bicycle | extremecarver5=bike ) & class:bicycle:bad!=yes {set toll=yes} 			[0x01 road_class=4 road_speed=2 resolution 24 continue]
+( rcn=yes ) & ( route=bicycle | extremecarver5=bike ) & class:bicycle:bad!=yes {set toll=yes} 			[0x01 road_class=4 road_speed=3 resolution 24 continue]
+( rcn=yes ) & ( route=bicycle | extremecarver5=bike ) & class:bicycle:bad!=yes {set toll=yes} 			[0x01 road_class=4 road_speed=4 resolution 24 continue]
 
 ( highway=cycleway | highway=residential | highway=unclassified | highway=minor | highway=tertiary ) & (route=mtb | extremecarver6=mr) & route!=bicycle & extremecarver5!=bike {set toll=yes} [0x01 road_class=4 road_speed=3 resolution 24 continue]
 ( highway=cycleway | highway=residential | highway=unclassified | highway=minor | highway=tertiary ) & (route=mtb | extremecarver6=mr) & route!=bicycle & extremecarver5!=bike {set toll=yes} [0x01 road_class=4 road_speed=2 resolution 24 continue]
 
 
-( highway=cycleway | highway=track | highway=residential | highway=unclassified | highway=path | highway=minor | highway=byway | highway=service | highway=tertiary ) & icn!=yes & ncn!=yes & rcn!=yes & ( route=bicycle | extremecarver5=bike )  {set toll=yes} [0x01 road_class=4 road_speed=3 resolution 24 continue]
+( highway=cycleway | highway=track | highway=residential | highway=unclassified | highway=path | highway=minor | highway=byway | highway=service | highway=tertiary ) & class:bicycle:bad!=yes & icn!=yes & ncn!=yes & rcn!=yes & ( route=bicycle | extremecarver5=bike )  {set toll=yes} [0x01 road_class=4 road_speed=3 resolution 24 continue]
 ( highway=cycleway | highway=track | highway=path | highway=minor | highway=byway | highway=service ) & icn!=yes & ncn!=yes & rcn!=yes & class:bicycle!=* & ( route=bicycle | extremecarver5=bike	) {set toll=yes} [0x01 road_class=4 road_speed=2 resolution 24 continue]
 
 
