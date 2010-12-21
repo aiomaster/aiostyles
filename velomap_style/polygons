@@ -13,7 +13,8 @@ natural=mud {set natural=wetland}
 ( landuse=forest | natural=wood ) {set 20resolution=yes} [0x50 resolution 20-19 continue]
 natural=glacier & 20resolution!=yes {set 20resolution=yes} [0x4d resolution 21-19 continue]
 natural=lake & 20resolution!=yes {set 20resolution=yes} [0x3a resolution 21-19 continue]
-(natural=water | natural=coastline) & 20resolution!=yes {set 20resolution=yes} [0x3c resolution 21-19 continue]
+natural=water  & 20resolution!=yes {set 20resolution=yes} [0x3c resolution 21-19 continue]
+# (natural=water | natural=coastline) & 20resolution!=yes {set 20resolution=yes} [0x3c resolution 21-19 continue]
 
 ( landuse=residential | landuse=residental ) & 20resolution!=yes {set 20resolution=yes} [0x03 resolution 21-20 continue]
 
@@ -196,7 +197,7 @@ amenity=cafe | amenity=fast_food | amenity=restaurant | amenity=pub | amenity=fo
 shop=* [0x11007 resolution 24]
 
 natural=bare_rock { name '${name} rock' | 'bare_rock' } [0x1100e resolution 21]
-natural=cliff 		{ name '${name} cliff' | 'cliff' } [0x1100e resolution 22]
+natural=cliff & area=yes	{ name '${name} cliff' | 'cliff' } [0x1100e resolution 22]
 
 leisure=marina [0x1100c resolution 22]
 sport=rugby [0x11006 resolution 23]
@@ -207,6 +208,7 @@ sport=equestrian [0x11003 resolution 22]
 waterway=dock [0x11001 resolution 22]
 waterway=boatyard [0x11000 resolution 22]
 natural=beach | natural=sand	[0x1100d resolution 21]
+surface=sand	[0x1100d resolution 22]
 water=tidal		[0x1101b resolution 22]
 
 
@@ -223,9 +225,6 @@ landuse=forest | natural=wood | landuse=wood | natural=forest [0x50 resolution 2
 
 historic=battlefield [0x1101a resolution 22]
 # natural=coastline [0x3c resolution 20]
-natural=land [0x10101 resolution 21-14 continue]
-natural=land | place=island [0x10100 resolution 22]
-natural=sea [0x10f1d resolution 14]
 # natural=water & name=* [0x3c resolution 22]
 natural=water [0x3c resolution 22]
 water=yes [0x3c resolution 22]
@@ -238,6 +237,12 @@ building=yes & name=*							[0x11013 resolution 24]
 building=yes									[0x13 resolution 24]
 parking=multi-storey 							[0x13 resolution 24]
 building=* 										[0x10f16 resolution 24]
+
+
+natural=sea [0x10f1d resolution 14]
+natural=land [0x10101 resolution 21-14 continue]
+natural=land | place=island [0x10100 resolution 22]
+
 leisure=*  										[0x10f17 resolution 24]
 tourism=*  										[0x10f18 resolution 24]
 sport=* & sport!=skiing & sport!=ski			[0x10f19 resolution 24]
