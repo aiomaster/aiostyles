@@ -723,7 +723,7 @@ entrance=yes | barrier=entrance	| barrier=porticullis | barrier=sally_port	[0x43
 # highway=crossing 																		[0x290d resolution 24]
 highway=stop {add mkgmap:road-speed	= '-1'}
 # highway=stop {add mkgmap:road-speed	= '-1'}											[0x320a resolution 24]
-traffic_sign = city_limit 																[0x330e resolution 24]
+# traffic_sign = city_limit 															[0x330e resolution 24]
 # highway=speed_camera 		{name 'maxspeed ${maxspeed} km/h'} 							[0x5601 resolution 24]
 # highway=motorway_junction & proposed!=* {name '${ref} ${name}' | '${ref}' | '${name}'}	[0x320c resolution 24]
 # highway=motorway_exit & proposed!=* 	{name '${ref} ${name}' | '${ref}' | '${name}'}	[0x2700 resolution 24]
