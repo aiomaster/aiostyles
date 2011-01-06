@@ -201,7 +201,7 @@ endif
 OPTIONS := --max-jobs=$(USE_CORES) --country-name=$(REGION) --country-abbr=$(KURZ) --area-name=$(KURZ)_$(DATE) --latin1 --gmapsupp --nsis --keep-going --transparent
 GBASEMAPOPTIONS := $(OPTIONS) --x-tdbfile --add-pois-to-areas --make-all-cycleways --link-pois-to-ways --remove-short-arcs --route --index  --generate-sea=extend-sea-sectors
 NOBASEMAPOPTIONS := $(OPTIONS) --x-tdbfile --no-poi-address --no-sorted-roads --ignore-maxspeeds --ignore-turn-restrictions --ignore-osm-bounds 
-VELOMAPOPTIONS := $(OPTIONS) --x-tdbfile --generate-sea=polygons,extend-sea-sectors,close-gaps=6000 --reduce-point-density=3.2 --x-reduce-point-density-polygon=8 --x-suppress-dead-end-nodes --index --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --route --description="VeloMap_$(KURZ)"
+VELOMAPOPTIONS := $(OPTIONS) --x-tdbfile --generate-sea=extend-sea-sectors,close-gaps=6000,floodblocker,fbgap=60,fbthres=200,fbratio=0.6 --reduce-point-density=3.2 --x-reduce-point-density-polygon=8 --x-suppress-dead-end-nodes --index --adjust-turn-headings --add-pois-to-areas --ignore-maxspeeds --link-pois-to-ways --ignore-turn-restrictions --remove-short-arcs=4 --route --description="VeloMap_$(KURZ)"
 
 
 # The splitter can use an older areas.list file from previous computations by giving USE_OLD_AREAS_LIST=true. Default is to split new.
