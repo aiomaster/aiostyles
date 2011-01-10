@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="aiotm" default="dist" basedir=".">
+
+	<property name="build.dir"              value="build"/>
+	<property name="src.dir"                value="src"/>
+	<!-- this is the directory where the jar is copied to -->
+	<property name="dist.dir"               value="dist"/>
+	<property name="ant.build.javac.target" value="1.6"/>
+	<property name="jmapviewer"             value="JMapViewer.jar"/>
+	<property name="mkgmap"                 value="mkgmap.jar"/>
+	<property name="jar"                    value="${dist.dir}/${ant.project.name}.jar"/>
+
+    <!--
+    **********************************************************
+    ** init - initializes the build
+    **********************************************************
+    -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <!--
+    **********************************************************
+    ** compile - complies the source tree
+    **********************************************************
+    -->
+	<target name="compile" depends="init">
+		<echo message="compiling sources for  ${jar} ... "/>
+		<javac srcdir="src" debug="true" destdir="${build.dir}">
+			<compilerarg value="-Xlint:deprecation"/>
+			<compilerarg value="-Xlint:unchecked"/>
+			<classpath>
+				<pathelement location="${jmapviewer}"/>
+				<pathelement location="${mkgmap}"/>
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!--
+    **********************************************************
+    ** dist - creates the jar
+    **********************************************************
+    -->
+	<target name="dist" depends="compile">
+		<echo message="creating ${ant.project.name}.jar ... "/>
+
+		<copy todir="${build.dir}/images">
+			<fileset dir="images"/>
+		</copy>
+		<!--copy todir="${build.dir}">
+			<fileset dir=".">
+				<include name="README" />
+				<include name="LICENSE" />
+			</fileset>
+		</copy-->
+		<unjar dest="${build.dir}" src="${mkgmap}"/>
+	    <unjar dest="${build.dir}" src="${jmapviewer}"/>
+		<jar destfile="${jar}" basedir="${build.dir}">
+
+			<manifest>
+				<attribute name="Build-By" value="Christoph Wagner"/>
+				<attribute name="Main-Class" value="org.openstreetmap.aiotm.Aiotm"/>
+				<attribute name="Build-Date" value="${version.entry.commit.date}"/>
+			</manifest>
+		</jar>
+	</target>
+
+    <!--
+    **********************************************************
+    ** clean - clean up the build environment
+    **********************************************************
+    -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete file="${jar}"/>
+    </target>
+
+
+</project>
