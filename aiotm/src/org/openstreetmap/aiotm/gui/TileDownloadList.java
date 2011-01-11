@@ -1,5 +1,6 @@
 package org.openstreetmap.aiotm.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.io.File;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
@@ -42,7 +44,13 @@ public class TileDownloadList implements GarminLayerListener {
 	}
 
 	public JComponent getComponent() {
-		return new JScrollPane(panel);
+		JPanel hor = new JPanel(new BorderLayout());
+		hor.add(panel,BorderLayout.LINE_START);
+		hor.add(Box.createHorizontalGlue(),BorderLayout.LINE_END);
+		JPanel ver = new JPanel(new BorderLayout());
+		ver.add(hor,BorderLayout.PAGE_START);
+		ver.add(Box.createVerticalGlue(),BorderLayout.PAGE_END);
+		return new JScrollPane(ver);
 	}
 
 	public void refreshLayer(GarminLayer l) {

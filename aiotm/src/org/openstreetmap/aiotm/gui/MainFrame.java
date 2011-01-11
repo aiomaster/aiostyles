@@ -3,6 +3,7 @@ package org.openstreetmap.aiotm.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -27,6 +28,7 @@ import org.openstreetmap.aiotm.data.GarminLayer;
 import org.openstreetmap.aiotm.data.GarminLayerHandler;
 import org.openstreetmap.aiotm.data.Preferences;
 import org.openstreetmap.aiotm.io.DownloadManager;
+import org.openstreetmap.aiotm.util.GBC;
 
 public class MainFrame extends JFrame {
 
@@ -71,11 +73,12 @@ public class MainFrame extends JFrame {
 
 	private JPanel makeLeftMenu() {
 		JPanel leftPanel = new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
+		leftPanel.setLayout(new GridBagLayout());
+		leftPanel.setPreferredSize(new Dimension(200,leftPanel.getPreferredSize().height));
 
 		glh.addGarminLayerListener(tdl);
 
-		leftPanel.add(tdl.getComponent());
+		leftPanel.add(tdl.getComponent(),GBC.eol().fill());
 
 		JButton downloadButton = new JButton(new AbstractAction("Download Tiles"){
 			/**
@@ -89,8 +92,8 @@ public class MainFrame extends JFrame {
 			}
 
 		});
-		leftPanel.add(downloadButton);
-		leftPanel.add(dm.getSpeedLabel());
+		leftPanel.add(downloadButton,GBC.eol());
+		leftPanel.add(dm.getSpeedLabel(),GBC.eol());
 		return leftPanel;
 	}
 

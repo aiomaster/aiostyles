@@ -36,6 +36,9 @@ public class GarminLayerHandler implements DownloadListener {
 	}
 
 	public void lookupAvailableLayers() {
+		GarminLayer dummy = selectableLayers.firstElement();
+		selectableLayers.clear();
+		selectableLayers.add(dummy);
 		Aiotm.main.dm.downloadFile(Aiotm.main.pref.get("serverpath")+"/index/layers", new File(Aiotm.main.pref.get("cachedir"),"available/layers"), this);
 	}
 

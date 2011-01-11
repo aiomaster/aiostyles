@@ -27,15 +27,48 @@ public class LayersIndexParser {
 	public Vector<GarminLayer> parseLayers() {
 		Vector<GarminLayer> layers = new Vector<GarminLayer>();
 		String line = null;
-
+		GarminLayer l = null;
+		int lineNumber = 0;
 		try {
 			while (( line = input.readLine()) != null){
-				if (!(line.charAt(0) == '#')) {
-					String[] s = line.split("::");
-					GarminLayer l = new GarminLayer(s[0]);
-					l.setDescription(s[1]);
-					layers.add(l);
+				lineNumber++;
+				// remove comments
+				int i;
+				if ((i = line.indexOf('#')) != -1)
+					line = line.substring(0, i);
+
+				// remove whitespaces
+				line = line.trim();
+
+				// continue if it was an empty line or comment
+				if (line.equals("")) continue;
+
+				String[] kv = new String[2];
+				// read key word and value
+				kv = line.split("\\s", 2);
+				if (kv[1] == null) {
+					System.err.println("Error in Line:"+lineNumber);
+					continue;
 				}
+
+				String key = kv[0];
+				String value = kv[1].trim();
+
+				if (kv[0].equals("Layer") && value.matches("\\w*")) {
+					l = new GarminLayer(value);
+					layers.add(l);
+					continue;
+				}
+
+				if (l != null) {
+					if (!l.setValue(key, value)) {
+						System.err.println("Key-Value-Pair in Index File sucks. Line number:"+lineNumber);
+					}
+				} else {
+					System.err.println("Found text without Layer context. Line number:"+lineNumber);
+				}
+
+
 			}
 		} catch (IOException e) {
 			System.err.println("Error while parsing layers Index File");

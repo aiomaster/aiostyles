@@ -135,15 +135,15 @@ public class SlippyMap extends JMapViewer {
 
 		Coordinate l1 = getPosition(p_max);
 		Coordinate l2 = getPosition(p_min);
-
-		selectTiles(new Bounds(
-				Math.min(l2.getLat(), l1.getLat()),
-				Math.min(l1.getLon(), l2.getLon()),
-				Math.max(l2.getLat(), l1.getLat()),
-				Math.max(l1.getLon(), l2.getLon())
-		),
-		isAdditional
-		);
+		if (gLayer != null)
+			selectTiles(new Bounds(
+					Math.min(l2.getLat(), l1.getLat()),
+					Math.min(l1.getLon(), l2.getLon()),
+					Math.max(l2.getLat(), l1.getLat()),
+					Math.max(l1.getLon(), l2.getLon())
+			),
+			isAdditional
+			);
 
 		repaint();
 	}

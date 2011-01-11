@@ -9,11 +9,13 @@ public class GarminLayer {
 
 	private final String name;
 	private String description = "";
+	private int splitVersion = 0;
+	private int dataVersion = 0;
 
 
 	public static GarminLayer makeDummy() {
 		GarminLayer l = new GarminLayer("<none>");
-		l.setDescription("Show nothing on the map");
+		l.setValue("Description","Show nothing on the map");
 		return l;
 	}
 
@@ -29,8 +31,20 @@ public class GarminLayer {
 		return name;
 	}
 
-	public void setDescription(String desc) {
-		description = desc;
+	public boolean setValue(String key, String value) {
+		if (key.equals("Description")) {
+			description = value;
+			return true;
+		}
+		if (key.equals("SplitVersion") && value.matches("\\d*")) {
+			splitVersion = Integer.parseInt(value);
+			return true;
+		}
+		if (key.equals("DataVersion") && value.matches("\\d*")) {
+			dataVersion = Integer.parseInt(value);
+			return true;
+		}
+		return false;
 	}
 
 	public String getDescription() {
