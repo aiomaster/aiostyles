@@ -60,7 +60,6 @@ public class MainFrame extends JFrame {
 		add(makeTopMenu(), BorderLayout.NORTH);
 		add(makeStatusPanel(), BorderLayout.SOUTH);
 
-		//dm.downloadFile("http://dev.openstreetmap.de/aio/garmintiles/basemap/70003001.img.gz", "/home/master/workspace/aiotm/data/70003001.img.gz");
 	}
 
 	private JPanel makeStatusPanel() {
@@ -184,8 +183,10 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String dir = chooseCacheDir();
-				if (dir != null)
+				if (dir != null) {
 					cachefield.setText(dir);
+					pref.put("cachedir", dir);
+				}
 			}
 
 		});

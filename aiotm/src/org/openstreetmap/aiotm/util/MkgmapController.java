@@ -15,6 +15,13 @@ public class MkgmapController {
 		for (int i = 1; i <= count; i++) {
 			args[i] = tiles.get(i-1).getFilePath();
 		}
-		Main.main(args);
+
 	}
+
+	public static void callMkgmap(List<String> args) {
+		// call the mkgmap Main Class with arguments
+		Main.main((String[])args.toArray());
+	}
+
+
 }

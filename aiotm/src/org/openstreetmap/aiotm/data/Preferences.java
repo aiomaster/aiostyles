@@ -62,4 +62,8 @@ public class Preferences {
 		return props.getProperty(key);
 	}
 
+	public void put(String key, String value) {
+		props.setProperty(key, value);
+	}
+
 }
