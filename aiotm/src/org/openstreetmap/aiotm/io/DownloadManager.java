@@ -130,6 +130,18 @@ public class DownloadManager {
 		};
 	}
 
+	public long getRemoteFileDate(String url) {
+		URLConnection uc = null;
+		long timestamp = 0;
+		try {
+			uc = loadFile(url);
+			timestamp = uc.getHeaderFieldDate("Last-Modified", 0l);
+		} catch (IOException e) {
+			System.err.println("No such file on server: "+url);
+		}
+		return timestamp;
+	}
+
 	protected URLConnection loadFile(String urlstring) throws IOException {
 		URL url;
 		url = new URL(urlstring);

@@ -167,6 +167,8 @@ public class MainFrame extends JFrame {
 			public boolean verify(JComponent field) {
 				JTextField tf = (JTextField)field;
 				File f = new File(tf.getText());
+				if (f.exists())
+					pref.put("cachedir", f.getAbsolutePath());
 				return f.exists();
 			}
 

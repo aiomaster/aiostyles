@@ -14,6 +14,9 @@ public class GarminTile implements MapRectangle {
 
 	private final int number;
 
+	private long localDate = 0;
+	private long serverDate = 0;
+
 	private boolean isSelected = false;
 
 	public GarminTile(int number, Bounds b) {
@@ -52,6 +55,27 @@ public class GarminTile implements MapRectangle {
 	public boolean isSelected() {
 		return isSelected;
 	}
+
+	public void setLocalDate(long time) {
+		this.localDate = time;
+	}
+
+	public long getLocalDate() {
+		return localDate;
+	}
+
+	public void setServerDate(long time) {
+		this.serverDate = time;
+	}
+
+	public long getServerDate() {
+		return serverDate;
+	}
+
+	public boolean isOutdated() {
+		return serverDate>localDate;
+	}
+
 
 	@Override
 	public void paint(Graphics g, Point topLeft, Point bottomRight) {

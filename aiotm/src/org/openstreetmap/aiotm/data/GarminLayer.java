@@ -10,8 +10,6 @@ public class GarminLayer {
 	private final String name;
 	private String description = "";
 	private int splitVersion = 0;
-	private int dataVersion = 0;
-
 
 	public static GarminLayer makeDummy() {
 		GarminLayer l = new GarminLayer("<none>");
@@ -40,15 +38,15 @@ public class GarminLayer {
 			splitVersion = Integer.parseInt(value);
 			return true;
 		}
-		if (key.equals("DataVersion") && value.matches("\\d*")) {
-			dataVersion = Integer.parseInt(value);
-			return true;
-		}
 		return false;
 	}
 
 	public String getDescription() {
 		return description;
+	}
+
+	public int getVersion() {
+		return splitVersion;
 	}
 
 	public void addTile(GarminTile tile) {
@@ -108,6 +106,10 @@ public class GarminLayer {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public boolean equals(GarminLayer l) {
+		return name.equals(l.getName()) && splitVersion==l.getVersion();
 	}
 
 }

@@ -156,11 +156,13 @@ public class TileDownloadList implements GarminLayerListener {
 
 	@Override
 	public void afterLayerlistChange(Vector<GarminLayer> layers) {
+		// remove all deleted layers
 		for (GarminLayer l : layerPanels.keySet()) {
 			if (!layers.contains(l))
 				deleteLayer(l);
 		}
 
+		// add missing layers
 		Collection<GarminLayer> retainedLayers = layerPanels.keySet();
 		for (GarminLayer l : layers) {
 			if (!retainedLayers.contains(l))
