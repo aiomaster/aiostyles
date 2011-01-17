@@ -14,19 +14,28 @@ public class GarminTile implements MapRectangle {
 
 	private final int number;
 
-	private long localDate = 0;
-	private long serverDate = 0;
+	private final long date;
+
+	private final String md5Hash;
 
 	private boolean isSelected = false;
 
-	public GarminTile(int number, Bounds b) {
+	private boolean isCached = false;
+
+	public GarminTile(int number, Bounds b, String hash, long date) {
 		super();
 		this.b = b;
 		this.number = number;
+		this.md5Hash = hash;
+		this.date = date;
 	}
 
 	public int getNumber() {
 		return number;
+	}
+
+	public String getHash() {
+		return md5Hash;
 	}
 
 	@Override
@@ -56,6 +65,15 @@ public class GarminTile implements MapRectangle {
 		return isSelected;
 	}
 
+	public void setCached(boolean cached) {
+		isCached = cached;
+	}
+
+	public boolean isCached() {
+		return isCached;
+	}
+
+	/*
 	public void setLocalDate(long time) {
 		this.localDate = time;
 	}
@@ -75,7 +93,11 @@ public class GarminTile implements MapRectangle {
 	public boolean isOutdated() {
 		return serverDate>localDate;
 	}
+	 */
 
+	public long getDate() {
+		return date;
+	}
 
 	@Override
 	public void paint(Graphics g, Point topLeft, Point bottomRight) {

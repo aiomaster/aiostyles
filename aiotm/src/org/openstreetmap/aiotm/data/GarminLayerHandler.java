@@ -3,14 +3,16 @@ package org.openstreetmap.aiotm.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
 import org.openstreetmap.aiotm.Aiotm;
-import org.openstreetmap.aiotm.io.AreasListParser;
 import org.openstreetmap.aiotm.io.DownloadListener;
 import org.openstreetmap.aiotm.io.LayersIndexParser;
+import org.openstreetmap.aiotm.io.TileIndexParser;
 
 public class GarminLayerHandler implements DownloadListener {
 
@@ -18,9 +20,20 @@ public class GarminLayerHandler implements DownloadListener {
 	private final Map<String, GarminLayer> loadingLayers = new HashMap<String, GarminLayer>();
 
 	private final Vector<GarminLayerListener> listener = new Vector<GarminLayerListener>();
+	private final HashMap<String,File> localTiles = new HashMap<String,File>();
 
 	public GarminLayerHandler() {
 		layerList.add(GarminLayer.makeDummy());
+
+	}
+
+	public void lookupLocalLayers() {
+
+		try {
+			MessageDigest digest = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			System.err.println("Your Java Engine sucks and has no MD5 algorithm build in.");
+		}
 
 	}
 
@@ -79,14 +92,14 @@ public class GarminLayerHandler implements DownloadListener {
 			Vector<GarminLayer> layers = new LayersIndexParser(in).parseLayers();
 			for (GarminLayer l : layers) {
 				loadingLayers.put(l.getName(), l);
-				Aiotm.main.dm.downloadFile(Aiotm.main.pref.get("serverpath")+"/index/"+l.getName()+"/areas.list", new File(layerPath,l.getName()+"/areas.list"), this);
+				Aiotm.main.dm.downloadFile(Aiotm.main.pref.get("serverpath")+"/index/"+l.getName()+".tilelist", new File(layerPath,l.getName()+".tilelist"), this);
 			}
-		} else if (f.getName().equals("areas.list")) {
-			String layername = f.getParentFile().getName();
+		} else if (f.getName().endsWith(".tilelist")) {
+			String layername = f.getName().substring(0, f.getName().indexOf('.'));
 			GarminLayer l;
 			if ((l = loadingLayers.get(layername)) != null){
 				if (!layerList.contains(l)) {
-					l.addAllTiles(new AreasListParser(in).parseAreas());
+					l.addAllTiles(new TileIndexParser(in).parseTiles());
 					addListenerToLayer(l);
 					layerList.add(l);
 				} else {

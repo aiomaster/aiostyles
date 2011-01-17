@@ -54,7 +54,7 @@ public class AreasListParser {
 						m = ll.matcher(nextline);
 						if (m.matches()) {
 							Bounds b = new Bounds(Double.parseDouble(m.group(1)),Double.parseDouble(m.group(2)),Double.parseDouble(m.group(3)),Double.parseDouble(m.group(4)));
-							tiles.add(new GarminTile(id,b));
+							tiles.add(new GarminTile(id,b,"",0));
 						}
 					}
 				}
