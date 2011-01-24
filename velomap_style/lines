@@ -194,7 +194,7 @@ highway=* & incline >20  & mtb:scale:uphill!=0 & mtb:scale:uphill!=1 & mtb:scale
 highway=* & incline <-20 & mtb:scale:uphill!=0 & mtb:scale:uphill!=1 & mtb:scale:uphill!=2 & mtb:scale:uphill!=3 {set oneway=yes;	set copy=99; set copy1=yes} 
 
 # Set ferry attribute
-route=ferry | route1=ferry 	| railway=funicular | railway=rack	| aerialway=* | route=shuttle_train		{set mkgmap:ferry=1}
+route=ferry | route1=ferry 	| railway=funicular | railway=rack	| aerialway=* | route=shuttle_train	| line=shuttle_train	{set mkgmap:ferry=1}
 
 # delete access restrictions if bicycle allowed
 bicycle=yes	| bicycle=designated | bicycle=permissive | bicycle=official | route=mtb | extremecarver=mr | route=bicycle | extremecarver5=bike {set access=yes}
@@ -251,10 +251,10 @@ goods=no | goods=private {delete goods}
 
 
 
-route1=ferry 									{set oneway=no; set name='${name1} ${name}'}			[0x212 road_class=3 road_speed=2 resolution 19 continue with_actions]
-route=ferry | waterway=ferry_way | line=ferry	{set oneway=no; set name='${name} ferry' | 'ferry'} 	[0x212 road_class=3 road_speed=1 resolution 20 continue]
-route1=shuttle_train 									{set oneway=no; set name='${name1} ${name}'}					[0x212 road_class=2 road_speed=2 resolution 19 continue with_actions]
-route=shuttle_train | line=shuttle_train				{set oneway=no; set name='${name} s_train' | 'shuttle_train'} 	[0x212 road_class=2 road_speed=1 resolution 20 continue]
+route1=ferry 									{set name='${name1} ${name} ferry' | '${name1} ferry'  |'${name} ferry' }					[0x212 road_class=3 road_speed=2 resolution 19 continue]
+route=ferry | waterway=ferry_way | line=ferry	{set name='${name} ferry' | 'ferry'} 														[0x212 road_class=3 road_speed=1 resolution 20 continue]
+route1=shuttle_train 							{set name='${name1} ${name} shuttle' | '${name1} shuttle train'  |'${name} shuttle train' }	[0x212 road_class=2 road_speed=2 resolution 19 continue]
+route=shuttle_train | line=shuttle_train		{set name='${name} s_train' | 'shuttle_train'} 												[0x212 road_class=2 road_speed=1 resolution 20 continue]
 
 ( bridge=yes | bridge=swing | bride=viaduct | bride=aqueduct)	& (route=mtb | route=bicycle | extremecarver6=*) {set name='${name} bridge' | 'bridge'}	[0x01 road_class=4 road_speed=0 resolution 24 continue]
 
@@ -386,7 +386,7 @@ aerialway=jbar | aerialway=j-bar				{set name='${name} jbar' | 'jbar'}				[0x100
 (aerialway=cable_car | aerialway=cablecar)	{set oneway=no; set name='${name} cablecar' | 'cablecar'}						[0x1b road_class=3 road_speed=1 resolution 21 continue]
 railway=funicular | railway=rack			{set oneway=no; set name='${name} funicular' | 'funicular'}						[0x10a08 road_class=3 road_speed=1 resolution 21 continue]
 (aerialway=gondola | aerialway=mixed_lift) 	{set oneway=no; set name='${name} gondola' | 'gondola'}							[0x1b road_class=3 road_speed=1 resolution 21 continue]
-( aerialway=chair_lift | aerialway=chairlift ) & bicycle=yes	{set oneway=no; set name='${name} chairlift' | 'chairlift'}	[0x216 road_class=2 road_speed=0 resolution 22 continue]
+( aerialway=chair_lift | aerialway=chairlift ) & bicycle=yes	{set name='${name} chairlift' | 'chairlift'}	[0x216 road_class=2 road_speed=0 resolution 22 continue]
 ( aerialway=chair_lift | aerialway=chairlift ) & bicycle!=yes	{set name='${name} chairlift' | 'chairlift'}				[0x10018 resolution 22 continue]
 aerialway=goods | aerialway=goods_lift | aerialway=lift | aerialway=material {set name='${name} goods' | 'goods_lift'}		[0x1b resolution 23 continue]
 
@@ -778,6 +778,7 @@ highway=* & (
    smoothness ~ '.*(horrible|impassable)' |
 	sac_scale ~ '.*(alpine)_hiking' |
 	sac_scale ~ '.*(demanding)_hiking' |
+	sac_scale ~ '.*(difficult)_hiking' |
 	usability>5 |
 	via_ferrata_scale>0 |
 	mtb:scale>1 |
@@ -879,8 +880,8 @@ bicycle:oneway=no & (cycleway=opposite | cycleway=opposite_lane | cycleway=both 
 highway=primary &  oneway=yes 				& copy!=* {set copy=copied} [0x1051c resolution 23 continue with_actions]
 highway=primary &  oneway=-1 				& copy!=* {set copy=copied} [0x1051d resolution 23 continue with_actions]
 
-oneway=yes 		& bicycle:oneway=no & copy!=* {set oneway=no; set copy=copied} [0x30a road_class=0 road_speed=0 resolution 24 continue]
-oneway=-1 		& bicycle:oneway=no & copy!=* {set oneway=no; set copy=copied} [0x30b road_class=0 road_speed=0 resolution 24 continue]
+oneway=yes 		& bicycle:oneway=no & copy!=* {set oneway=no} [0x30a road_class=0 road_speed=0 resolution 24 continue]
+oneway=-1 		& bicycle:oneway=no & copy!=* {set oneway=no} [0x30b road_class=0 road_speed=0 resolution 24 continue]
 oneway=yes 		& bicycle:oneway=no & copy!=* {set copy=copied} 
 oneway=-1 		& bicycle:oneway=no & copy!=* {set copy=copied} 
 
@@ -1207,24 +1208,6 @@ junction=roundabout 																													[0x0c road_class=1 road_speed=0
 
 
 ################## Route Preference ##############################
-
-# class:bicycle=3 & ( route=bicycle | extremecarver5=bike )										[0x01 road_class=4 road_speed=2 resolution 24 continue]
-# class:bicycle=2 & ( route=bicycle | extremecarver5=bike )										[0x01 road_class=4 road_speed=2 resolution 24 continue]
-
-# class:bicycle=3 & ( route=bicycle | extremecarver5=bike )										[0x01 road_class=3 road_speed=1 resolution 24 continue]
-# class:bicycle=2 & ( route=bicycle | extremecarver5=bike )										[0x01 road_class=3 road_speed=1 resolution 24 continue]
-# class:bicycle=1 & ( route=bicycle | extremecarver5=bike ) & highway=primary						[0x01 road_class=3 road_speed=2 resolution 24 continue]
-
-# class:bicycle=3 & ( route=bicycle | extremecarver5=bike )										[0x01 road_class=2 road_speed=0 resolution 24 continue]
-# class:bicycle=2 & ( route=bicycle | extremecarver5=bike )			{set toll=yes}				[0x01 road_class=2 road_speed=0 resolution 24 continue]
-# class:bicycle=1 & ( route=bicycle | extremecarver5=bike )										[0x01 road_class=2 road_speed=1 resolution 24 continue]
-# class:bicycle=0 & ( route=bicycle | extremecarver5=bike ) & highway=primary	& highway!=secondary [0x01 road_class=2 road_speed=2 resolution 24 continue]
-
-
-# class:bicycle=3 & ( route=bicycle | extremecarver5=bike )			{set toll=yes}				[0x01 road_class=1 road_speed=0 resolution 24 continue]
-# class:bicycle=2 & ( route=bicycle | extremecarver5=bike )			{set toll=yes}				[0x01 road_class=1 road_speed=0 resolution 24 continue]
-# class:bicycle=1 & ( route=bicycle | extremecarver5=bike )			{set toll=yes}				[0x01 road_class=1 road_speed=0 resolution 24 continue]
-# class:bicycle=0 & ( route=bicycle | extremecarver5=bike )			{set toll=yes}				[0x01 road_class=1 road_speed=1 resolution 24 continue]
 
 
 class:bicycle=3 & route!=bicycle & extremecarver5!=bike & highway!=steps [0x01 road_class=4 road_speed=2 continue]
