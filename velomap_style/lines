@@ -769,15 +769,19 @@ highway=* & (surface=compacted | surface=dirt |
    smoothness ~ '.*(bad|horrible|impassable)' |
    sac_scale ~ '.*(mountain|alpine)_hiking' |
    usability>3 |
+   mtb:scale>0 |
    sport=via_ferrata)
-{ add mkgmap:unpaved=1 }
+{ set mkgmap:unpaved=1 }
 
-
-
-
-
-
-
+# Flag access rights:
+highway=* & smoothness ~ '.*(horrible|impassable) | 
+	sac_scale ~ '.*(alpine)_hiking' |
+	sac_scale ~ '.*(demanding)_hiking' |
+	usability>5 |
+	via_ferrata_scale>0 |
+	mtb:scale>1 |
+	sport=via_ferrata
+{ set access=no; set foot=yes; set importantaccess=yes }
 
 extremecarver3=icn 						 & ( highway=primary | highway=secondary | highway=tertiary )		[0x10419 resolution 20 continue]
 (extremecarver3=ncn | extremecarver3=tcn) & (highway=primary | highway=secondary | highway=tertiary )		[0x10419 resolution 20 continue]
@@ -1847,7 +1851,7 @@ highway=bridleway & sac_scale=hiking											[0x10017 resolution 22]
 highway=bridleway 																[0x01 road_class=0 road_speed=1 resolution 24 continue]
 highway=bridleway 																[0x10017 resolution 23]
 
-bicycle=no {set bicycle=nope}
+bicycle=no & importantaccess!=yes {set bicycle=nope}
 
 (highway=unclassified | highway=minor | highway=road | highway=service ) & ( tracktype=3 | tracktype=4 | tracktype=5 | tracktype=extremecarver ) { set highway=unsurfaced }
 
@@ -2054,7 +2058,7 @@ highway=minor 														[0x0b road_class=3 road_speed=2 resolution 21]
 highway=ford 			{add taxi=no; add mkgmap:unpaved=1}			[0x0d road_class=0 road_speed=0 resolution 22]
 highway=byway 														[0x0a road_class=0 road_speed=1 resolution 22]
 
-bicycle=no {set bicycle=nope}
+bicycle=no & importantaccess!=yes {set bicycle=nope}
 
 highway=residential & fixme='check import' 							[0x07 road_class=0 road_speed=0 resolution 24]
 highway=residential & fixme=* & import=* 							[0x07 road_class=0 road_speed=0 resolution 24]
