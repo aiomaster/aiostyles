@@ -774,13 +774,14 @@ highway=* & (surface=compacted | surface=dirt |
 { set mkgmap:unpaved=1 }
 
 # Flag access rights:
-highway=* & smoothness ~ '.*(horrible|impassable) | 
+highway=* & (
+   smoothness ~ '.*(horrible|impassable)' |
 	sac_scale ~ '.*(alpine)_hiking' |
 	sac_scale ~ '.*(demanding)_hiking' |
 	usability>5 |
 	via_ferrata_scale>0 |
 	mtb:scale>1 |
-	sport=via_ferrata
+	sport=via_ferrata)
 { set access=no; set foot=yes; set importantaccess=yes }
 
 extremecarver3=icn 						 & ( highway=primary | highway=secondary | highway=tertiary )		[0x10419 resolution 20 continue]
