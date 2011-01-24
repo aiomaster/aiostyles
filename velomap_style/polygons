@@ -10,6 +10,7 @@ natural=mud {set natural=wetland}
 
 
 # Small prominent large area section to aid orientation
+( natural=forest | landuse=wood ) {set landuse=forest}
 ( landuse=forest | natural=wood ) {set 20resolution=yes} [0x50 resolution 20-19 continue]
 natural=glacier & 20resolution!=yes {set 20resolution=yes} [0x4d resolution 21-19 continue]
 natural=lake & 20resolution!=yes {set 20resolution=yes} [0x3a resolution 21-19 continue]
@@ -210,7 +211,8 @@ sport=equestrian [0x11003 resolution 22]
 waterway=dock [0x11001 resolution 22]
 waterway=boatyard [0x11000 resolution 22]
 natural=beach | natural=sand	[0x1100d resolution 21]
-surface=sand	[0x1100d resolution 22]
+surface=sand & area=yes	[0x1100d resolution 22]
+surface=sand & highway!=* [0x1100d resolution 22]
 water=tidal		[0x1101b resolution 22]
 
 
