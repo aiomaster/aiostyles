@@ -594,12 +594,15 @@ amenity=bicycle_rental 	{ name '${name} ${spaces} ${network}' }				[0x2f02 resol
 amenity=bicycle_rental 	{ name '${name} ${spaces} ${network}' }				[0x1151c resolution 24-22 continue]
 amenity=bicycle_rental 	{ name '${name} ${spaces} ${network}' }				[0x1960b resolution 22-22 continue]
 
-(amenity=WLAN | amenity=Wlan | amenity=wlan | amenity=Wifi | amenity=WIFI ) {set amenity=wifi}
-amenity=wifi		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
-amenity=arts_centre | amenity=arts_center									[0x2f14 resolution 24 continue]
-internet_access=yes & amenity!=wifi &{ name 'Internet ${name}' | 'Internet' } [0x2f12 resolution 21 continue]
-internet_access=* & amenity!=wifi & internet_access!=no & internet_access!=yes { name 'Internet(${internet_access}) ${name|def:}' } [0x2f12 resolution 21 continue]
+amenity=WLAN 	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
+amenity=Wlan 	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
+amenity=wlan 	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
+amenity=wifi	& wlanmatch!=*		{set wlanmatch=no}						[0x2f12 resolution 23 continue with_actions]
 
+internet_access=yes & wlanmatch!=* { name 'Internet ${name}' | 'Internet'; set wlanmatch=no } [0x2f12 resolution 24 continue]
+internet_access=* & wlanmatch!=* & amenity!=wifi & internet_access!=no & internet_access!=yes { name 'Internet(${internet_access}) ${name|def:}' } [0x2f12 resolution 24 continue]
+
+amenity=arts_centre | amenity=arts_center									[0x2f14 resolution 24 continue]
 
 amenity=bank | amenity='bank;atm' | amenity='bank; atm' {name 'Bank ${name}' | 'Bank' }		[0x2f06 resolution 23 continue]
 amenity=atm 		{name 'ATM ${name}' | 'ATM' }		[0x2f06 resolution 24 continue]
