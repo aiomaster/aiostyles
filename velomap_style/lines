@@ -47,7 +47,7 @@ highway="cycleway; footway" { set highway=cycleway; set segregated=no }
 highway="cycleway;footway" { set highway=cycleway; set segregated=no }
 highway=cycleroad {set highway=cycleway; add class:bicycle=-1}
 highway=cyclestreet { set highway=cycleway }
-( highway=path | highway=footway | highway=track) & cycleway=* & cycleway!=no {set highway=cycleway}
+( highway=path | highway=footway | highway=track) & ( cycleway=* | cycleway:left=* | cycleway:right=* ) & cycleway!=no {set highway=cycleway}
 cycleroad=yes {add class:bicycle=-1}
 highway=pedestrian & ( sac_scale=* | mtb:scale=* ) {set highway=path}
 ( highway=footway | highway=pedestrian ) & ( hiking=yes | mtb=yes ) {set highway=path}
