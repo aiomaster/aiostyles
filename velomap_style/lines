@@ -47,7 +47,7 @@ highway="cycleway; footway" { set highway=cycleway; set segregated=no }
 highway="cycleway;footway" { set highway=cycleway; set segregated=no }
 highway=cycleroad {set highway=cycleway; add class:bicycle=-1}
 highway=cyclestreet { set highway=cycleway }
-( highway=path | highway=footway | highway=track) & ( cycleway=* | cycleway:left=* | cycleway:right=* ) & cycleway!=no {set highway=cycleway}
+( highway=path | highway=footway | highway=track) & ( cycleway=* | cycleway:left=* | cycleway:right=* ) & cycleway!=no & oneway!=* {set highway=cycleway; delete cycleway; delete cycleway:left; delete cycleway:right}
 cycleroad=yes {add class:bicycle=-1}
 highway=pedestrian & ( sac_scale=* | mtb:scale=* ) {set highway=path}
 ( highway=footway | highway=pedestrian ) & ( hiking=yes | mtb=yes ) {set highway=path}
@@ -217,15 +217,15 @@ bicycle=yes	| foot=yes	| bicycle=designated | foot=designated | bicycle=permissi
 ( access=no | access=private ) & ( bicycle=* | foot=* ) & bicycle!=nope & foot!=no & foot!=private & tunnel!=* & bridge!=* 	{set access=yes} 
 
 
-(highway=path | highway=footway | highway=bridleway) & segregated=yes 	{set highway=cycleway}
-( highway=cycleway | highway=footway ) & segregated=no 					{add taxi=no; set highway=path}
+(highway=path | highway=footway | highway=bridleway) & segregated=yes 		{set highway=cycleway}
+highway=footway  & segregated=no 											{add taxi=no; set highway=path}
 highway=path & ( bicycle=designated | bicycle=yes ) & foot=no				{set taxi=no; add mkgmap:unpaved=1; set highway=cycleway}
 highway=path & bicycle=nope & (foot=designated | foot=yes | foot=permitted) {set taxi=no; add mkgmap:unpaved=1; set highway=footway}
-highway=footway & bicycle=designated & foot!=*							{set access=yes; set highway=path}
-highway=cycleway & ( foot=yes | foot=permissive )  						{set access=yes; set highway=path}
-highway=footway & bicycle=designated & ( foot=yes | foot=designated )	{set access=yes; set taxi=no; set highway=path}
-highway=cycleway & foot=designated				  						{set access=yes; set taxi=no; set highway=path}
-( highway=footway | highway=path ) & bicycle=official 					{set access=yes; set highway=cycleway; set taxi=no}
+highway=footway & bicycle=designated & foot!=*								{set access=yes; set highway=path}
+highway=cycleway & ( foot=yes | foot=permissive )  							{set access=yes}
+highway=footway & bicycle=designated & ( foot=yes | foot=designated )		{set access=yes; set taxi=no; set highway=cycleway}
+highway=cycleway & foot=designated				  							{set access=yes }
+( highway=footway | highway=path ) & bicycle=official 						{set access=yes; set highway=cycleway; set taxi=no}
 highway=pedestrian & ( sac_scale=* | trail_visibility=* ) {set highway=footway; set access=yes; add mkgmap:unpaved=1; set taxi=no}
 highway=pedestrian & (mtb:scale=* | mtb:scale:uphill=*) {set highway=path; set access=yes; add mkgmap:unpaved=1; set taxi=no}
 highway=pedestrian & bicycle=yes {set highway=footway; set access=yes; set taxi=no}
@@ -845,8 +845,8 @@ route=lcn & network!=* & mtb!=yes & extremecarver6!=* & extremecarver6!=* {add l
 
 
 
-(bicycle=no | bicycle=nope) & highway=primary & highway=secondary 																							[0x1051f resolution 23-22 continue]
-(bicycle=no | bicycle=nope) & highway=primary & highway=secondary {add taxi=no; add mkgmap:unpaved=1; set nonope=yes} 										[0x10400 resolution 24 continue with_actions]
+(bicycle=no | bicycle=nope) & ( highway=primary | highway=secondary ) 																						[0x1051f resolution 23-22 continue]
+(bicycle=no | bicycle=nope) & ( highway=primary | highway=secondary ) {add taxi=no; add mkgmap:unpaved=1; set nonope=yes} 									[0x10400 resolution 24 continue with_actions]
 (bicycle=no | bicycle=nope) & highway=tertiary 																												[0x1051f resolution 23-22 continue]
 (bicycle=no | bicycle=nope) & highway=tertiary {add taxi=no; add mkgmap:unpaved=1; set nonope=yes} 															[0x1040c resolution 24 continue with_actions]
 (bicycle=no | bicycle=nope) & ( highway=unclassified | highway=minor )  {add taxi=no; add mkgmap:unpaved=1; set nonope=yes} 								[0x10a09 resolution 22 continue with_actions]
