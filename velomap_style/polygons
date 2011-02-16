@@ -31,10 +31,10 @@ landuse=farmland  & 20resolution!=yes {set 20resolution=yes} [0x11019 resolution
 natural=bay & 20resolution!=yes {set 20resolution=yes} [0x53 resolution 21-20 continue with_actions]
 natural=heath & 20resolution!=yes {set 20resolution=yes} [0x11014 resolution 21-20 continue with_actions]
 ( landuse=meadow | natural=meadow )& 20resolution!=yes {set 20resolution=yes} [0x33 resolution 21-20 continue with_actions]
-wood=mixed	& 20resolution!=yes {set 20resolution=yes} [0x1101f resolution 21-21 continue with_actions]
-wood=deciduos | wood=deciduous	& 20resolution!=yes {set 20resolution=yes} [0x1101e resolution 21-21 continue with_actions]
-wood=coniferous & 20resolution!=yes {set 20resolution=yes} [0x1101d resolution 21-21 continue with_actions]
-landuse=forest & wood!=mixed & wood!=deciduos & wood!=coniferous & 20resolution!=yes {set 20resolution=yes} [0x50 resolution 21-21 continue with_actions]
+wood=mixed	 {set 20resolution=yes} [0x1101f resolution 21-21 continue with_actions]
+wood=deciduos | wood=deciduous	 {set 20resolution=yes} [0x1101e resolution 21-21 continue with_actions]
+wood=coniferous  {set 20resolution=yes} [0x1101d resolution 21-21 continue with_actions]
+landuse=forest & wood!=mixed & wood!=deciduos & wood!=deciduous & wood!=coniferous  {set 20resolution=yes} [0x50 resolution 21-21 continue with_actions]
 
 
 landuse=quarry & 20resolution!=yes {set 20resolution=yes} [0x11 resolution 21-21 continue with_actions]
@@ -60,12 +60,17 @@ addr:housenumber=* {name '${addr:housenumber}'}
 opening_hours=* {set addr:city = '${addr:city} open ${opening_hours}' | 'open ${opening_hours}'}
 note=* {set addr:city = '${addr:city} (${note})' | '${note}'}
 
-# Add huts polygon for searchability.
+# Add huts / hotels / campsites polygon for searchability.
 tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut				{ name '${name} ${operator} alpine_hut' | '${name} alpine_hut' | 'alpine_hut' } 			[0x11013 resolution 21]
 tourism=wilderness_hut | amenity=wilderness_hut | building=wilderness_hut	{ name '${name} ${operator} wilderness_hut' | '${name} wilderness_hut' | 'wilderness_hut' } [0x11013 resolution 22]
 tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} ${operator} basic_hut' | '${name} basic_hut' | 'basic_hut' } 				[0x11013 resolution 22]
 tourism=basic_hut | amenity=basic_hut | building=basic_hut | tourism=bothy	{ name '${name} ${operator} basic_hut' | '${name} basic_hut' | 'basic_hut' } 				[0x11013 resolution 23]
-tourism=lean_to | amenity=lean_to											{ name '${name} lean_to' | 'lean_to' } 	[0x11013 resolution 24]
+tourism=lean_to | amenity=lean_to											{ name '${name} lean_to' | 'lean_to' } 														[0x11013 resolution 24]
+tourism=hotel 																{ name '${name} ${operator} hotel' | '${name} hotel' | 'hotel' }							[0x11013 resolution 24]
+tourism=motel 																{ name '${name} ${operator} motel' | '${name} motel' | 'motel' }							[0x11013 resolution 24]
+tourism=camp_site 															{ name '${name} ${operator} camping' | '${name} camping' | 'campsite' }						[0x03 resolution 24 continue]
+tourism=caravan_site														{ name '${name} ${operator} caravan' | '${name} caravan' | 'caravan_site' }					[0x03 resolution 24 continue]
+tourism=chalet & building!=*																																			[0x11013 resolution 24]
 
 landuse=commercial | landuse=comercial [0x10f07 resolution 22 continue]
 landuse=residential | landuse=residental [0x03 resolution 22]
@@ -74,10 +79,13 @@ landuse=residential | landuse=residental [0x03 resolution 22]
 place=suburb | place=village | place=town [0x03 resolution 22]
 place=hamlet [0x03 resolution 22]
 leisure=nature_reserve [0x16 resolution 22]
-amenity=prison [0x04 resolution 23]
-# military ~ 'airfield\|barracks\|danger_area\|range'  [0x04 resolution 22]
-military=airfield |  military=danger_area | landuse=military [0x04 resolution 22]
-military=barracks |  military=range [0x04 resolution 24]
+amenity=prison [0x11013 resolution 23]
+
+landuse=military [0x04 resolution 21 continue]
+( military=danger_area | military=range ) & landuse!=military [0x04 resolution 22 continue]
+military=airfield [0x31 resolution 22]
+military=barracks | military=bunker | military=range [0x11013 resolution 24]
+
 amenity=parking | parking=surface [0x05 resolution 24]
 highway=pedestrian & area=yes [0x07 resolution 23]
 highway=* & area=yes [0x07 resolution 23]
@@ -214,6 +222,9 @@ sport=horse_racing [0x11003 resolution 22]
 sport=equestrian [0x11003 resolution 22]
 waterway=dock [0x11001 resolution 22]
 waterway=boatyard [0x11000 resolution 22]
+waterway=dam & area=yes [0x11013 default_name="dam" resolution 23]
+man_made=pier & area=yes [0x11013 default_name="pier" resolution 23]
+
 natural=beach | natural=sand	[0x1100d resolution 21]
 surface=sand & area=yes	[0x1100d resolution 22]
 surface=sand & highway!=* [0x1100d resolution 22]
