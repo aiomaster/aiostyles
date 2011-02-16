@@ -137,24 +137,25 @@ highway=trunk & int_ref=* 	{set name='${ref} ${name}'} 		[0x1050c resolution 17-
 highway=trunk 				{set name='${ref} ${name}'} 		[0x1050c resolution 20-18 continue]
 highway=trunk_link 												[0x10513 resolution 20-20 continue]
 
+highway=primary & importantprimary=yes {set name='${ref} ${name}'} 					[0x10518 resolution 18-18 continue]
+
 motoroad=yes {set motorroad=yes}
-highway=primary & motorroad=yes {set name='${ref} ${name}'} 						[0x10508 resolution 18-18 continue]
 motorroad=yes {set access=no; set motorcar=no; set bicycle=no; set foot=no; set hgv=no; set taxi=no; set emergency=no}
 (bicycle=nope | bicycle=no ) & highway!=motorway & highway!=motorway_link  {set name='${name} XBK'|'XBK'; set mkgmap:unpaved=1; add taxi=no}
-highway=primary & importantprimary=yes {set name='${ref} ${name}'} 					[0x10518 resolution 18-18 continue]
+
 highway=primary & oneway=* & lanes>1 {set no0x150e=yes}
 highway=primary & oneway=* & lanes>1 {set name='${ref} ${name}'}					[0x10518 resolution 20-19 continue]
 highway=primary & no0x150e!=yes	{set name='${ref} ${name}'} 						[0x1050d resolution 20-19 continue]
 highway=primary_link 																[0x10517 resolution 20-20 continue]
 
 
-highway=secondary & importantprimary=yes {set name='${ref} ${name}'}				[0x10519 resolution 19-19 continue]
+highway=secondary & ( importantsecondary=yes | importantprimary=yes ) {set name='${ref} ${name}'} [0x10519 resolution 19-19 continue]
 highway=secondary & oneway=yes & lanes>1 {set no0x150e=yes}
 highway=secondary & oneway=yes & lanes>1 {set name='${ref} ${name}'}				[0x10519 resolution 20-20 continue]
-highway=secondary & no0x150e!=yes	{set name='${ref} ${name}'}					[0x1051e resolution 20-20 continue]
+highway=secondary & no0x150e!=yes	{set name='${ref} ${name}'}						[0x1051e resolution 20-20 continue]
 highway=secondary_link 																[0x10519 resolution 20-20 continue]
 
-highway=tertiary 					{set name='${ref} ${name}'}					[0x1050f resolution 20-20 continue]
+highway=tertiary 					{set name='${ref} ${name}'}						[0x1050f resolution 20-20 continue]
 
 
 
