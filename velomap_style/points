@@ -173,7 +173,7 @@ manmade=* {add man_made='${manmade}'
 
 # Naming
 elevation=* { add ele='${elevation}' }
-( natural=peak | natural=summit | natural=mountain ) & ele=* { set tname='${name}, ${ele}' | '${ele}' }
+( natural=peak | natural=summit | natural=mountain ) & ele=* { set name='${name}, ${ele}' | '${ele}' }
 
 (highway=bus_stop | railway=tram_stop | railway=halt | railway=station) & lit=yes & (shelter=yes | covered=yes)
 { set ref='${ref|def:}(${route_ref})';  name '${name|def:} ${ref|def:}*${operator|def:}'; }
@@ -185,7 +185,7 @@ elevation=* { add ele='${elevation}' }
 { set ref='${ref|def:}(${route_ref})';  name '${name|def:} ${ref|def:} ${operator|def:}'; }
 
 addr:housename=* & name!=* {name '${addr:housename}'}
-addr:housenumber=* {set tname= '${name} (${addr:housenumber})' | '${addr:housenumber}' }
+addr:housenumber=* {set name= '${name} (${addr:housenumber})' | '${addr:housenumber}' }
 
 opening_hours=* {set addr:city = '${addr:city} open ${opening_hours}' | 'open ${opening_hours}'}
 note=* {set addr:city = '${addr:city}  (${note})' | '${note}'}
@@ -224,12 +224,12 @@ place=town   & population >  49999 & cityxx!=yes {set cityxx=yes} [0x0600 resolu
 place=town   & population >  19999 & cityxx!=yes {set cityxx=yes} [0x0700 resolution 18 continue with_actions ]
 place=town   & population >   9999 & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
 place=town   & population >   4999 & cityxx!=yes {set cityxx=yes} [0x0a00 resolution 19 continue with_actions ]
-place=town   & population >    999 & cityxx!=yes {set cityxx=yes} [0x0b00 resolution 20 continue with_actions ]
+place=town   & population >    999 & cityxx!=yes {set cityxx=yes} [0x0b00 resolution 19 continue with_actions ]
 place=town   & population >		 0 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
 place=town 						   & cityxx!=yes {set cityxx=yes} [0x0800 resolution 19 continue with_actions ]
 
 place=village & population >  20000	 & cityxx!=yes {set cityxx=yes} [0x0b00 resolution 19 continue with_actions ]
-place=village & population >   4000	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
+place=village & population >   4000	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 19 continue with_actions ]
 place=village & population >   1500	 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
 place=village & population >      0	 & cityxx!=yes {set cityxx=yes} [0x0d00 resolution 21 continue with_actions ]
 place=village 						 & cityxx!=yes {set cityxx=yes} [0x0c00 resolution 20 continue with_actions ]
@@ -260,20 +260,14 @@ place=suburb                         & cityxx!=yes {set cityxx=yes} [0x0d00 reso
 place=locality 						 & cityxx!=yes {set cityxx=yes} [0x1100 resolution 22 continue with_actions ]
 
 
-name:de=* 								{ set tname='${name:de}'; set double0=city }
-cityxx=yes & double0=city  				[0x0900 resolution 24 continue]
+ 								
+name:de=* & cityxx=yes  	{ set name='${name:de}' } 	[0x0900 resolution 24 continue]
+name:loc=* & cityxx=yes  	{ set name='${name:loc}' } 	[0x0900 resolution 24 continue]
+name:en=* & cityxx=yes  	{ set name='${name:en}' } 	[0x0900 resolution 24 continue]
+name:int=* & cityxx=yes  	{ set name='${name:int}' } 	[0x0900 resolution 24 continue]
 
-name:loc=*								{ set loc_name='${name:loc}'}
-loc_name=* 								{ set tname='${loc_name}'; set double1=city }
-cityxx=yes & double1=city	 			[0x0900 resolution 24 continue]
 
 
-name:en=* 								{ set tname='${name:en}'; set double2=city }
-cityxx=yes & double2=city  				[0x0900 resolution 24 continue]
-
-name:int=*								{ set int_name='${name:int}'}
-int_name=* 								{ set tname='${int_name}'; set double3=city }
-cityxx=yes & double3=city  				[0x0900 resolution 24 continue]
 
 
 rcn_ref=0 	{ name '${rcn_ref}' } [0x1710 resolution 24 continue]
@@ -389,8 +383,8 @@ mkgmap:rcn_ref=19 | mkgmap:rcn_ref=29 | mkgmap:rcn_ref=39 | mkgmap:rcn_ref=49 | 
 # mkgmap:rcn_ref=108 | mkgmap:rcn_ref=118 | mkgmap:rcn_ref=128 | mkgmap:rcn_ref=138 | mkgmap:rcn_ref=148 | mkgmap:rcn_ref=158 | mkgmap:rcn_ref=168 | mkgmap:rcn_ref=178 | mkgmap:rcn_ref=188 | mkgmap:rcn_ref=198  [0x12908 resolution 21]
 # mkgmap:rcn_ref=109 | mkgmap:rcn_ref=119 | mkgmap:rcn_ref=129 | mkgmap:rcn_ref=139 | mkgmap:rcn_ref=149 | mkgmap:rcn_ref=159 | mkgmap:rcn_ref=169 | mkgmap:rcn_ref=179 | mkgmap:rcn_ref=189 | mkgmap:rcn_ref=199  [0x12909 resolution 21]
 
-(shop=* | amenity=* | building=* | cuisine=* | natural=* | tourism=*) & name=* & operator=*  { set tname='${name} ${operator}'; delete operator }
-operator=* & name!=*  { set tname='${operator}'; delete operator}
+(shop=* | amenity=* | building=* | cuisine=* | natural=* | tourism=*) & name=* & operator=*  { set name='${name} ${operator}'; delete operator }
+operator=* & name!=*  { set name='${operator}'; delete operator}
 
 #Garmin types. 11602 alpine_hut, 11603 hut, 11604 alpine_hut belonging to a mountaineering club - 11601 used for lean_to, though not used by Garmin. According to the http://wiki.openstreetmap.org/wiki/Proposed_features/wilderness_mountain_buildings
 (tourism=alpine_hut | amenity=alpine_hut | building=alpine_hut) & (name=* | heating=* | shower=* | mattres=* | toilets=* | opening_hours=* | capacity=* | operator=* )	{ name '${name} alpine_hut' | 'alpine_hut' } [0x2b04 resolution 24 continue]
@@ -795,8 +789,8 @@ man_made=communications_tower							[0x11513 resolution 23]
 man_made=mast											[0x11513 resolution 23]
 
 # man_made=surveillance 				[0x2c16 resolution 24]
-man_made=gasometer 						[0x3401 resolution 24]
-man_made=works 	| man_made=mineshaft	[0x3401 resolution 24]
+# man_made=gasometer 					[0x3401 resolution 24]
+man_made=mineshaft						[0x3401 resolution 24]
 amenity=prison 							[0x3207 resolution 24]
 man_made=survey_point 					[0x4315 resolution 24]
 # survey war 2c18

@@ -1,6 +1,6 @@
 Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
 ===================================================================
---- uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(revision 1727)
+--- uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(revision 1858)
 +++ uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(working copy)
 @@ -43,7 +43,7 @@
  
@@ -20,7 +20,7 @@ Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
  
  		writer.putChar((char) 1);
  		writer.put((byte) 0);
-@@ -229,7 +229,7 @@
+@@ -233,7 +233,7 @@
  	public void config(EnhancedProperties props) {
  		String key = "draw-priority";
  		if (props.containsKey(key))
@@ -31,7 +31,7 @@ Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
  			poiDisplayFlags |= POI_FLAG_TRANSPARENT;
 Index: uk/me/parabola/mkgmap/build/MapBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1727)
+--- uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1858)
 +++ uk/me/parabola/mkgmap/build/MapBuilder.java	(working copy)
 @@ -92,6 +92,9 @@
  public class MapBuilder implements Configurable {
@@ -73,16 +73,16 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  				boolean doAutofill;
  				if(locationAutofillLevel > 0 || p.isRoadNamePOI())
  					doAutofill = true;
-@@ -353,7 +363,7 @@
- 					CountryStr = locator.fixCountryString(CountryStr);
+@@ -351,7 +361,7 @@
+ 					countryStr = locator.fixCountryString(countryStr);
  
  				boolean guessed = false;
--				if(CountryStr == null || RegionStr == null || (ZipStr == null && CityStr == null))
-+				if((CountryStr == null || RegionStr == null || (ZipStr == null && CityStr == null)) & p.getStreet() != null)
+-				if(countryStr == null || regionStr == null || (zipStr == null && cityStr == null))
++				if((countryStr == null || regionStr == null || (zipStr == null && cityStr == null)) & p.getStreet() != null)
  				{
  						MapPoint nextCity = locator.findByCityName(p);
  						
-@@ -440,11 +450,6 @@
+@@ -438,11 +448,6 @@
  					Label streetName = lbl.newLabel(p.getStreet());
  					r.setStreetName(streetName);			  
  				}
@@ -94,7 +94,7 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  
  				if(p.getHouseNumber() != null)
  				{
-@@ -697,9 +702,9 @@
+@@ -695,9 +700,9 @@
  		//
  		// We use it to add copyright information that there is no room for
  		// elsewhere.
@@ -107,7 +107,7 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  		map.addInfo("http://creativecommons.org/licenses/by-sa/2.0/");
  
  		// Pad the version number with spaces so that version
-@@ -708,12 +713,12 @@
+@@ -706,12 +711,12 @@
  		map.addInfo("Map created with mkgmap-r"
  				+ String.format("%-10s", Version.VERSION));
  
@@ -122,7 +122,7 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  
  		// This one gets shown when you switch on, so put the actual
  		// map copyright here.
-@@ -878,16 +883,16 @@
+@@ -876,16 +881,16 @@
  
  		//TODO: Maybe this is the wrong place to do merging.
  		// Maybe more efficient if merging before creating subdivisions.
@@ -142,7 +142,7 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  			if(reducePointError > 0)
  				filters.addFilter(new DouglasPeuckerFilter(reducePointError));
  		}
-@@ -923,14 +928,14 @@
+@@ -921,14 +926,14 @@
  		FilterConfig config = new FilterConfig();
  		config.setResolution(res);
  		LayerFilterChain filters = new LayerFilterChain(config);
@@ -163,7 +163,7 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  		filters.addFilter(new RemoveEmpty());
 Index: uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1727)
+--- uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1858)
 +++ uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(working copy)
 @@ -78,7 +78,7 @@
  
@@ -176,7 +176,7 @@ Index: uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
  	}
 Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(revision 1727)
+--- uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(revision 1858)
 +++ uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(working copy)
 @@ -34,6 +34,7 @@
  	private String seriesName;
@@ -188,7 +188,7 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  	private boolean hasTyp;
 @@ -45,7 +46,8 @@
  	public void init(CommandArgs args) {
- 		int familyId = args.get("family-id", 0);
+ 		int familyId = args.get("family-id", CommandArgs.DEFAULT_FAMILYID);
  		productId = args.get("product-id", 1);
 -
 +		familyIdd = args.get("family-id", 1);
@@ -293,10 +293,10 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			pw.format(Locale.ROOT, "Map created with mkgmap-r" + Version.VERSION +"\n");
 Index: uk/me/parabola/mkgmap/combiners/TdbBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(revision 1727)
+--- uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(revision 1858)
 +++ uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(working copy)
-@@ -62,8 +62,7 @@
- 	 * In otherwords if the same argument appears more than once, then it will
+@@ -65,8 +65,7 @@
+ 	 * In other words if the same argument appears more than once, then it will
  	 */
  	public void init(CommandArgs args) {
 -		overviewMapname = args.get("overview-mapname", "osmmap");
@@ -305,7 +305,7 @@ Index: uk/me/parabola/mkgmap/combiners/TdbBuilder.java
  		
  		try {
  			parent = Integer.parseInt(overviewMapnumber);
-@@ -77,8 +76,8 @@
+@@ -80,8 +79,8 @@
  		int productId = args.get("product-id", 1);
  		short productVersion = (short)args.get("product-version", 100);
  
@@ -318,7 +318,7 @@ Index: uk/me/parabola/mkgmap/combiners/TdbBuilder.java
  		// option can be used.
 Index: uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
 ===================================================================
---- uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(revision 1727)
+--- uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(revision 1858)
 +++ uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(working copy)
 @@ -66,6 +66,7 @@
  		coords.addAll(points);
@@ -348,7 +348,7 @@ Index: uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
  
 Index: uk/me/parabola/mkgmap/filters/SizeFilter.java
 ===================================================================
---- uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1727)
+--- uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1858)
 +++ uk/me/parabola/mkgmap/filters/SizeFilter.java	(working copy)
 @@ -24,13 +24,16 @@
   */
@@ -370,178 +370,3 @@ Index: uk/me/parabola/mkgmap/filters/SizeFilter.java
  	}
  
  	/**
-Index: uk/me/parabola/mkgmap/general/MapShape.java
-===================================================================
---- uk/me/parabola/mkgmap/general/MapShape.java	(revision 1727)
-+++ uk/me/parabola/mkgmap/general/MapShape.java	(working copy)
-@@ -29,6 +29,7 @@
- public class MapShape extends MapLine {// So top code can link objects from here
- 
- 	private int poiType;
-+	private String poiName;
- 	
- 	public MapShape() {
- 	}
-@@ -55,6 +56,16 @@
- 	{
- 		return this.poiType;
- 	}
-+
-+	public void setPoiName(String name)
-+	{
-+		this.poiName = name;
-+	}
-+
-+	public String getPoiName()
-+	{
-+		return this.poiName;
-+	}
- 	
- 	/**
- 	 * Checks if a point is contained within this shape. Points on the
-Index: uk/me/parabola/mkgmap/main/MapMaker.java
-===================================================================
---- uk/me/parabola/mkgmap/main/MapMaker.java	(revision 1727)
-+++ uk/me/parabola/mkgmap/main/MapMaker.java	(working copy)
-@@ -165,7 +165,7 @@
- 			}
- 			
- 			for (MapShape shape : src.getShapes()) {
--				String shapeName = shape.getName();
-+				String pointName = shape.getPoiName();
- 
- 				int pointType = shape.getPoiType();
- 				
-@@ -175,15 +175,15 @@
- 
- 				
- 				// We don't want to add unnamed cities !!
--				if(MapPoint.isCityType(pointType) && shapeName == null)
-+				if(MapPoint.isCityType(pointType) && pointName == null)
- 					continue;
- 				
- 				// check if there is not already a poi in that shape 
- 							
--				if(poiMap.findPointInShape(shape, pointType, shapeName) == null) {
-+				if(poiMap.findPointInShape(shape, pointType, pointName) == null) {
- 					MapPoint newPoint = new MapPoint();
- 					
--					newPoint.setName(shapeName);
-+					newPoint.setName(pointName);
- 					newPoint.setType(pointType);
- 
- 					copyAddressInformation(shape, newPoint);
-@@ -192,7 +192,7 @@
- 
- 					src.getPoints().add(newPoint);
- 
--					log.info("created POI ", shapeName, "from shape");
-+					log.info("created POI ", pointName, "from shape");
- 				}
- 			}
- 		}
-Index: uk/me/parabola/mkgmap/osmstyle/StyledConverter.java
-===================================================================
---- uk/me/parabola/mkgmap/osmstyle/StyledConverter.java	(revision 1727)
-+++ uk/me/parabola/mkgmap/osmstyle/StyledConverter.java	(working copy)
-@@ -115,6 +115,7 @@
- 	private final Rule relationRules;
- 
- 	private final boolean ignoreMaxspeeds;
-+	private final boolean addPoisToAreas;
- 	private boolean driveOnLeft;
- 	private boolean driveOnRight;
- 	private final boolean checkRoundabouts;
-@@ -168,6 +169,7 @@
- 		relationRules = style.getRelationRules();
- 
- 		ignoreMaxspeeds = props.getProperty("ignore-maxspeeds") != null;
-+		addPoisToAreas = props.getProperty("add-pois-to-areas") != null;
- 		driveOnLeft = props.getProperty("drive-on-left") != null;
- 		NODHeader.setDriveOnLeft(driveOnLeft);
- 		driveOnRight = props.getProperty("drive-on-right") != null;
-@@ -276,10 +278,13 @@
- 			GType foundType = makeGTypeFromTags(way);
- 			if(foundType == null)
- 				return;
--			addConvertedWay(way, foundType);
-+			addConvertedWay(way, foundType, null);
- 			return;
- 		}
- 
-+		final Way wayForPoiConversion = new Way(way.getId());
-+ 		wayForPoiConversion.copyTags(way);
-+
- 		preConvertRules(way);
- 
- 		Rule rules;
-@@ -301,21 +306,40 @@
- 					// originalWay.put(el, way);
- 				}
- 				postConvertRules(el, type);
--				addConvertedWay((Way) el, type);
-+				addConvertedWay((Way) el, type, wayForPoiConversion);
- 			}
- 		});
- 	}
- 
--	private void addConvertedWay(Way way, GType foundType) {
-+	private boolean poiFound; // This is a dirty hack!!!
-+	private void addConvertedWay(final Way way, final GType foundType, final Way wayForPoiConversion) {
- 		if (foundType.getFeatureKind() == GType.POLYLINE) {
- 		    if(foundType.isRoad() &&
- 			   !MapObject.hasExtendedType(foundType.getType()))
- 				addRoad(way, foundType);
- 		    else
- 				addLine(way, foundType);
-+		} else {
-+			if (addPoisToAreas) {
-+				poiFound = false;
-+				nodeRules.resolveType(wayForPoiConversion, new TypeResult() {
-+					boolean first = true;
-+					public void add(Element el, GType type) {
-+						if (first) {
-+							postConvertRules(wayForPoiConversion, type);
-+							addShape(way, foundType, type, wayForPoiConversion.getName());
-+							poiFound = true;
-+							first = false;
-+						}
-+					}
-+				});
-+				if (!poiFound) {
-+					addShape(way, foundType, null, null);
-+				}
-+			} else {
-+				addShape(way, foundType, null, null);
-+			}
- 		}
--		else
--			addShape(way, foundType);
- 	}
- 
- 	/**
-@@ -516,19 +540,16 @@
- 		clipper.clipLine(line, lineAdder);
- 	}
- 
--	private void addShape(Way way, GType gt) {
-+	private void addShape(Way way, GType gt, GType gtPoi, String namePoi) {
- 		final MapShape shape = new MapShape();
- 		elementSetup(shape, gt, way);
- 		shape.setPoints(way.getPoints());
- 
- 		clipper.clipShape(shape, collector);
--		
--		nodeRules.resolveType(way, new TypeResult() {
--			public void add(Element el, GType type) {
--				if(type != null)
--			shape.setPoiType(type.getType());
--			}
--		});
-+
-+		shape.setPoiName(namePoi);
-+		if (gtPoi != null)
-+			shape.setPoiType(gtPoi.getType());
- 	}
- 
- 	private void addPoint(Node node, GType gt) {
