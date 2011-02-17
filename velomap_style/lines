@@ -645,23 +645,23 @@ sac_scale=demanding_mountain_hiking & mtb:scale<2 						{delete sac_scale; set t
 
 # Delete some mtb:scale values if not needed and reclassify others.
 ( mtb:scale=0 | mtb:scale="0-" ) & ( tracktype=1 | smoothness=excellent | smoothness=very_good | smoothness=good | smoothness=intermediate | surface=asphalt | surface=concrete ) {delete mtb:scale}
-mtb:scale=0 & ( tracktype=2 | tracktype=3 |  smoothness=bad | smoothness=very_bad | surface=gravel ) {set mtb:scale="0-"}
-mtb:scale=0 & ( tracktype=5 | smoothness=very_horrible | smoothness=impassable ){set mtb:scale="0+"}
+mtb:scale=0 & ( tracktype=2 | tracktype=3 |  smoothness=bad ) {delete mtb:scale}
+mtb:scale=0 & ( tracktype=5 | smoothness=very_horrible | smoothness=impassable ){set mtb:scale=1}
 
 
 
 
 
-# mtb:scale unification - There will be some ammendments to have a clearer difference between mtb:scale=0; mtb:scale=0- and mtb:scale=0+ or mtb:scale=0-1 in future. All other s are well enough seperated
+# mtb:scale unification
 
 mtb:scale="0+" {set mtb:scale=1}
-mtb:scale="1+" {set mtb:scale=1}
+mtb:scale="1+" {set mtb:scale=2}
 mtb:scale="2+" {set mtb:scale=2}
 mtb:scale="3+" {set mtb:scale=3}
 mtb:scale="4+" {set mtb:scale=4}
 mtb:scale="5+" {set mtb:scale=5}
 
-mtb:scale="0-" {delete mtb:scale}
+mtb:scale="0-" {delete mtb:scale; add taxi=no}
 mtb:scale="1-" {set mtb:scale=1}
 mtb:scale="2-" {set mtb:scale=2}
 mtb:scale="3-" {set mtb:scale=3}
@@ -697,19 +697,10 @@ mtb:scale!=* & mtb:scale:uphill=* & route!=mtb & extremecarver6!=mr {set name='M
 
 
 # Put already mtb:sclae=0 into the map -- so that street condition naming works better.... --- this whole section seems to be placed wrong here and only belongs to the openmtbmap.
-mtb:scale="0-" & mtb:scale:uphill!=0 & (highway=path | highway=footway | highway=bridleway | highway=cycleway)	{add taxi=no; add mkgmap:unpaved=1}
-mtb:scale="0+" & mtb:scale:uphill!=0 & (highway=path | highway=footway | highway=bridleway | highway=cycleway)	{add taxi=no; add mkgmap:unpaved=1}
-mtb:scale="0-" & mtb:scale:uphill!=0 & ( highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service ) {add taxi=no}
-mtb:scale="0+" & mtb:scale:uphill!=0 & ( highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service ) {add taxi=no}
-mtb:scale="0+" & highway!=path & highway!=footway & highway!=bridleway & highway!=cycleway & highway!=track & highway!=unsurfaced & highway!=road & highway!=byway & highway!=unclassified & highway!=service & highway!=minor & mtb:scale:uphill!=0 {add taxi=no} 
-mtb:scale="0-" & highway!=path & highway!=footway & highway!=bridleway & highway!=cycleway & highway!=track & highway!=unsurfaced & highway!=road & highway!=byway & highway!=unclassified & highway!=service & highway!=minor & mtb:scale:uphill!=0 {add taxi=no}
 mtb:scale=0 & mtb:scale:uphill!=0 & ( highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service ) {add taxi=no}
 mtb:scale=0 & highway!=path & highway!=footway & highway!=bridleway & highway!=cycleway & highway!=track & highway!=unsurfaced & highway!=road & highway!=byway & highway!=unclassified & highway!=service & highway!=minor & mtb:scale:uphill!=0 {add taxi=no} 
 mtb:scale=0	& mtb:scale:uphill!=0 & (highway=path | highway=footway | highway=bridleway | highway=cycleway)	{add taxi=no; add mkgmap:unpaved=1}
-mtb:scale="0+" {set mtb:scale=0}
-mtb:scale=0 & mtb:scale!="0-" & (highway=path | highway=footway | highway=bridleway) {set mkgmap:unpaved=1}
-mtb:scale="0-" {set mtb:scale=0}
-
+mtb:scale=0 & (highway=path | highway=footway | highway=bridleway) {set mkgmap:unpaved=1}
 
 
 
