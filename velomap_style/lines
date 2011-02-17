@@ -708,7 +708,9 @@ mtb:scale=0 & (highway=path | highway=footway | highway=bridleway) {set mkgmap:u
 # Add street condition to name
 ( highway=path | highway=footway | highway=bridleway | highway=track | highway=unsurfaced | highway=road ) & tracktype=1 & ( tracktypeadded!=yes | surface=asphalt | surface=paving_stones ) {set name='${name} G1' | 'G1'; set addendumname=yes} 
 
-( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & mtb:scale!=* & mtb:scale:uphill!=* & tracktype=2 & tracktypeadded!=yes {set name='${name} G2' | 'G2'; set addendumname=yes}
+( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & tracktype=2 & tracktypeadded!=yes {set name='${name} G2' | 'G2'; set addendumname=yes}
+
+( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & tracktype=3 & tracktypeadded!=yes {set name='${name} G3' | 'G3'; set addendumname=yes}
 
 ( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & (mtb:scale!=* | mtb:scale>3) & sac_scale=demanding_mountain_hiking & addendumname!=* {set name='${name} T3' | 'T3'; set addendumname=yes}
 
@@ -717,8 +719,6 @@ mtb:scale=0 & (highway=path | highway=footway | highway=bridleway) {set mkgmap:u
 ( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & sac_scale=demanding_alpine_hiking & addendumname!=* {set name='${name} T5' | 'T5'; set addendumname=yes}
 
 ( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & sac_scale=difficult_alpine_hiking & addendumname!=* {set name='${name} T6' | 'T6'; set addendumname=yes}
-
-( highway=path | highway=footway | highway=cycleway | highway=bridleway | highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & mtb:scale!=* & tracktype=3 & tracktypeadded!=yes {set name='${name} G3' | 'G3'; set addendumname=yes}
 
 ( highway=track | highway=unsurfaced | highway=road | highway=byway | highway=unclassified | highway=service | highway=minor ) & mtb:scale!=* & ( tracktype!=1 | tracktype!=2 | tracktype!=3 | tracktypeadded=yes ) & sac_scale=hiking {set name='${name} T1' | 'T1'; set addendumname=yes}
 
