@@ -2,7 +2,7 @@
 # Auto
 
 amenity=fuel [0x2f01 resolution 22]
-amenity=car_rental [0x2f02 resolution 24]
+amenity=car_rental | amenity=car_sharing [0x2f02 resolution 24]
 shop=car_repair [0x2f03 resolution 24]
 shop=car | shop=car_parts [0x2f07 resolution 24]
 amenity=parking [0x2f0b resolution 22]
@@ -144,6 +144,10 @@ amenity=recycling [0x2f19 resolution 24]
 amenity=waste_basket [0x2f1a resolution 24]
 
 amenity=clock [0x7018 resolution 24]
+amenity=shower | (amenity=toilets & shower=yes) [0x4e01 resolution 23]
+amenity=toilets [0x4e00 resolution 22]
+amenity=telephone [0x5100 resolution 24]
+amenity=emergency_phone [0x5101 resolution 22]
 
 #------------------------------------------------------------------------------
 # Freizeit
@@ -152,7 +156,7 @@ amenity=theatre [0x2d01 resolution 24]
 amenity=nightclub [0x2d02 resolution 24]
 amenity=cinema [0x2d03 resolution 24]
 amenity=casino | leisure=casino | tourism=casino [0x2d04 resolution 24]
-
+amenity=concert_hall [0x2c09 resolution 24]
 amenity=zoo | tourism=zoo [0x2c07 resolution 24]
 amenity=bench [0x4a01 resolution 24]
 
@@ -162,12 +166,6 @@ leisure=park [0x2c06 resolution 21]
 leisure=pitch [0x2c08 resolution 21]
 leisure=stadium [0x2c08 resolution 21]
 leisure=track [0x2c08 resolution 21]
-
-amenity=concert_hall [0x2c09 resolution 24]
-amenity=shower | (amenity=toilets & shower=yes) [0x4e01 resolution 23]
-amenity=toilets [0x4e00 resolution 22]
-amenity=telephone [0x5100 resolution 24]
-amenity=emergency_phone [0x5101 resolution 22]
 
 #------------------------------------------------------------------------------
 # Unterkunft
@@ -214,8 +212,8 @@ amenity=place_of_worship [0x2c0b resolution 23]
 natural=beach [0x6604 resolution 23]
 natural=cliff [0x6607 resolution 23]
 natural=glacier [0x650a resolution 21]
-natural=peak & ele>3500 [0x6616 resolution 21]
-natural=peak & ele>3000 [0x6616 resolution 22]
+natural=peak & ele>3000 [0x6616 resolution 21]
+natural=peak & ele>2000 [0x6616 resolution 22]
 natural=peak | natural=hill [0x6616 resolution 23]
 natural=cave_entrance [0x6619 resolution 23]
 natural=spring [0x6511 resolution 23]
@@ -291,7 +289,7 @@ place=locality  [0x2800 resolution 22]
 sport=skiing [0x2d06 resolution 24]
 sport=9pin | sport=10pin [0x2d07 resolution 24]
 sport=skating [0x2d08 resolution 24]
-sport=swimming [0x2d09 resolution 24]
+sport=swimming | leisure=water_park [0x2d09 resolution 24]
 sport=multi | leisure=sports_centre [0x2d0a resolution 24]
 #sport=airport [0x2d0b resolution 14]
 sport=soccer [0x2d0c resolution 24]
@@ -309,3 +307,5 @@ sport=diving | sport=scuba_diving [0x2d15 resolution 24]
 # military
 
 military=bunker [0x5801 resolution 24]
+
+#eof
