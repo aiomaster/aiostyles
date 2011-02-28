@@ -1,7 +1,29 @@
-Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
+Index: resources/LocatorConfig.xml
 ===================================================================
---- uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(revision 1858)
-+++ uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(working copy)
+--- resources/LocatorConfig.xml	(revision 1860)
++++ resources/LocatorConfig.xml	(working copy)
+@@ -62,6 +62,9 @@
+ 		<variant>Austria</variant>
+ 		<variant>AT</variant>
+ 		<variant>AUT</variant>
++		<variant>Oesterreich</variant>
++		<variant>Oestereich</variant>
++		<variant>Östereich</variant>
+ 	</country>
+ 	<country name="Azerbaijan" abr="AZE">
+ 		<variant>AZ</variant>
+@@ -902,6 +905,7 @@
+ 	</country>
+ 	<country name="Schweiz" abr="CHE" geodb="1" poiDispFlag="0xc">
+ 		<variant>Switzerland</variant>
++		<variant>Suisse</variant>
+ 		<variant>CH</variant>
+ 		<variant>CHE</variant>
+ 	</country>
+Index: src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java
+===================================================================
+--- src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(revision 1860)
++++ src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(working copy)
 @@ -43,7 +43,7 @@
  
  	// A map has a display priority that determines which map is on top
@@ -29,10 +51,10 @@ Index: uk/me/parabola/imgfmt/app/trergn/TREHeader.java
  
  		if (props.containsKey("transparent"))
  			poiDisplayFlags |= POI_FLAG_TRANSPARENT;
-Index: uk/me/parabola/mkgmap/build/MapBuilder.java
+Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1858)
-+++ uk/me/parabola/mkgmap/build/MapBuilder.java	(working copy)
+--- src/uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1860)
++++ src/uk/me/parabola/mkgmap/build/MapBuilder.java	(working copy)
 @@ -92,6 +92,9 @@
  public class MapBuilder implements Configurable {
  	private static final Logger log = Logger.getLogger(MapBuilder.class);
@@ -161,10 +183,10 @@ Index: uk/me/parabola/mkgmap/build/MapBuilder.java
  		}
  		filters.addFilter(new PolygonSplitterFilter());
  		filters.addFilter(new RemoveEmpty());
-Index: uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
+Index: src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1858)
-+++ uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(working copy)
+--- src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1860)
++++ src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(working copy)
 @@ -78,7 +78,7 @@
  
  	public void init(CommandArgs args) {
@@ -174,10 +196,10 @@ Index: uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
  		overallDescription = args.getDescription();
  		outputDir = args.getOutputDir();
  	}
-Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
+Index: src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(revision 1858)
-+++ uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(working copy)
+--- src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(revision 1860)
++++ src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(working copy)
 @@ -34,6 +34,7 @@
  	private String seriesName;
  	private String id;
@@ -291,10 +313,10 @@ Index: uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			pw.format(Locale.ROOT, "http://creativecommons.org/licenses/by-sa/2.0/\n");
  			pw.println();
  			pw.format(Locale.ROOT, "Map created with mkgmap-r" + Version.VERSION +"\n");
-Index: uk/me/parabola/mkgmap/combiners/TdbBuilder.java
+Index: src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java
 ===================================================================
---- uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(revision 1858)
-+++ uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(working copy)
+--- src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(revision 1860)
++++ src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(working copy)
 @@ -65,8 +65,7 @@
  	 * In other words if the same argument appears more than once, then it will
  	 */
@@ -316,10 +338,10 @@ Index: uk/me/parabola/mkgmap/combiners/TdbBuilder.java
  
  		// Version 4 is the default.  If you really want v3 then the tdb-v3
  		// option can be used.
-Index: uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
+Index: src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
 ===================================================================
---- uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(revision 1858)
-+++ uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(working copy)
+--- src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(revision 1860)
++++ src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(working copy)
 @@ -66,6 +66,7 @@
  		coords.addAll(points);
  
@@ -346,10 +368,10 @@ Index: uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
  //#endif
  		MapLine newline = line.copy();
  
-Index: uk/me/parabola/mkgmap/filters/SizeFilter.java
+Index: src/uk/me/parabola/mkgmap/filters/SizeFilter.java
 ===================================================================
---- uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1858)
-+++ uk/me/parabola/mkgmap/filters/SizeFilter.java	(working copy)
+--- src/uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1860)
++++ src/uk/me/parabola/mkgmap/filters/SizeFilter.java	(working copy)
 @@ -24,13 +24,16 @@
   */
  public class SizeFilter implements MapFilter {

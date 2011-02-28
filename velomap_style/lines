@@ -571,31 +571,31 @@ highway=* & mtb:scale!=* & tracktype!=1 & tracktype!=2 & tracktype!=3 & tracktyp
 
 
 
-# Map surface to tracktype
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=compacted {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=dirt {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=mud {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=sand {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=earth {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=ground {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=grass {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=pebblestone {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=grass_paver {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=paving_stones {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=paved {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface="dirt road" {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=dirt_road {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=compacted {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=unsealed {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=unsurfaced {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=ash {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=unpaved {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=sidewalk {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=cobblestone {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=bricks {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=block {add tracktypeadded=yes}
-mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=wood {add tracktypeadded=yes}
-
+# Map surface to tracktype -- currently only used for openmtbmap
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=compacted {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=dirt {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=mud {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=sand {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=earth {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=ground {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=grass {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=pebblestone {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=grass_paver {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=paving_stones {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=paved {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface="dirt road" {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=dirt_road {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=compacted {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=unsealed {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=unsurfaced {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=ash {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=unpaved {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=sidewalk {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=cobblestone {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=bricks {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=block {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=wood {add tracktypeadded=yes}
+# mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=stone {add tracktypeadded=yes}
 
 tracktype!=* & surface=asphalt {add tracktype=1}
 tracktype!=* & surface=concrete {add tracktype=1}
@@ -628,7 +628,7 @@ mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=cobblestone {add tracktype=
 mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=bricks {add tracktype=2}
 mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=block {add tracktype=2}
 mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=wood {add tracktype=2}
-
+mtb:scale!=* & sac_scale!=* & tracktype!=* & surface=stone {add tracktype=2}
 
 
 # Delete sac_scale entered by noobs
