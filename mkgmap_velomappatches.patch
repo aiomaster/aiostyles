@@ -1,6 +1,6 @@
 Index: resources/LocatorConfig.xml
 ===================================================================
---- resources/LocatorConfig.xml	(revision 1860)
+--- resources/LocatorConfig.xml	(revision 1875)
 +++ resources/LocatorConfig.xml	(working copy)
 @@ -62,6 +62,9 @@
  		<variant>Austria</variant>
@@ -22,7 +22,7 @@ Index: resources/LocatorConfig.xml
  	</country>
 Index: src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java
 ===================================================================
---- src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(revision 1860)
+--- src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(revision 1875)
 +++ src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java	(working copy)
 @@ -43,7 +43,7 @@
  
@@ -53,19 +53,18 @@ Index: src/uk/me/parabola/imgfmt/app/trergn/TREHeader.java
  			poiDisplayFlags |= POI_FLAG_TRANSPARENT;
 Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
 ===================================================================
---- src/uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1860)
+--- src/uk/me/parabola/mkgmap/build/MapBuilder.java	(revision 1875)
 +++ src/uk/me/parabola/mkgmap/build/MapBuilder.java	(working copy)
-@@ -92,6 +92,9 @@
- public class MapBuilder implements Configurable {
- 	private static final Logger log = Logger.getLogger(MapBuilder.class);
+@@ -94,7 +94,7 @@
  	private static final int CLEAR_TOP_BITS = (32 - 15);
-+	
-+	private static final int MIN_SIZE_LINE = 2;
+ 	
+ 	private static final int MIN_SIZE_LINE = 1;
+-	private static final int MIN_SIZE_POLYGON = 8;
 +	private static final int MIN_SIZE_POLYGON = 15;
  
  	private final java.util.Map<MapPoint,POIRecord> poimap = new HashMap<MapPoint,POIRecord>();
  	private final java.util.Map<MapPoint,City> cityMap = new HashMap<MapPoint,City>();
-@@ -111,6 +114,7 @@
+@@ -114,6 +114,7 @@
  	private String regionAbbr;
  
  	private double reducePointError;
@@ -73,7 +72,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  	private boolean mergeLines;
  
  	private int		locationAutofillLevel;
-@@ -132,6 +136,9 @@
+@@ -135,6 +136,9 @@
  		regionName = props.getProperty("region-name", null);
  		regionAbbr = props.getProperty("region-abbr", null);
  		reducePointError = props.getProperty("reduce-point-density", 2.6);
@@ -83,7 +82,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  		mergeLines = props.containsKey("merge-lines");
  
  		makePOIIndex = props.getProperty("make-poi-index", false);
-@@ -334,7 +341,10 @@
+@@ -337,7 +341,10 @@
  			if(p.isExit()) {
  				processExit(map, (MapExitPoint)p);
  			}
@@ -95,7 +94,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  				boolean doAutofill;
  				if(locationAutofillLevel > 0 || p.isRoadNamePOI())
  					doAutofill = true;
-@@ -351,7 +361,7 @@
+@@ -354,7 +361,7 @@
  					countryStr = locator.fixCountryString(countryStr);
  
  				boolean guessed = false;
@@ -104,7 +103,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  				{
  						MapPoint nextCity = locator.findByCityName(p);
  						
-@@ -438,11 +448,6 @@
+@@ -441,11 +448,6 @@
  					Label streetName = lbl.newLabel(p.getStreet());
  					r.setStreetName(streetName);			  
  				}
@@ -116,7 +115,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  
  				if(p.getHouseNumber() != null)
  				{
-@@ -695,9 +700,9 @@
+@@ -698,9 +700,9 @@
  		//
  		// We use it to add copyright information that there is no room for
  		// elsewhere.
@@ -129,7 +128,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  		map.addInfo("http://creativecommons.org/licenses/by-sa/2.0/");
  
  		// Pad the version number with spaces so that version
-@@ -706,12 +711,12 @@
+@@ -709,12 +711,12 @@
  		map.addInfo("Map created with mkgmap-r"
  				+ String.format("%-10s", Version.VERSION));
  
@@ -144,7 +143,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  
  		// This one gets shown when you switch on, so put the actual
  		// map copyright here.
-@@ -876,16 +881,16 @@
+@@ -879,7 +881,7 @@
  
  		//TODO: Maybe this is the wrong place to do merging.
  		// Maybe more efficient if merging before creating subdivisions.
@@ -153,27 +152,8 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  			LineMergeFilter merger = new LineMergeFilter();
  			lines = merger.merge(lines);
  		}
- 
- 		LayerFilterChain filters = new LayerFilterChain(config);
--		if (enableLineCleanFilters && (res < 24)) {
-+		if (enableLineCleanFilters && (res < 22)) {
- 			filters.addFilter(new PreserveHorizontalAndVerticalLinesFilter());
- 			filters.addFilter(new RoundCoordsFilter());
--			filters.addFilter(new SizeFilter());
-+			filters.addFilter(new SizeFilter(MIN_SIZE_LINE));
- 			if(reducePointError > 0)
- 				filters.addFilter(new DouglasPeuckerFilter(reducePointError));
- 		}
-@@ -921,14 +926,14 @@
- 		FilterConfig config = new FilterConfig();
- 		config.setResolution(res);
- 		LayerFilterChain filters = new LayerFilterChain(config);
--		if (enableLineCleanFilters && (res < 24)) {
-+		if (enableLineCleanFilters && (res < 22)) {
- 			filters.addFilter(new PreserveHorizontalAndVerticalLinesFilter());
- 			filters.addFilter(new RoundCoordsFilter());
--			filters.addFilter(new SizeFilter());
-+			filters.addFilter(new SizeFilter(MIN_SIZE_POLYGON));
+@@ -930,8 +932,8 @@
+ 			filters.addFilter(new SizeFilter(MIN_SIZE_POLYGON));
  			//DouglasPeucker behaves at the moment not really optimal at low zooms, but acceptable.
  			//Is there an similar algorithm for polygons?
 -			if(reducePointError > 0)
@@ -185,7 +165,7 @@ Index: src/uk/me/parabola/mkgmap/build/MapBuilder.java
  		filters.addFilter(new RemoveEmpty());
 Index: src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
 ===================================================================
---- src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1860)
+--- src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(revision 1875)
 +++ src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java	(working copy)
 @@ -78,7 +78,7 @@
  
@@ -198,7 +178,7 @@ Index: src/uk/me/parabola/mkgmap/combiners/GmapsuppBuilder.java
  	}
 Index: src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java
 ===================================================================
---- src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(revision 1860)
+--- src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(revision 1875)
 +++ src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java	(working copy)
 @@ -34,6 +34,7 @@
  	private String seriesName;
@@ -315,7 +295,7 @@ Index: src/uk/me/parabola/mkgmap/combiners/NsisBuilder.java
  			pw.format(Locale.ROOT, "Map created with mkgmap-r" + Version.VERSION +"\n");
 Index: src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java
 ===================================================================
---- src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(revision 1860)
+--- src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(revision 1875)
 +++ src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java	(working copy)
 @@ -65,8 +65,7 @@
  	 * In other words if the same argument appears more than once, then it will
@@ -340,7 +320,7 @@ Index: src/uk/me/parabola/mkgmap/combiners/TdbBuilder.java
  		// option can be used.
 Index: src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
 ===================================================================
---- src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(revision 1860)
+--- src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(revision 1875)
 +++ src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java	(working copy)
 @@ -66,6 +66,7 @@
  		coords.addAll(points);
@@ -368,27 +348,3 @@ Index: src/uk/me/parabola/mkgmap/filters/DouglasPeuckerFilter.java
  //#endif
  		MapLine newline = line.copy();
  
-Index: src/uk/me/parabola/mkgmap/filters/SizeFilter.java
-===================================================================
---- src/uk/me/parabola/mkgmap/filters/SizeFilter.java	(revision 1860)
-+++ src/uk/me/parabola/mkgmap/filters/SizeFilter.java	(working copy)
-@@ -24,13 +24,16 @@
-  */
- public class SizeFilter implements MapFilter {
- 
--	// Minsize==1 may cause small holes in QLandkarte, but does not at etrex!
--	private static final int MIN_SIZE = 1;
-+	private int size;
- 
- 	private int minSize;
-+	
-+	public SizeFilter(int s) {
-+		size = s;
-+	}
- 
- 	public void init(FilterConfig config) {
--		minSize = MIN_SIZE * (1<<config.getShift());
-+		minSize = size * (1<<config.getShift());
- 	}
- 
- 	/**
