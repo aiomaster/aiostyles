@@ -29,6 +29,7 @@ import org.openstreetmap.aiotm.data.GarminLayerHandler;
 import org.openstreetmap.aiotm.data.Preferences;
 import org.openstreetmap.aiotm.io.DownloadManager;
 import org.openstreetmap.aiotm.util.GBC;
+import org.openstreetmap.aiotm.util.MkgmapController;
 
 public class MainFrame extends JFrame {
 
@@ -91,12 +92,28 @@ public class MainFrame extends JFrame {
 			}
 
 		});
+		JButton gmapsuppButton = new JButton(new AbstractAction("Create gmapsupp.img"){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				dm.getProgressBar().setIndeterminate(true);
+				String outDir = chooseDir();
+				MkgmapController.createGmapsupp(glh.getLayers(),outDir);
+				dm.getProgressBar().setIndeterminate(false);
+			}
+
+		});
 		leftPanel.add(downloadButton,GBC.eol());
 		leftPanel.add(dm.getSpeedLabel(),GBC.eol());
+		leftPanel.add(gmapsuppButton,GBC.eol());
 		return leftPanel;
 	}
 
-	private String chooseCacheDir() {
+	private String chooseDir() {
 		final JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int returnVal = chooser.showOpenDialog(this);
@@ -184,7 +201,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String dir = chooseCacheDir();
+				String dir = chooseDir();
 				if (dir != null) {
 					cachefield.setText(dir);
 					pref.put("cachedir", dir);

@@ -1,0 +1,226 @@
+<html>
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="content-type">
+	<title>AiO Tiles Map</title>
+
+    <!-- bring in the OpenLayers javascript library
+         (here we bring it from the remote site, but you could
+         easily serve up this javascript yourself) -->
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+
+<!--script type="text/javascript" src="http://osm.cdauth.eu/ajax-proxy/ajax-proxy.js"></script-->
+<!--script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=[your key]"></script>
+<script type="text/javascript" src="http://api.maps.yahoo.com/ajaxymap?v=3.0&amp;appid=cdauths-map"></script>
+<script type="text/javascript" src="http://osm.cdauth.eu/map/prototypes.js"></script-->
+
+ 
+    <!-- bring in the OpenStreetMap OpenLayers layers.
+         Using this hosted file will make sure we are kept up
+         to date with any necessary changes -->
+    <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+ 
+    <script type="text/javascript">
+        // Start position for the map (hardcoded here for simplicity)
+        var lon = 13.7629;
+        var lat = 51.0364;
+        var zoom = 5;
+
+        var map; //complex object of type OpenLayers.Map
+
+
+
+
+
+        //Initialise the 'map' object
+        function init() {
+
+
+//map = new OpenLayers.Map.cdauth("map");
+//map.addAllAvailableLayers();
+
+
+ 
+            map = new OpenLayers.Map ("map", {
+                controls:[
+                        new OpenLayers.Control.Navigation(),
+                        new OpenLayers.Control.LayerSwitcher(),
+                        new OpenLayers.Control.PanZoomBar(),
+                        new OpenLayers.Control.Attribution(),
+                        new OpenLayers.Control.Permalink(),
+                        new OpenLayers.Control.MousePosition(),
+                        new OpenLayers.Control.KeyboardDefaults(),
+                        new OpenLayers.Control.ScaleLine()
+                    ],
+                units: 'm',
+		numZoomLevels: 18,
+                maxResolution: 156543.0339,
+                maxExtent: new OpenLayers.Bounds(-20037508, -20037508,
+                                                 20037508, 20037508.34),
+                projection: new OpenLayers.Projection("EPSG:900913"),
+                displayProjection: new OpenLayers.Projection("EPSG:4326")
+            } );
+ 
+ 
+            // Define the map layer
+            // Other defined layers are OpenLayers.Layer.OSM.Mapnik, OpenLayers.Layer.OSM.Maplint and OpenLayers.Layer.OSM.CycleMap
+
+	        var osm   = new OpenLayers.Layer.OSM.Mapnik("Mapnik");
+		var hikebike = new OpenLayers.Layer.TMS(
+                    "Hike & Bike Map",
+	             "http://toolserver.org/tiles/hikebike/",
+                    {
+                            type: 'png', getURL: osm_getTileURL,
+                            displayOutsideMaxExtent: true, isBaseLayer: true,
+                            attribution: 'Map Data from <a href="http://www.openstreetmap.org/">OpenStreetMap</a> (<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-by-SA 2.0</a>)'
+                        }
+                    );
+	        var ruwkb  = new OpenLayers.Layer.OSM("Reit- & Wanderkarte (Base)","http://topo.openstreetmap.de/base/${z}/${x}/${y}.png",{});
+	        var ruwkt  = new OpenLayers.Layer.OSM("Reit- & Wanderkarte (Trails)","http://topo.openstreetmap.de/topo/${z}/${x}/${y}.png",{isBaseLayer: false, "visibility": false});
+	        var cycle = new OpenLayers.Layer.OSM.CycleMap("Cycle Map");
+	        var osma  = new OpenLayers.Layer.OSM.Osmarender("Osmarender");
+	        var osbr  = new OpenLayers.Layer.OSM("OpenStreetBrowser","http://www.openstreetbrowser.org/tiles/base/${z}/${x}/${y}.png",{});
+	        var opnv  = new OpenLayers.Layer.OSM("ÖPNV-Karte","http://tile.öpnvkarte.de/tilegen/${z}/${x}/${y}.png",{});
+
+                var hill = new OpenLayers.Layer.TMS(
+                    "Hillshading (NASA SRTM3 v2)",
+                    "http://toolserver.org/~cmarqu/hill/",
+                    {
+                            type: 'png', getURL: osm_getTileURL,
+                            displayOutsideMaxExtent: true, isBaseLayer: false,
+	                    transparent: true, "visibility": false
+                        }
+                    );
+
+
+		map.addLayers([
+	            osm
+		    ,osbr ,hikebike, ruwkb, cycle, osma, opnv
+		    ,hill, ruwkt
+	            ]);
+
+	tileStyle = new OpenLayers.StyleMap({
+                "default": new OpenLayers.Style({
+                                strokeColor: "#E38125",
+                                strokeWidth:4,
+                                strokeOpacity:1,
+                                fillColor:"#E3B125",
+                                fillOpacity: 0.05,
+                                label : "${name}"
+                })/*,
+                "select": new OpenLayers.Style({
+                                strokeColor: "#B0FFFF",
+                                strokeWidth:3,
+                                strokeOpacity:1,
+                                fillColor:"#B0FFFF",
+                                fillOpacity: 0.4
+                })*/
+            }); 
+
+	map.addLayer(new OpenLayers.Layer.GML("Tiles_Europe", "tiles_europe.kml",
+               {
+                format: OpenLayers.Format.KML,
+		styleMap: tileStyle,
+                formatOptions: {
+                  extractStyles: false,
+                  extractAttributes: true
+                },
+
+		projection: map.displayProjection
+               }));
+
+	map.addLayer(new OpenLayers.Layer.GML("Tiles_Addr_Europe", "tiles_addr_europe.kml",
+               {
+                format: OpenLayers.Format.KML,
+		styleMap: tileStyle,
+                formatOptions: {
+                  extractStyles: false,
+                  extractAttributes: true
+                },
+		projection: map.displayProjection,
+		"visibility": false
+               }));
+
+	map.addLayer(new OpenLayers.Layer.GML("Tiles_Maxspeed_Europe", "tiles_maxspeed_europe.kml",
+               {
+                format: OpenLayers.Format.KML,
+		styleMap: tileStyle,
+                formatOptions: {
+                  extractStyles: false,
+                  extractAttributes: true
+                },
+		projection: map.displayProjection,
+		"visibility": false
+               }));
+
+	map.addLayer(new OpenLayers.Layer.GML("Tiles_Boundary_Europe", "tiles_boundary_europe.kml",
+               {
+                format: OpenLayers.Format.KML,
+		styleMap: tileStyle,
+                formatOptions: {
+                  extractStyles: false,
+                  extractAttributes: true
+                },
+		projection: map.displayProjection,
+		"visibility": false
+               }));
+
+	map.addLayer(new OpenLayers.Layer.GML("Tiles_Keepright_Europe", "tiles_keepright_europe.kml",
+               {
+                format: OpenLayers.Format.KML,
+		styleMap: tileStyle,
+                formatOptions: {
+                  extractStyles: false,
+                  extractAttributes: true
+                },
+		projection: map.displayProjection,
+		"visibility": false
+               }));
+
+	map.addLayer(new OpenLayers.Layer.GML("Tiles_OSB_Europe", "tiles_osb_europe.kml",
+               {
+                format: OpenLayers.Format.KML,
+		styleMap: tileStyle,
+                formatOptions: {
+                  extractStyles: false,
+                  extractAttributes: true
+                },
+		projection: map.displayProjection,
+		"visibility": false
+               }));
+
+            if( ! map.getCenter() ){
+                var lonLat = new OpenLayers.LonLat(lon, lat).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+                map.setCenter (lonLat, zoom);
+            }
+
+
+        }
+	function osm_getTileURL(bounds) {
+            var res = this.map.getResolution();
+            var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+            var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+            var z = this.map.getZoom();
+            var limit = Math.pow(2, z);
+
+            if (y < 0 || y >= limit) {
+                return OpenLayers.Util.getImagesLocation() + "404.png";
+            } else {
+                x = ((x % limit) + limit) % limit;
+                return this.url + z + "/" + x + "/" + y + "." + this.type;
+            }
+
+        }
+
+ 
+    </script>
+</head>
+ 
+<!-- body.onload is called once the page is loaded (call the 'init' function) -->
+<body onload="init();">
+ 
+    <!-- define a DIV into which the map will appear. Make it take up the whole window -->
+    <div style="width:100%; height:100%" id="map"></div>
+ 
+</body>
+ 
+</html>

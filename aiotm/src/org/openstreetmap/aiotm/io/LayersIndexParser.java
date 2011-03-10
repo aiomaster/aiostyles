@@ -40,7 +40,7 @@ public class LayersIndexParser {
 				// remove whitespaces
 				line = line.trim();
 
-				// continue if it was an empty line or comment
+				// continue loop if it was an empty line
 				if (line.equals("")) continue;
 
 				String[] kv = new String[2];

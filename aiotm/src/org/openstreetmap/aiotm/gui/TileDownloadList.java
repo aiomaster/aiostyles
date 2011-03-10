@@ -26,11 +26,13 @@ import org.openstreetmap.aiotm.Aiotm;
 import org.openstreetmap.aiotm.data.GarminLayer;
 import org.openstreetmap.aiotm.data.GarminLayerListener;
 import org.openstreetmap.aiotm.data.GarminTile;
+import org.openstreetmap.aiotm.io.DownloadListener;
 import org.openstreetmap.aiotm.util.GBC;
 
 public class TileDownloadList implements GarminLayerListener {
 
 	private final JPanel panel;
+	// every layer get its own collapsible panel which shows all tilenumbers in a progressbar
 	private final Map<GarminLayer, JCollapsiblePanel> layerPanels;
 	private final Map<GarminLayer, JList> tileList;
 
@@ -172,16 +174,32 @@ public class TileDownloadList implements GarminLayerListener {
 	}
 
 	public void downloadSelected() {
+		// start global progressbar from new if it is not in use
+		final JProgressBar b = Aiotm.main.dm.getProgressBar();
+		if (b.getValue() == b.getMaximum())
+			b.setMaximum(0);
 		for (GarminLayer l : tileList.keySet()) {
 			File layerPath = new File(Aiotm.main.pref.get("cachedir"),"local/"+l.getName());
 			String layerPathServer = Aiotm.main.pref.get("serverpath")+"/"+l.getName();
 			for (Object o : tileList.get(l).getSelectedValues()) {
 				TileProgressBar tpb = (TileProgressBar) o;
-				String filename = tpb.getTile().getNumber()+".img.gz";
-				Aiotm.main.dm.downloadFile(layerPathServer+"/"+filename, new File(layerPath,filename), null, tpb);
+				final GarminTile t = tpb.getTile();
+				// don't load again if it is cached already
+				if (t.isCached()) continue;
+				String filename = t.getNumber()+".img.gz";
+				Aiotm.main.dm.downloadFile(layerPathServer+"/"+filename, new File(layerPath,filename), new DownloadListener(){
+
+					@Override
+					public void fileLoadingFinished(File f, boolean success) {
+						t.setCached(true);
+						t.setFilePath(f.getAbsolutePath());
+					}
+				}, tpb);
+
 			}
 		}
 	}
+
 
 	public class TileProgressBar extends JProgressBar {
 		private final GarminTile t;
@@ -190,6 +208,10 @@ public class TileDownloadList implements GarminLayerListener {
 			setString(t.toString());
 			setStringPainted(true);
 			this.t = t;
+			if (t.isCached()) {
+				setMaximum(1);
+				setValue(1);
+			}
 		}
 
 		public GarminTile getTile() {

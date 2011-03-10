@@ -38,6 +38,14 @@ public class DownloadManager {
 		return bar;
 	}
 
+	public synchronized void addGlobalJobSize(int jobsize){
+		bar.setMaximum(bar.getMaximum()+jobsize);
+	}
+
+	public synchronized void updateGlobalBar(int done){
+		bar.setValue(bar.getValue()+done);
+	}
+
 	public JLabel getSpeedLabel() {
 		return speedLabel;
 	}
@@ -65,14 +73,14 @@ public class DownloadManager {
 	public int measureDownloadSpeed() {
 		setReceivedKiloBytes(0);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			System.err.println("TimeMeasuring interrupted");
 		}
-		return received;
+		return received/3;
 	}
 
-	public Runnable createFileLoaderJob(final String url, final File file, final DownloadListener listener, final JProgressBar bar) {
+	public Runnable createFileLoaderJob(final String url, final File file, final DownloadListener listener, final JProgressBar filebar) {
 		incTasks(1);
 		if (downloadTasks == 1) {
 			new Thread(new Runnable(){
@@ -98,9 +106,10 @@ public class DownloadManager {
 					URLConnection conn = loadFile(url);
 
 					int size = conn.getContentLength();
-					synchronized (bar) {
-						bar.setMaximum(size);
+					synchronized (filebar) {
+						filebar.setMaximum(size);
 					}
+					addGlobalJobSize(size);
 					InputStream input = conn.getInputStream();
 					file.getParentFile().mkdirs();
 					FileOutputStream f = new FileOutputStream(file);
@@ -109,9 +118,10 @@ public class DownloadManager {
 					int count;
 					while ((count = input.read(data)) != -1) {
 						f.write(data,0,count);
-						synchronized (bar) {
-							bar.setValue(bar.getValue()+count);
+						synchronized (filebar) {
+							filebar.setValue(filebar.getValue()+count);
 						}
+						updateGlobalBar(count);
 						incReceivedKiloBytes(count/1024);
 					}
 
@@ -121,7 +131,8 @@ public class DownloadManager {
 					if (listener != null)
 						listener.fileLoadingFinished(file, true);
 				} catch (Exception e) {
-
+					if (listener != null)
+						listener.fileLoadingFinished(file, false);
 					System.err.println("failed loading "  + e.getMessage());
 
 				}

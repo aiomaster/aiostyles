@@ -105,11 +105,17 @@ public class GarminTile implements MapRectangle {
 		int w = bottomRight.x - topLeft.x;
 		int h = bottomRight.y - topLeft.y;
 
-		if (isSelected)
-			g.setColor(new Color(0.8f, 0.5f, 0.3f, 0.6f));
-		else
-			g.setColor(new Color(0.9f, 0.5f, 0.3f, 0.2f));
-
+		if (isCached) {
+			if (isSelected)
+				g.setColor(new Color(0.4f, 1.0f, 0.2f, 0.6f));
+			else
+				g.setColor(new Color(0.6f, 1.0f, 0.2f, 0.4f));
+		} else {
+			if (isSelected)
+				g.setColor(new Color(0.8f, 0.5f, 0.3f, 0.6f));
+			else
+				g.setColor(new Color(0.9f, 0.5f, 0.3f, 0.2f));
+		}
 		g.fillRect(topLeft.x, topLeft.y, w, h);
 
 		g.setColor(Color.BLACK);

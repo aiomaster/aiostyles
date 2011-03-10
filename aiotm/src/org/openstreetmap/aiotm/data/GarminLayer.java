@@ -10,6 +10,9 @@ public class GarminLayer {
 	private final String name;
 	private String description = "";
 	private int splitVersion = 0;
+	private int familyID = 0;
+	private int productID = 0;
+	private TypFile typFile;
 
 	public static GarminLayer makeDummy() {
 		GarminLayer l = new GarminLayer("<none>");
@@ -38,7 +41,23 @@ public class GarminLayer {
 			splitVersion = Integer.parseInt(value);
 			return true;
 		}
+		if (key.equals("FamilyID") && value.matches("\\d*")) {
+			familyID = Integer.parseInt(value);
+			return true;
+		}
+		if (key.equals("ProductID") && value.matches("\\d*")) {
+			productID = Integer.parseInt(value);
+			return true;
+		}
+		if (key.equals("TypFile")) {
+			typFile = new TypFile(value);
+			return true;
+		}
 		return false;
+	}
+
+	public TypFile getTypFile() {
+		return typFile;
 	}
 
 	public String getDescription() {
@@ -47,6 +66,14 @@ public class GarminLayer {
 
 	public int getVersion() {
 		return splitVersion;
+	}
+
+	public int getFamilyID() {
+		return familyID;
+	}
+
+	public int getProductID() {
+		return productID;
 	}
 
 	public void addTile(GarminTile tile) {
