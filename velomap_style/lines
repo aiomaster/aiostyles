@@ -109,6 +109,27 @@ toll=* {delete toll}
 # Remove oneway on Waterways
 oneway=* & waterway=* {delete oneway}
 
+# Translate unusual access values
+bicycle=agricultural {add bicycle=yes}
+bicycle=forestry {add bicycle=yes}
+bicycle=delivery {add bicycle=yes}
+bicycle=permissive {set bicycle=yes}
+bicycle=private {add access=destination}
+
+foot=agricultural {set foot=yes}
+foot=forestry {set foot=yes}
+foot=delivery {set access=destination}
+foot=permissive {set foot=yes}
+foot=private & bicycle!=* {set access=no}
+foot=private {set foot=no}
+
+access=destination & bicycle!=* {set access=yes}
+# access=agricultural | access=forestry {set access=yes}
+# vehicle=agricultural | vehicle=forestry {add access=yes}
+access=private & foot!=* & bicycle!=* {set access=no}
+
+
+
 # Correct Spelling Mistakes and Apply Translitset name=
 bicycle=no 	{set bicycle=nope}
 highway=footpath {set highway=footway}
@@ -239,12 +260,15 @@ highway=pedestrian & bicycle=yes {set highway=footway; set access=yes; set taxi=
 # Remove access rights for motorcars/motorcycles:
 motorcar=no | motorcar=private {delete motorcar}
 motorcycle=no | motorcycle=private {delete motorcycle}
-hgv=no | hgv=private {delete hgv}
-psv=no | psv=private {delete psv}
-taxi=no | taxi=private {delete taxi}
+motor_vehicle=* {delete motor_vehicle}
+hgv=* {delete hgv}
+psv=* {delete psv}
+taxi=* {delete taxi}
+bus=* {delete bus}
 emergency=no | emergency=private {delete emergency}
 delivery=no | delivery=private {delete delivery}
 goods=no | goods=private {delete goods}
+carpool=* {delete carpool}
 
 
 route1=ferry 											{set name='${name1} ${name} ferry' | '${name1} ferry'  |'${name} ferry' }					[0x01 road_class=3 road_speed=2 resolution 24 continue with_actions]
